@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using DrawBench.Core;
 using DrawBench.Core.Ui;
 using DrawBench.Modules.Metadata.ViewModels;
@@ -150,6 +153,34 @@ public partial class ImageView : UserControl
         {
             UiHost.Warn("复制失败：" + ex.Message);
         }
+    }
+
+    /// <summary>生成参数表只复制值：选中的每一行取「值」列，一行一个，不带项目名和表头。</summary>
+    private void CopyParams_Click(object sender, RoutedEventArgs e) => CopyParamValues();
+
+    private void ParamsGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.C) return;
+        if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control) return;
+
+        e.Handled = true;
+        CopyParamValues();
+    }
+
+    private void CopyParamValues()
+    {
+        var rows = ParamsGrid.SelectedItems.OfType<KeyValuePair<string, string>>().ToList();
+        if (rows.Count == 0)
+            rows = _vm.Selected?.Params.ParameterItems.ToList() ?? new List<KeyValuePair<string, string>>();
+
+        var values = rows.Where(kv => kv.Value.Length > 0).Select(kv => kv.Value).ToList();
+        if (values.Count == 0)
+        {
+            UiHost.Info("这里还没有内容可以复制呢～");
+            return;
+        }
+
+        CopyToClipboard(string.Join(Environment.NewLine, values));
     }
 
     // ---------------------------------------------------------------- 其他交互

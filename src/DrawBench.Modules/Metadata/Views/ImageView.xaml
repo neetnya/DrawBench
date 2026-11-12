@@ -29,7 +29,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="文件夹" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#4B5563" />
@@ -42,8 +41,6 @@
                 <Button Grid.Column="3" Content="读取全部" Style="{StaticResource PrimaryButton}" Click="Scan_Click" />
                 <CheckBox Grid.Column="4" Content="包含子文件夹" VerticalAlignment="Center" Margin="14,0,0,0"
                           IsChecked="{Binding IncludeSubFolders}" />
-                <TextBlock Grid.Column="5" Text="AI 图 Tag · ComfyUI / WebUI / NovelAI"
-                           Margin="20,0,0,0" VerticalAlignment="Center" Foreground="#9CA3AF" FontSize="12" />
             </Grid>
         </Border>
 
@@ -73,7 +70,7 @@
         <!-- 主体 -->
         <Grid Margin="12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="380" MinWidth="240" />
+                <ColumnDefinition Width="300" MinWidth="240" />
                 <ColumnDefinition Width="6" />
                 <ColumnDefinition Width="*" MinWidth="520" />
             </Grid.ColumnDefinitions>
@@ -214,56 +211,66 @@
 
                 <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch" Background="Transparent" />
 
-                <!-- 参数详情 -->
-                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <GroupBox>
-                            <GroupBox.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="正向提示词" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                    <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyPositive_Click" />
-                                    <Button Content="发送到队列" Style="{StaticResource SmallButton}" Click="SendPositiveToBatch_Click" ToolTip="把这段提示词送进「批量提交」模块的队列" />
-                                </StackPanel>
-                            </GroupBox.Header>
-                            <TextBox Text="{Binding Selected.PositivePrompt, Mode=OneWay}" IsReadOnly="True"
-                                     TextWrapping="Wrap" AcceptsReturn="True" Height="150"
-                                     VerticalScrollBarVisibility="Auto" BorderThickness="0"
-                                     Background="Transparent" Padding="2" />
-                        </GroupBox>
+                <!-- 参数详情：三块各占一段高度、各自滚动，外层不再有整体滚动条 -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.2*" />
+                        <RowDefinition Height="0.9*" />
+                        <RowDefinition Height="1.5*" />
+                    </Grid.RowDefinitions>
 
-                        <GroupBox>
-                            <GroupBox.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="负向提示词" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                    <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyNegative_Click" />
-                                    <Button Content="发送到队列" Style="{StaticResource SmallButton}" Click="SendNegativeToBatch_Click" ToolTip="送进「批量提交」模块的负向提示词框" />
-                                </StackPanel>
-                            </GroupBox.Header>
-                            <TextBox Text="{Binding Selected.NegativePromptText, Mode=OneWay}" IsReadOnly="True"
-                                     TextWrapping="Wrap" AcceptsReturn="True" Height="100"
-                                     VerticalScrollBarVisibility="Auto" BorderThickness="0"
-                                     Background="Transparent" Padding="2" />
-                        </GroupBox>
+                    <GroupBox Grid.Row="0">
+                        <GroupBox.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="正向提示词" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyPositive_Click" />
+                                <Button Content="发送到队列" Style="{StaticResource SmallButton}" Click="SendPositiveToBatch_Click" ToolTip="把这段提示词送进「批量提交」模块的队列" />
+                            </StackPanel>
+                        </GroupBox.Header>
+                        <TextBox Text="{Binding Selected.PositivePrompt, Mode=OneWay}" IsReadOnly="True"
+                                 TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" BorderThickness="0"
+                                 Background="Transparent" Padding="2" />
+                    </GroupBox>
 
-                        <GroupBox>
-                            <GroupBox.Header>
-                                <TextBlock Text="生成参数" FontWeight="SemiBold" />
-                            </GroupBox.Header>
-                            <DataGrid ItemsSource="{Binding Selected.Params.ParameterItems}"
-                                      AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                                      HeadersVisibility="Column" GridLinesVisibility="Horizontal"
-                                      RowHeaderWidth="0" Height="250" BorderThickness="0"
-                                      Background="Transparent" FontSize="12"
-                                      HorizontalGridLinesBrush="#EEF1F4" VerticalGridLinesBrush="Transparent">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="项目" Binding="{Binding Key}" Width="130" />
-                                    <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="*" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </GroupBox>
+                    <GroupBox Grid.Row="1">
+                        <GroupBox.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="负向提示词" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyNegative_Click" />
+                                <Button Content="发送到队列" Style="{StaticResource SmallButton}" Click="SendNegativeToBatch_Click" ToolTip="送进「批量提交」模块的负向提示词框" />
+                            </StackPanel>
+                        </GroupBox.Header>
+                        <TextBox Text="{Binding Selected.NegativePromptText, Mode=OneWay}" IsReadOnly="True"
+                                 TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" BorderThickness="0"
+                                 Background="Transparent" Padding="2" />
+                    </GroupBox>
 
-                    </StackPanel>
-                </ScrollViewer>
+                    <GroupBox Grid.Row="2">
+                        <GroupBox.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="生成参数" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <Button Content="复制值" Style="{StaticResource SmallButton}" Click="CopyParams_Click"
+                                        ToolTip="复制选中行的参数值（不含项目名）" />
+                            </StackPanel>
+                        </GroupBox.Header>
+                        <DataGrid x:Name="ParamsGrid" ItemsSource="{Binding Selected.Params.ParameterItems}"
+                                  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                                  HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                  RowHeaderWidth="0" BorderThickness="0"
+                                  Background="Transparent" FontSize="12"
+                                  ClipboardCopyMode="None"
+                                  PreviewKeyDown="ParamsGrid_PreviewKeyDown"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalGridLinesBrush="#EEF1F4" VerticalGridLinesBrush="Transparent">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="项目" Binding="{Binding Key}" Width="130" />
+                                <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                </Grid>
             </Grid>
         </Grid>
     </DockPanel>
