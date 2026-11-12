@@ -1,7 +1,7 @@
 <Window x:Class="DrawBench.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DrawBench 出图工作台" Height="720" Width="1320"
+        Title="DrawBench 出图工作台" Height="760" Width="1320"
         MinHeight="560" MinWidth="1040"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
