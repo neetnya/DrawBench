@@ -433,10 +433,11 @@ public partial class BatchView : UserControl
             int done = 0;
             int failed = 0;
 
-            async System.Threading.Tasks.Task SubmitOne(JsonObject clone, long? seed, bool useSharedSeed)
+            async System.Threading.Tasks.Task SubmitOne(JsonObject clone, long? seed)
             {
-                if (seed.HasValue && useSharedSeed) ApplySeed(clone, seed.Value);
-                else if (!seed.HasValue) RandomizeSeed(clone);
+                // seed 为 null 表示不锁定：每个工作流里的种子节点各自随机（与旧版行为一致）
+                if (seed.HasValue) ApplySeed(clone, seed.Value);
+                else RandomizeSeed(clone);
 
                 var result = await client.SubmitAsync(clone);
                 if (result.Ok)
@@ -460,7 +461,7 @@ public partial class BatchView : UserControl
                         foreach (var wf in selected)
                         {
                             var clone = Clone(wf, prompt, negativePrompt, dateSuffix);
-                            await SubmitOne(clone, roundSeed, true);
+                            await SubmitOne(clone, roundSeed);
                         }
                     }
                 }
@@ -471,15 +472,14 @@ public partial class BatchView : UserControl
                 {
                     for (int i = 0; i < perPromptCount; i++)
                     {
-                        // 勾选「锁定 seed」时同一组提示词的所有工作流共用一个 seed，
-                        // 未勾选时每个工作流各自随机；填了固定 seed 时所有图都用它。
-                        long sharedSeed = fixedSeed ?? NextSeed();
-                        bool useShared = fixedSeed is not null || lockSeed;
+                        // 填了固定 seed 时所有图都用它；勾选「锁定 seed」时同一组提示词的所有工作流
+                        // 共用一个随机 seed；两者都不生效时传 null，让每个工作流各自随机。
+                        long? sharedSeed = fixedSeed ?? (lockSeed ? NextSeed() : null);
 
                         foreach (var wf in selected)
                         {
                             var clone = Clone(wf, prompt, negativePrompt, dateSuffix);
-                            await SubmitOne(clone, sharedSeed, useShared);
+                            await SubmitOne(clone, sharedSeed);
                         }
                     }
                 }
