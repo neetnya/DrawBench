@@ -4,7 +4,7 @@
 
 原来它们是五个独立程序（PromptGacha / ComfyBatchTool / ImageTagReader / WD14Tagger / ComfyCollage），
 各自带一份界面、一份配置、一份 Python 探测逻辑，互不相通。现在是一个程序、一套设置、一条流水线，
-每个模块的界面布局基本保持原样。
+五页界面统一到同一套配色与控件样式（`src/DrawBench.App/Themes/Theme.xaml`）。
 
 ## 界面
 
@@ -93,8 +93,8 @@ DrawBench.exe --render shots        依次切模块截图后退出
 ```
 src/
   DrawBench.Core/       公共层：路径、配置、Python、ComfyUI 客户端、图片扫描、日志
-  DrawBench.Modules/    五个模块，各占一个文件夹，各带一份独立资源字典
-  DrawBench.App/        外壳：左侧导航、内容区、状态栏、设置页、命令行入口
+  DrawBench.Modules/    五个模块，各占一个文件夹；只写布局，颜色与控件样式统一取自全局主题
+  DrawBench.App/        外壳：左侧导航、内容区、状态栏、设置页、命令行入口，以及 Themes/Theme.xaml（唯一主题）
 ```
 
 模块通过 `Core.IToolModule` 契约被外壳反射加载，加模块只需往 Modules 里放一个类。
