@@ -39,8 +39,6 @@ internal static class SelfCheck
 
         window.Show();
         window.WindowState = WindowState.Normal;
-        window.Width = 1400;
-        window.Height = 880;
 
         // 截图时给多行框灌一点样例文本，否则空框看不出文字对齐是否正常
         foreach (var tb in FindTextBoxes(window)

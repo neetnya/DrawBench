@@ -1,10 +1,11 @@
 <Window x:Class="DrawBench.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DrawBench 出图工作台" Height="820" Width="1320"
-        MinHeight="600" MinWidth="1040"
+        Title="DrawBench 出图工作台" Height="720" Width="1320"
+        MinHeight="560" MinWidth="1040"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
+        FontFamily="{StaticResource AppFont}"
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Display">
 
@@ -23,12 +24,16 @@
                 <StackPanel DockPanel.Dock="Top" Margin="18,18,14,14">
                     <TextBlock Text="出图工作台" Style="{StaticResource TitleText}" FontSize="18" />
                     <TextBlock Text="DrawBench" Style="{StaticResource SubText}" FontSize="11" Margin="0,1,0,0" />
-                    <TextBlock x:Name="TxtSubtitle" Text="ComfyUI 出图工具集"
-                               Style="{StaticResource SubText}" Margin="0,6,0,0" />
+                    <Border Background="{StaticResource AccentSoft}" CornerRadius="8"
+                            Padding="8,5" Margin="0,12,0,0" HorizontalAlignment="Left">
+                        <TextBlock x:Name="TxtSubtitle" Text="ComfyUI 出图工具集"
+                                   FontSize="12" Foreground="{StaticResource AccentDeep}" />
+                    </Border>
                 </StackPanel>
 
                 <!-- 底部：设置 + 版本 -->
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
+                    <Border Height="1" Background="{StaticResource LineBrush}" Margin="14,0,14,8" />
                     <RadioButton x:Name="BtnSettings" Style="{StaticResource NavButton}"
                                  GroupName="Nav" Checked="Settings_Checked" Margin="10,3">
                         <StackPanel Orientation="Horizontal">
@@ -70,6 +75,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock x:Name="TxtStatus" Grid.Column="0" Style="{StaticResource SubText}"
+                               Foreground="{StaticResource InkSoft}"
                                VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                     <TextBlock x:Name="TxtPython" Grid.Column="1" Style="{StaticResource SubText}"
                                VerticalAlignment="Center" Margin="12,0,0,0" />
