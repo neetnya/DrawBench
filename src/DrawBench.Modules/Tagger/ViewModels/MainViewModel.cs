@@ -767,9 +767,13 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         if (string.IsNullOrWhiteSpace(SelectedTagsText)) return;
 
         if (AiBridge.SendToBatchQueue(SelectedTagsText, "反推标签"))
+        {
             StatusText = "标签已发送到批量提交队列";
-        else
-            StatusText = "批量提交模块没有接收这段标签";
+            return;
+        }
+
+        StatusText = "批量提交模块没有接收这段标签";
+        UiHost.Warn("标签没能送进队列。\n请先打开一次「批量提交」页，再回来重试。", "发送失败");
     }
 
     private void ApplyUpdate(ItemUpdate u)

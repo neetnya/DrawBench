@@ -171,6 +171,7 @@ public partial class MainWindow : Window
         _appSection.LastModule = moduleId;
         _store.Set("app", _appSection);
         SetStatus(module.Description);
+        UpdateStatusBar();
     }
 
     // ==================== 供模块调用 ====================
@@ -244,9 +245,11 @@ public partial class MainWindow : Window
         TxtPython.Text = python.Found ? "Python 就绪" : "Python 未找到";
         TxtPython.ToolTip = python.Describe();
 
-        string comfy = Core.Comfy.ComfyClient.Normalize(_appSection.ComfyBaseUrl);
+        // ComfyUI 地址只在「批量提交」页里维护，这里从批量模块的配置里读，避免两处不一致
+        var batch = _store.Get<DrawBench.Modules.Batch.BatchSettings>(DrawBench.Modules.ModuleIds.Batch);
+        string comfy = Core.Comfy.ComfyClient.Normalize(batch?.ComfyBaseUrl);
         TxtComfy.Text = "ComfyUI " + comfy.Replace("http://", "");
-        TxtComfy.ToolTip = "在「设置」里修改 ComfyUI 地址";
+        TxtComfy.ToolTip = "在「批量提交」页顶部修改 ComfyUI 地址";
 
         TxtSubtitle.Text = _activeModuleId != null && _modules.TryGetValue(_activeModuleId, out var m)
             ? m.Title

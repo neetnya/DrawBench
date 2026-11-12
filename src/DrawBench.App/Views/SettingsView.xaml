@@ -9,24 +9,6 @@
             <TextBlock Style="{StaticResource SubText}" Margin="0,4,0,18"
                        Text="这里的设置对所有模块生效。各模块自己的参数在各自界面里，会自动保存。" />
 
-            <!-- ==================== ComfyUI ==================== -->
-            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
-                <StackPanel>
-                    <TextBlock Text="ComfyUI 服务地址" Style="{StaticResource SectionTitle}" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="TxtComfyUrl" Grid.Column="0" />
-                        <Button x:Name="BtnTestComfy" Grid.Column="1" Content="测试连接"
-                                Style="{StaticResource ToolButton}" Click="TestComfy_Click" />
-                    </Grid>
-                    <TextBlock x:Name="TxtComfyHint" Style="{StaticResource SubText}" Margin="0,6,0,0"
-                               Text="默认 http://127.0.0.1:8188，批量提交模块用它把任务送进 ComfyUI 队列。" />
-                </StackPanel>
-            </Border>
-
             <!-- ==================== Python ==================== -->
             <Border Style="{StaticResource Card}" Margin="0,0,0,14">
                 <StackPanel>
@@ -64,16 +46,6 @@
                     </StackPanel>
                     <TextBlock Style="{StaticResource SubText}" Margin="0,8,0,0"
                                Text="api / engine / scripts / models / data 都在程序目录下，整个文件夹复制走即可换机器。" />
-                </StackPanel>
-            </Border>
-
-            <!-- ==================== 关于 ==================== -->
-            <Border Style="{StaticResource Card}">
-                <StackPanel>
-                    <TextBlock Text="关于" Style="{StaticResource SectionTitle}" />
-                    <TextBlock x:Name="TxtAbout" Style="{StaticResource SubText}" TextWrapping="Wrap" />
-                    <Button Content="打开日志文件" Style="{StaticResource BaseButton}"
-                            HorizontalAlignment="Left" Margin="0,10,0,0" Click="OpenLog_Click" />
                 </StackPanel>
             </Border>
 

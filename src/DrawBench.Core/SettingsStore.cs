@@ -9,7 +9,7 @@ namespace DrawBench.Core;
 ///
 /// <code>
 /// {
-///   "app":     { "lastModule": "batch", "comfyBaseUrl": "http://127.0.0.1:8188", "pythonPath": "" },
+///   "app":     { "lastModule": "batch", "pythonPath": "" },
 ///   "batch":   { ... },
 ///   "collage": { ... },
 ///   "tagger":  { ... },
@@ -156,12 +156,12 @@ public static class SettingsJson
 }
 
 /// <summary>
-/// 全局段（shell 自己用）：上次停留的模块、ComfyUI 地址、Python 解释器路径。
+/// 全局段（shell 自己用）：上次停留的模块、Python 解释器路径。
+/// ComfyUI 地址不在这里——它只属于批量提交模块，存在 "batch" 段。
 /// </summary>
 public sealed class AppSection
 {
     public string? LastModule { get; set; }
-    public string ComfyBaseUrl { get; set; } = "http://127.0.0.1:8188";
 
     /// <summary>留空 = 自动探测。</summary>
     public string? PythonPath { get; set; }
