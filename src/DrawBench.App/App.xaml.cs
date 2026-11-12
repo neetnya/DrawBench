@@ -15,7 +15,7 @@ public partial class App : Application
     {
         var paths = AppPaths.Current;
         paths.EnsureCreated();
-        StartupTasks.Run(paths);
+        StartupTasks.Run();
 
         // 开发期自检：--selftest <图片目录> 直接跑解析逻辑后退出
         string? selfTestDir = SelfTest.TargetDir(e.Args);

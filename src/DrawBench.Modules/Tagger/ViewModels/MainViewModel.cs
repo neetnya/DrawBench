@@ -455,7 +455,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     private static List<string> CollectImages(IEnumerable<string> paths, bool recursive, HashSet<string> _)
     {
-        var exts = new HashSet<string>(new AppConfig().Extensions.Select(e => "." + e), StringComparer.OrdinalIgnoreCase);
+        var exts = new HashSet<string>(AppConfig.DefaultExtensions.Select(e => "." + e), StringComparer.OrdinalIgnoreCase);
         var result = new List<string>();
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

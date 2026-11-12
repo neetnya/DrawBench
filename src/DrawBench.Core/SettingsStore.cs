@@ -9,7 +9,7 @@ namespace DrawBench.Core;
 ///
 /// <code>
 /// {
-///   "app":     { "lastModule": "batch", "pythonPath": "" },
+///   "app":     { "pythonPath": "" },
 ///   "batch":   { ... },
 ///   "collage": { ... },
 ///   "tagger":  { ... },
@@ -18,7 +18,6 @@ namespace DrawBench.Core;
 /// </code>
 ///
 /// 用「段 → JSON 原文」的方式存，模块读写自己的强类型对象，Core 不关心各模块长什么样。
-/// 旧版分散的配置文件由 <see cref="ImportLegacySection"/> 一次性搬进对应段。
 /// </summary>
 public sealed class SettingsStore
 {
@@ -73,30 +72,6 @@ public sealed class SettingsStore
                 return;
             }
             Save();
-        }
-    }
-
-    /// <summary>把一段外部 JSON（旧配置文件全文）写进指定段。</summary>
-    public bool ImportLegacySection(string section, string legacyFilePath)
-    {
-        try
-        {
-            if (!File.Exists(legacyFilePath)) return false;
-            string text = File.ReadAllText(legacyFilePath);
-            using var doc = JsonDocument.Parse(text);
-            if (doc.RootElement.ValueKind != JsonValueKind.Object) return false;
-
-            lock (_gate)
-            {
-                if (_sections.ContainsKey(section)) return false;   // 已经有新配置就不覆盖
-                _sections[section] = doc.RootElement.GetRawText();
-                Save();
-            }
-            return true;
-        }
-        catch
-        {
-            return false;
         }
     }
 
@@ -156,15 +131,11 @@ public static class SettingsJson
 }
 
 /// <summary>
-/// 全局段（shell 自己用）：上次停留的模块、Python 解释器路径。
+/// 全局段（shell 自己用）：Python 解释器路径。
 /// ComfyUI 地址不在这里——它只属于批量提交模块，存在 "batch" 段。
 /// </summary>
 public sealed class AppSection
 {
-    public string? LastModule { get; set; }
-
     /// <summary>留空 = 自动探测。</summary>
     public string? PythonPath { get; set; }
-
-    public bool SidebarCollapsed { get; set; }
 }

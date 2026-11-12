@@ -22,14 +22,12 @@ public sealed class AppConfig
     /// <summary>复制时生效，把括号转义成 \( \)；默认勾选。</summary>
     public bool EscapeParens { get; set; } = true;
 
-    /// <summary>配置版本号，用于旧配置升级（v2 起括号转义默认勾选）。</summary>
-    public int ConfigVersion { get; set; } = CurrentConfigVersion;
-
-    public const int CurrentConfigVersion = 2;
-
     public int Threads { get; set; } = Math.Clamp(Environment.ProcessorCount / 2, 1, 8);
     public bool Recursive { get; set; } = true;
-    public string[] Extensions { get; set; } = { "png", "jpg", "jpeg", "webp", "bmp", "gif", "tiff", "tif" };
+
+    /// <summary>固定支持的图片扩展名，不写入配置。</summary>
+    public static readonly string[] DefaultExtensions =
+        { "png", "jpg", "jpeg", "webp", "bmp", "gif", "tiff", "tif" };
 
     public TaggerOptions ToTaggerOptions() => new()
     {

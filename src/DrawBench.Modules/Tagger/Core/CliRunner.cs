@@ -78,7 +78,7 @@ public static class CliRunner
         }
 
         var vocab = TagVocabulary.Load(csv);
-        var files = CollectImages(paths, new AppConfig().Extensions);
+        var files = CollectImages(paths, AppConfig.DefaultExtensions);
         if (files.Count == 0)
         {
             Console.Error.WriteLine("没有找到图片文件");

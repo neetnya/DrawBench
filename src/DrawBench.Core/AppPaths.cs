@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace DrawBench.Core;
@@ -122,68 +121,4 @@ public sealed class AppPaths
         }
     }
 
-    /// <summary>
-    /// 旧版本数据迁移：把五个独立工具留下的配置/结果搬进 data\。
-    /// 只在目标不存在时复制，复制成功后旧文件改名为 *.migrated 避免二次迁移。
-    /// </summary>
-    public List<string> MigrateLegacy()
-    {
-        var notes = new List<string>();
-        IReadOnlyList<string> roots = LegacyRoots();
-
-        // 反推结果：旧版在 exe 同级 data\results.csv（或 data\ 下），搬进新的 data\results.csv
-        foreach (string root in roots)
-        {
-            MigrateFile(Path.Combine(root, "data", "results.csv"), TaggerCsvPath, "反推结果", notes);
-            MigrateFile(Path.Combine(root, "results.csv"), TaggerCsvPath, "反推结果", notes);
-        }
-
-        return notes;
-    }
-
-    private void MigrateFile(string legacyPath, string targetPath, string label, List<string> notes)
-    {
-        try
-        {
-            if (!File.Exists(legacyPath)) return;
-            if (File.Exists(targetPath)) return;
-            if (IsSamePath(legacyPath, targetPath)) return;
-
-            File.Copy(legacyPath, targetPath, overwrite: false);
-            try { File.Move(legacyPath, legacyPath + ".migrated", overwrite: true); } catch { }
-            notes.Add($"已迁移{label}：{legacyPath} → {targetPath}");
-        }
-        catch (Exception ex)
-        {
-            notes.Add($"迁移{label}失败（{legacyPath}）：{ex.Message}");
-        }
-    }
-
-    private static bool IsSamePath(string a, string b)
-    {
-        try
-        {
-            return string.Equals(Path.GetFullPath(a), Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase);
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    /// <summary>可能留有旧数据的几个根目录：软件目录、上一个工作目录、用户 AppData。</summary>
-    private static List<string> LegacyRoots()
-    {
-        var list = new List<string>();
-        void Add(string? dir)
-        {
-            if (string.IsNullOrWhiteSpace(dir)) return;
-            if (!list.Contains(dir, StringComparer.OrdinalIgnoreCase)) list.Add(dir);
-        }
-
-        Add(Current?.AppDir);
-        try { Add(Environment.CurrentDirectory); } catch { }
-        Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ComfyCollage"));
-        return list;
-    }
 }

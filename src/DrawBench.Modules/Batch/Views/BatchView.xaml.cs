@@ -62,13 +62,11 @@ public partial class BatchView : UserControl
         Loaded -= OnViewLoaded;
 
         TxtBaseUrl.Text = ComfyClient.Normalize(_settings.ComfyBaseUrl);
-        TxtCount.Text = Math.Max(1, _settings.PerPromptCount).ToString();
-        TxtDate.Text = string.IsNullOrWhiteSpace(_settings.DateSuffix)
-            ? DateTime.Now.ToString("yyMMdd")
-            : _settings.DateSuffix;
-        TxtSeed.Text = _settings.Seed.ToString();
-        ChkLockSeed.IsChecked = _settings.LockSeed;
-        ChkGlobalLockSeed.IsChecked = _settings.GlobalLockSeed;
+        TxtCount.Text = "1";
+        TxtDate.Text = DateTime.Now.ToString("yyMMdd");
+        TxtSeed.Text = "-1";
+        ChkLockSeed.IsChecked = false;
+        ChkGlobalLockSeed.IsChecked = false;
 
         UpdateSeedControls();
         ReloadWorkflows();
@@ -76,16 +74,11 @@ public partial class BatchView : UserControl
         _uiReady = true;
     }
 
-    /// <summary>界面上的勾选状态回写到设置并落盘。</summary>
+    /// <summary>把 ComfyUI 地址写回设置并落盘（勾选状态由 SaveSelection 维护）。</summary>
     private void Persist()
     {
         if (!_uiReady) return;
         _settings.ComfyBaseUrl = ComfyClient.Normalize(TxtBaseUrl.Text);
-        _settings.PerPromptCount = int.TryParse(TxtCount.Text.Trim(), out int n) && n > 0 ? n : 1;
-        _settings.DateSuffix = TxtDate.Text.Trim();
-        _settings.Seed = long.TryParse(TxtSeed.Text.Trim(), out long seed) ? seed : -1;
-        _settings.LockSeed = ChkLockSeed.IsChecked == true;
-        _settings.GlobalLockSeed = ChkGlobalLockSeed.IsChecked == true;
 
         // 勾选状态只由 ReloadWorkflows / 勾选事件维护，这里不要覆盖
         _store.Set(ModuleIds.Batch, _settings);
@@ -139,8 +132,8 @@ public partial class BatchView : UserControl
                 var root = JsonNode.Parse(File.ReadAllText(path))!.AsObject();
                 var item = new WorkflowItem(path, root);
 
-                // 保存过设置时用上次的勾选状态；之前没出现过的新文件默认勾选
-                if (_settings.HasSavedSelection && _settings.KnownWorkflows.Contains(item.FileName, StringComparer.OrdinalIgnoreCase))
+                // 保存过勾选状态时按上次的来；否则全部默认勾选
+                if (_settings.HasSavedSelection)
                     item.IsEnabled = _settings.IsEnabled(item.FileName);
 
                 item.PropertyChanged += Workflow_PropertyChanged;
@@ -170,7 +163,7 @@ public partial class BatchView : UserControl
         if (_workflows.Count == 0) return;
 
         _settings.EnabledWorkflows = _workflows.Where(w => w.IsEnabled).Select(w => w.FileName).ToList();
-        _settings.MarkKnown(_workflows.Select(w => w.FileName));
+        _settings.HasSavedSelection = true;
         _store.Set(ModuleIds.Batch, _settings);
     }
 

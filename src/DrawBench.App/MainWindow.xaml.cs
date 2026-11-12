@@ -96,12 +96,8 @@ public partial class MainWindow : Window
     {
         UpdateStatusBar();
 
-        // 恢复上次停留的模块；没有就用导航里的第一个
-        string? last = _appSection.LastModule;
-        var target = (last != null && _modules.ContainsKey(last))
-            ? last
-            : _navButtons.FirstOrDefault()?.Tag as string;
-
+        // 启动时停在导航里的第一个模块
+        var target = _navButtons.FirstOrDefault()?.Tag as string;
         if (target != null)
         {
             var button = _navButtons.FirstOrDefault(b => (string)b.Tag == target);
@@ -166,8 +162,6 @@ public partial class MainWindow : Window
             try { activatable.OnActivated(); } catch (Exception ex) { AppLog.Error("模块激活失败", ex); }
         }
 
-        _appSection.LastModule = moduleId;
-        _store.Set("app", _appSection);
         SetStatus(module.Description);
         UpdateStatusBar();
     }
@@ -267,8 +261,6 @@ public partial class MainWindow : Window
             try { activatable.OnDeactivated(); } catch { }
         }
 
-        _appSection.LastModule = _activeModuleId;
-        _store.Set("app", _appSection);
         AppLog.Line -= OnLogLine;
     }
 }
