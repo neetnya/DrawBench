@@ -3,15 +3,18 @@
 
     <!-- 参数读取模块自己的少量资源：只在本模块内使用，不放进全局字典，避免与别的模块撞键 -->
 
-    <SolidColorBrush x:Key="SoftBorderBrush" Color="#E3E6EA" />
-
     <Style x:Key="InfoKey" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="#7A828B" />
-        <Setter Property="Margin" Value="0,3,8,3" />
+        <Setter Property="Foreground" Value="{StaticResource Muted}" />
+        <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="0,3,10,3" />
         <Setter Property="VerticalAlignment" Value="Top" />
     </Style>
 
     <Style x:Key="InfoValue" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
         <Setter Property="Margin" Value="0,3,0,3" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
