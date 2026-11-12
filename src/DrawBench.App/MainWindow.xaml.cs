@@ -43,6 +43,7 @@ public partial class MainWindow : Window
         TxtVersion.Text = "v" + version;
 
         AppLog.Line += OnLogLine;
+        SharedContext.Current.ModuleNavigationRequested += OnModuleNavigationRequested;
 
         Loaded += MainWindow_Loaded;
         Closing += MainWindow_Closing;
@@ -178,6 +179,13 @@ public partial class MainWindow : Window
         if (button != null) button.IsChecked = true;
     }
 
+    /// <summary>模块点「发送到队列」后请求切到目标页，统一在这里处理线程与存在性。</summary>
+    private void OnModuleNavigationRequested(string moduleId)
+    {
+        if (Dispatcher.CheckAccess()) NavigateTo(moduleId);
+        else Dispatcher.BeginInvoke(new Action(() => NavigateTo(moduleId)));
+    }
+
     /// <summary>打开全局设置页。</summary>
     public void NavigateToSettings() => BtnSettings.IsChecked = true;
 
@@ -262,5 +270,6 @@ public partial class MainWindow : Window
         }
 
         AppLog.Line -= OnLogLine;
+        SharedContext.Current.ModuleNavigationRequested -= OnModuleNavigationRequested;
     }
 }

@@ -277,6 +277,8 @@ public partial class GachaView : UserControl
     /// <summary>把当前结果直接送进批量提交模块的队列。</summary>
     private void OnSendToBatch(object sender, RoutedEventArgs e)
     {
+        SharedContext.Current.RequestModule(ModuleIds.Batch);
+
         string text = TxtResult.Text ?? "";
         if (text.Trim().Length == 0)
         {

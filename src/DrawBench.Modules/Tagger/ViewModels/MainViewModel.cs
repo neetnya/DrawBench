@@ -764,6 +764,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     /// <summary>把当前选中的标签送进批量提交模块的正向提示词队列（内容与「复制标签」一致）。</summary>
     private void SendTagsToBatch()
     {
+        // 点按钮就切到批量提交页，没标签也跳过去
+        SharedContext.Current.RequestModule(ModuleIds.Batch);
+
         if (string.IsNullOrWhiteSpace(SelectedTagsText)) return;
 
         if (AiBridge.SendToBatchQueue(SelectedTagsText, "反推标签"))

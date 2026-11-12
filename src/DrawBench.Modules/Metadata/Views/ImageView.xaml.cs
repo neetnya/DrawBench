@@ -123,6 +123,9 @@ public partial class ImageView : UserControl
 
     private void SendToBatch(string? text, bool negative = false)
     {
+        // 点「发送到队列」就切到批量提交页，内容为空也照样切过去
+        SharedContext.Current.RequestModule(ModuleIds.Batch);
+
         if (string.IsNullOrWhiteSpace(text))
         {
             UiHost.Info("这里还没有内容可以发送呢～");
