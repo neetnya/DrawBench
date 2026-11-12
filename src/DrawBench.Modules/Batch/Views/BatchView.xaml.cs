@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -22,10 +23,19 @@ namespace DrawBench.Modules.Batch.Views;
 /// </summary>
 public partial class BatchView : UserControl
 {
-    private readonly List<WorkflowItem> _workflows = new();
+    /// <summary>
+    /// 必须用可通知的集合：刷新/拖入时列表会重建条目，
+    /// 用普通 List 的话 ItemsSource 赋值给的是同一个实例，WPF 不会重新生成条目，
+    /// 界面上的勾选框会绑在早已丢弃的旧对象上（表现为全选/全不选点了没反应）。
+    /// </summary>
+    private readonly ObservableCollection<WorkflowItem> _workflows = new();
+
     private readonly SettingsStore _store;
     private BatchSettings _settings;
     private static Encoding? _gbEncoding;
+
+    /// <summary>重建列表期间不要回写勾选状态，否则会拿半截列表覆盖已保存的勾选。</summary>
+    private bool _suppressSelectionSave;
 
     /// <summary>
     /// 界面初始化完成前不要回写设置：XAML 里 TxtSeed 的 Text="-1" 会提前触发 TextChanged，
@@ -39,6 +49,8 @@ public partial class BatchView : UserControl
         _settings = store.Get<BatchSettings>(ModuleIds.Batch) ?? new BatchSettings();
 
         InitializeComponent();
+
+        LstWorkflows.ItemsSource = _workflows;
 
         Loaded += OnViewLoaded;
     }
@@ -85,6 +97,22 @@ public partial class BatchView : UserControl
 
     private void ReloadWorkflows()
     {
+        // 重建期间条目的 IsEnabled 变化不应该回写设置
+        _suppressSelectionSave = true;
+        try
+        {
+            LoadWorkflows();
+        }
+        finally
+        {
+            _suppressSelectionSave = false;
+        }
+
+        SaveSelection();
+    }
+
+    private void LoadWorkflows()
+    {
         _workflows.Clear();
         string targetDir = WorkflowDirectory;
 
@@ -124,8 +152,6 @@ public partial class BatchView : UserControl
             }
         }
 
-        LstWorkflows.ItemsSource = _workflows;
-
         SetStatus(_settings.HasSavedSelection
             ? $"已加载 {_workflows.Count} 个 JSON，已恢复上次勾选"
             : $"已加载 {_workflows.Count} 个 JSON，默认全部勾选");
@@ -139,7 +165,8 @@ public partial class BatchView : UserControl
 
     private void SaveSelection()
     {
-        // 列表为空时不要把已保存的勾选状态清掉
+        // 列表重建过程中不要回写；列表为空时也不要把已保存的勾选状态清掉
+        if (_suppressSelectionSave) return;
         if (_workflows.Count == 0) return;
 
         _settings.EnabledWorkflows = _workflows.Where(w => w.IsEnabled).Select(w => w.FileName).ToList();
@@ -153,7 +180,16 @@ public partial class BatchView : UserControl
 
     private void SetAllWorkflowsEnabled(bool enabled)
     {
-        foreach (var wf in _workflows) wf.IsEnabled = enabled;
+        _suppressSelectionSave = true;
+        try
+        {
+            foreach (var wf in _workflows) wf.IsEnabled = enabled;
+        }
+        finally
+        {
+            _suppressSelectionSave = false;
+        }
+
         SaveSelection();
     }
 
@@ -381,6 +417,7 @@ public partial class BatchView : UserControl
         BtnRun.IsEnabled = false;
         TxtLog.Text = string.Empty;
         SetStatus("正在提交…");
+        AppendLog($"本次提交使用 {selected.Count} 个工作流：{string.Join("、", selected.Select(w => w.DisplayName))}");
 
         try
         {
@@ -798,9 +835,9 @@ public partial class BatchView : UserControl
 
         if (batchSeeds.Count == 0)
         {
-            TxtLog.Text = fixedText.Length == 0
+            AppendLog(fixedText.Length == 0
                 ? $"全部任务已提交，共 {done} 个{failText}。"
-                : $"全部任务已提交，共 {done} 个{failText}，{fixedText}。";
+                : $"全部任务已提交，共 {done} 个{failText}，{fixedText}。");
             return;
         }
 
@@ -808,6 +845,6 @@ public partial class BatchView : UserControl
             ? string.Join(", ", batchSeeds)
             : string.Join(", ", batchSeeds.Take(10)) + " …";
 
-        TxtLog.Text = $"全部任务已提交，共 {done} 个{failText}。共 {batchSeeds.Count} 轮，每轮全局 seed: {seedText}";
+        AppendLog($"全部任务已提交，共 {done} 个{failText}。共 {batchSeeds.Count} 轮，每轮全局 seed: {seedText}");
     }
 }
