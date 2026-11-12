@@ -21,29 +21,24 @@
             <DockPanel LastChildFill="True">
 
                 <!-- 标题 -->
-                <StackPanel DockPanel.Dock="Top" Margin="18,18,14,14">
+                <StackPanel DockPanel.Dock="Top" Margin="9,9,7,7">
                     <TextBlock Text="出图工作台" Style="{StaticResource TitleText}" FontSize="18" />
-                    <TextBlock Text="DrawBench" Style="{StaticResource SubText}" FontSize="11" Margin="0,1,0,0" />
-                    <Border Background="{StaticResource AccentSoft}" CornerRadius="8"
-                            Padding="8,5" Margin="0,12,0,0" HorizontalAlignment="Left">
-                        <TextBlock x:Name="TxtSubtitle" Text="ComfyUI 出图工具集"
-                                   FontSize="12" Foreground="{StaticResource AccentDeep}" />
-                    </Border>
+                    <TextBlock Text="DrawBench" Style="{StaticResource SubText}" FontSize="11" Margin="0,0.5,0,0" />
                 </StackPanel>
 
                 <!-- 底部：设置 + 版本 -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
-                    <Border Height="1" Background="{StaticResource LineBrush}" Margin="14,0,14,8" />
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,6">
+                    <Border Height="1" Background="{StaticResource LineBrush}" Margin="7,0,7,4" />
                     <RadioButton x:Name="BtnSettings" Style="{StaticResource NavButton}"
-                                 GroupName="Nav" Checked="Settings_Checked" Margin="10,3">
+                                 GroupName="Nav" Checked="Settings_Checked" Margin="5,1.5">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="17"
-                                       VerticalAlignment="Center" Margin="0,0,12,0" />
+                                       VerticalAlignment="Center" Margin="0,0,6,0" />
                             <TextBlock Text="设置" FontSize="14.5" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
                     <TextBlock x:Name="TxtVersion" Style="{StaticResource SubText}"
-                               Margin="22,12,14,0" FontSize="11" />
+                               Margin="11,6,7,0" FontSize="11" />
                 </StackPanel>
 
                 <!-- 模块列表（代码里填充） -->
@@ -66,7 +61,7 @@
             <!-- 状态栏 -->
             <Border Grid.Row="1" Background="{StaticResource SidebarBrush}"
                     BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0"
-                    Padding="14,5">
+                    Padding="7,2.5">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -78,9 +73,9 @@
                                Foreground="{StaticResource InkSoft}"
                                VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                     <TextBlock x:Name="TxtPython" Grid.Column="1" Style="{StaticResource SubText}"
-                               VerticalAlignment="Center" Margin="12,0,0,0" />
+                               VerticalAlignment="Center" Margin="6,0,0,0" />
                     <TextBlock x:Name="TxtComfy" Grid.Column="2" Style="{StaticResource SubText}"
-                               VerticalAlignment="Center" Margin="14,0,0,0" />
+                               VerticalAlignment="Center" Margin="7,0,0,0" />
                 </Grid>
             </Border>
         </Grid>

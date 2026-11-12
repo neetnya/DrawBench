@@ -14,10 +14,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="12,12,12,0">
+        <Grid Grid.Row="0" Margin="6,6,6,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="440" MinWidth="360" />
-                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" MinWidth="320" />
             </Grid.ColumnDefinitions>
 
@@ -28,7 +28,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" Header="抽卡设置" Padding="12,10,12,10">
+                <GroupBox Grid.Row="0" Header="抽卡设置" Padding="6,5,6,5" Margin="0,0,0,5">
                     <StackPanel>
                         <!-- 通用 -->
                         <Grid>
@@ -49,14 +49,14 @@
                                 <ComboBoxItem Content="any" />
                             </ComboBox>
 
-                            <TextBlock Grid.Column="2" Text="连抽" Style="{StaticResource FieldLabel}" Margin="10,0,6,0" />
+                            <TextBlock Grid.Column="2" Text="连抽" Style="{StaticResource FieldLabel}" Margin="5,0,3,0" />
                             <TextBox Grid.Column="3" x:Name="TxtRepeat" Text="1" />
                         </Grid>
 
                         <!-- 角色分组 -->
-                        <Grid Margin="0,9,0,6">
+                        <Grid Margin="0,4.5,0,3">
                             <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                            <Border Background="{StaticResource Card}" Padding="0,0,9,0"
+                            <Border Background="{StaticResource Card}" Padding="0,0,4.5,0"
                                     HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock Text="角色 · 女性特征" FontSize="11.5"
                                            Foreground="{StaticResource Muted}" />
@@ -82,7 +82,7 @@
                                 <ComboBoxItem Content="全部女性" />
                             </ComboBox>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="关系" Style="{StaticResource FieldLabel}" Margin="0,3,6,0" />
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="关系" Style="{StaticResource FieldLabel}" Margin="0,1.5,3,0" />
                             <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CmbRelation" SelectedIndex="0">
                                 <ComboBoxItem Content="auto（按等级）" Tag="auto" />
                                 <ComboBoxItem Content="normal（正常互动）" Tag="normal" />
@@ -90,7 +90,7 @@
                                 <ComboBoxItem Content="none（不加）" Tag="none" />
                             </ComboBox>
 
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="人数" Style="{StaticResource FieldLabel}" Margin="10,3,6,0" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="人数" Style="{StaticResource FieldLabel}" Margin="5,1.5,3,0" />
                             <ComboBox Grid.Row="1" Grid.Column="3" x:Name="CmbCount" SelectedIndex="0">
                                 <ComboBoxItem Content="1" />
                                 <ComboBoxItem Content="2" />
@@ -98,15 +98,15 @@
                             </ComboBox>
                         </Grid>
 
-                        <WrapPanel Margin="0,7,0,0">
-                            <CheckBox x:Name="ChkHuge" Content="强制巨乳" Margin="0,0,16,0" />
-                            <CheckBox x:Name="ChkNoAvoid" Content="关闭避重" Margin="0,0,16,0" />
+                        <WrapPanel Margin="0,3.5,0,0">
+                            <CheckBox x:Name="ChkHuge" Content="强制巨乳" Margin="0,0,8,0" />
+                            <CheckBox x:Name="ChkNoAvoid" Content="关闭避重" Margin="0,0,8,0" />
                         </WrapPanel>
 
                         <!-- 装扮分组 -->
-                        <Grid Margin="0,9,0,6">
+                        <Grid Margin="0,4.5,0,3">
                             <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                            <Border Background="{StaticResource Card}" Padding="0,0,9,0"
+                            <Border Background="{StaticResource Card}" Padding="0,0,4.5,0"
                                     HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock Text="装扮 · 服装 / 姿势 / 表情 / 场景" FontSize="11.5"
                                            Foreground="{StaticResource Muted}" />
@@ -114,11 +114,11 @@
                         </Grid>
 
                         <WrapPanel>
-                            <CheckBox x:Name="ChkNoOutfit" Content="不抽服装" Margin="0,0,16,3" />
-                            <CheckBox x:Name="ChkNoPose" Content="不抽姿势" Margin="0,0,16,3" />
-                            <CheckBox x:Name="ChkNoExpr" Content="不抽表情" Margin="0,0,16,3" />
-                            <CheckBox x:Name="ChkNoScene" Content="不抽场景" Margin="0,0,16,3" />
-                            <CheckBox x:Name="ChkAllowPublic" Content="允许公共场合暴露" Margin="0,0,16,3" />
+                            <CheckBox x:Name="ChkNoOutfit" Content="不抽服装" Margin="0,0,8,1.5" />
+                            <CheckBox x:Name="ChkNoPose" Content="不抽姿势" Margin="0,0,8,1.5" />
+                            <CheckBox x:Name="ChkNoExpr" Content="不抽表情" Margin="0,0,8,1.5" />
+                            <CheckBox x:Name="ChkNoScene" Content="不抽场景" Margin="0,0,8,1.5" />
+                            <CheckBox x:Name="ChkAllowPublic" Content="允许公共场合暴露" Margin="0,0,8,1.5" />
                         </WrapPanel>
                     </StackPanel>
                 </GroupBox>
@@ -139,11 +139,11 @@
             <!-- ============ 右：提示词 ============ -->
             <GroupBox Grid.Column="2" Header="提示词" Padding="0" Margin="0">
                 <DockPanel LastChildFill="True">
-                    <Border DockPanel.Dock="Top" Padding="10,6"
+                    <Border DockPanel.Dock="Top" Padding="5,3"
                             BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
                         <DockPanel LastChildFill="False">
                             <Border DockPanel.Dock="Left" Background="{StaticResource AccentSoft}"
-                                    CornerRadius="9" Padding="7,1.5" VerticalAlignment="Center">
+                                    CornerRadius="9" Padding="3.5,0.75" VerticalAlignment="Center">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Visibility" Value="Visible" />
@@ -158,14 +158,14 @@
                             </Border>
                             <Button DockPanel.Dock="Right" x:Name="BtnCopy" Content="复制"
                                     Style="{StaticResource SecondaryButton}"
-                                    MinHeight="28" Padding="12,4" Click="OnCopy" />
+                                    MinHeight="28" Padding="6,2" Click="OnCopy" />
                             <Button DockPanel.Dock="Right" x:Name="BtnSendToBatch" Content="发送到队列"
                                     Style="{StaticResource SecondaryButton}"
-                                    MinHeight="28" Padding="12,4" Margin="0,0,6,0" Click="OnSendToBatch"
+                                    MinHeight="28" Padding="6,2" Margin="0,0,3,0" Click="OnSendToBatch"
                                     ToolTip="把结果直接送进「批量提交」模块的正向提示词队列" />
                             <Button DockPanel.Dock="Right" x:Name="BtnSave" Content="保存…"
                                     Style="{StaticResource SecondaryButton}"
-                                    MinHeight="28" Padding="12,4" Margin="0,0,6,0" Click="OnSave" />
+                                    MinHeight="28" Padding="6,2" Margin="0,0,3,0" Click="OnSave" />
                         </DockPanel>
                     </Border>
 
@@ -173,9 +173,9 @@
                         <TextBox x:Name="TxtResult" IsReadOnly="True" AcceptsReturn="True"
                                  Style="{StaticResource ConsoleBox}"
                                  TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                                 VerticalContentAlignment="Top" Padding="14,12" FontSize="13"
+                                 VerticalContentAlignment="Top" Padding="7,6" FontSize="13"
                                  Foreground="{StaticResource Ink}" />
-                        <TextBlock IsHitTestVisible="False" Margin="16,15,16,0" VerticalAlignment="Top"
+                        <TextBlock IsHitTestVisible="False" Margin="8,7.5,8,0" VerticalAlignment="Top"
                                    TextWrapping="Wrap" FontSize="12.5" Foreground="#AEB7C6"
                                    Text="点下面的按钮抽一次，抽中的提示词会显示在这里">
                             <TextBlock.Style>
@@ -195,7 +195,7 @@
         </Grid>
 
         <!-- ============ 底栏 ============ -->
-        <Border Grid.Row="1" Margin="12,12,12,12" Padding="12" Style="{StaticResource PanelCard}">
+        <Border Grid.Row="1" Margin="6,6,6,6" Padding="6" Style="{StaticResource PanelCard}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -205,20 +205,20 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" x:Name="BtnGirl" Content="抽角色" Padding="20,7"
+                <Button Grid.Column="0" x:Name="BtnGirl" Content="抽角色" Padding="10,3.5"
                         MinWidth="98" Click="OnGirl" ToolTip="只抽角色本身，不管穿什么" />
-                <Button Grid.Column="1" x:Name="BtnGirlRoll" Content="角色 + 装扮" Padding="20,7"
-                        MinWidth="122" Margin="8,0,0,0" Click="OnGirlRoll"
+                <Button Grid.Column="1" x:Name="BtnGirlRoll" Content="角色 + 装扮" Padding="10,3.5"
+                        MinWidth="122" Margin="4,0,0,0" Click="OnGirlRoll"
                         Style="{StaticResource PrimaryButton}"
                         ToolTip="先抽角色，再给每个角色配一套服装 / 姿势 / 表情 / 场景" />
-                <Button Grid.Column="2" x:Name="BtnRoll" Content="抽装扮" Padding="20,7"
-                        MinWidth="98" Margin="8,0,0,0" Click="OnRoll"
+                <Button Grid.Column="2" x:Name="BtnRoll" Content="抽装扮" Padding="10,3.5"
+                        MinWidth="98" Margin="4,0,0,0" Click="OnRoll"
                         ToolTip="只抽装扮；提示词为空时从头抽一套" />
-                <Button Grid.Column="3" x:Name="BtnCancel" Content="取消" Padding="16,7"
-                        MinWidth="76" Margin="8,0,0,0" IsEnabled="False" Click="OnCancel" />
+                <Button Grid.Column="3" x:Name="BtnCancel" Content="取消" Padding="8,3.5"
+                        MinWidth="76" Margin="4,0,0,0" IsEnabled="False" Click="OnCancel" />
 
                 <TextBlock Grid.Column="4" x:Name="TxtStatus" VerticalAlignment="Center"
-                           Margin="16,0,4,0" Foreground="{StaticResource Muted}" FontSize="12"
+                           Margin="8,0,2,0" Foreground="{StaticResource Muted}" FontSize="12"
                            TextTrimming="CharacterEllipsis" />
             </Grid>
         </Border>

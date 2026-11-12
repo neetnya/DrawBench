@@ -15,69 +15,50 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- ══ 工具条：操作按钮 + 模型与开关 ══ -->
-        <Border Grid.Row="0" Margin="12,12,12,0" Padding="12,10" Style="{StaticResource PanelCard}">
+        <!-- ══ 工具条：操作按钮 + 模型选择 ══ -->
+        <Border Grid.Row="0" Margin="6,6,6,0" Padding="6,5" Style="{StaticResource PanelCard}">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                <WrapPanel Grid.Row="0" Orientation="Horizontal">
+                <WrapPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Content="选择目录" Command="{Binding OpenFolderCommand}"
                             Style="{StaticResource SecondaryButton}" />
                     <Button Content="添加图片" Command="{Binding AddFilesCommand}"
-                            Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                            Style="{StaticResource SecondaryButton}" Margin="4,0,0,0" />
                     <Button Content="开始反推" Command="{Binding StartCommand}"
-                            Style="{StaticResource PrimaryButton}" Padding="20,5" Margin="16,0,0,0" />
+                            Style="{StaticResource PrimaryButton}" Padding="10,2.5" Margin="8,0,0,0" />
                     <Button Content="反推选中" Command="{Binding StartSelectedCommand}"
-                            Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                            Style="{StaticResource SecondaryButton}" Margin="4,0,0,0" />
                     <Button Content="{Binding PauseButtonText}" Command="{Binding PauseCommand}"
-                            Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" MinWidth="72" />
+                            Style="{StaticResource SecondaryButton}" Margin="4,0,0,0" MinWidth="72" />
                     <Button Content="停止" Command="{Binding StopCommand}"
-                            Style="{StaticResource DangerButton}" Margin="8,0,0,0" />
+                            Style="{StaticResource DangerButton}" Margin="4,0,0,0" />
                     <Button Content="清空队列" Command="{Binding ClearCommand}"
-                            Style="{StaticResource GhostButton}" Margin="8,0,0,0" />
+                            Style="{StaticResource GhostButton}" Margin="4,0,0,0" />
                     <Button Content="删除选中" Command="{Binding RemoveSelectedCommand}"
-                            Style="{StaticResource GhostButton}" Margin="8,0,0,0" />
+                            Style="{StaticResource GhostButton}" Margin="4,0,0,0" />
                     <Button Content="清空数据" Command="{Binding ClearDataCommand}"
-                            Style="{StaticResource DangerButton}" Margin="8,0,0,0"
+                            Style="{StaticResource DangerButton}" Margin="4,0,0,0"
                             ToolTip="清空 data\results.csv 里保存的全部反推结果，队列里已完成的图片会恢复为待处理" />
                 </WrapPanel>
 
-                <Grid Grid.Row="1" Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0" Text="模型" Style="{StaticResource FieldLabel}"
-                               Margin="0,0,10,0" />
-                    <ComboBox Grid.Column="1" Width="230" ItemsSource="{Binding Models}"
-                              SelectedItem="{Binding SelectedModel}" DisplayMemberPath="DisplayName" />
-                    <TextBlock Grid.Column="2" Text="{Binding ModelSummary}"
-                               Style="{StaticResource SubText}" FontSize="11.5"
-                               VerticalAlignment="Center" Margin="10,0,0,0"
-                               TextTrimming="CharacterEllipsis" MaxWidth="240" />
-
-                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
-                        <CheckBox Content="跳过已完成" IsChecked="{Binding SkipDone}" />
-                        <CheckBox Content="含子目录" IsChecked="{Binding Recursive}" Margin="16,2,0,2" />
-                    </StackPanel>
-                </Grid>
+                <ComboBox Grid.Column="1" Width="230" Margin="8,0,0,0"
+                          ItemsSource="{Binding Models}"
+                          SelectedItem="{Binding SelectedModel}" DisplayMemberPath="DisplayName"
+                          ToolTip="{Binding ModelSummary}" />
             </Grid>
         </Border>
 
         <!-- ══ 三栏内容 ══ -->
-        <Grid Grid.Row="1" Margin="12,10,12,0">
+        <Grid Grid.Row="1" Margin="6,5,6,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="320" MinWidth="260" />
-                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" MinWidth="360" />
-                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="300" MinWidth="260" />
             </Grid.ColumnDefinitions>
 
@@ -89,14 +70,14 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Padding="12,7"
+                    <Border Grid.Row="0" Padding="6,3.5"
                             BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
                         <TextBlock Text="{Binding QueueSummary}" Style="{StaticResource SubText}"
                                    FontSize="11.5" TextTrimming="CharacterEllipsis" />
                     </Border>
 
                     <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}"
-                             Margin="6,6,6,6"
+                             Margin="3,3,3,3"
                              VirtualizingPanel.IsVirtualizing="True"
                              VirtualizingPanel.VirtualizationMode="Recycling">
                         <ListBox.ItemTemplate>
@@ -113,10 +94,10 @@
                                         <Image Source="{Binding Thumb}" Stretch="UniformToFill" />
                                     </Border>
 
-                                    <StackPanel Grid.Column="1" Margin="9,0,8,0" VerticalAlignment="Center">
+                                    <StackPanel Grid.Column="1" Margin="4.5,0,4,0" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding FileName}" FontSize="12.5" FontWeight="SemiBold"
                                                    Foreground="{StaticResource Ink}" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Text="{Binding TagsPreview}" FontSize="11" Margin="0,2,0,0"
+                                        <TextBlock Text="{Binding TagsPreview}" FontSize="11" Margin="0,1,0,0"
                                                    Foreground="{StaticResource Muted}" TextTrimming="CharacterEllipsis"
                                                    MaxHeight="15" />
                                     </StackPanel>
@@ -126,7 +107,7 @@
                                                    Foreground="{Binding StateBrush}" HorizontalAlignment="Right" />
                                         <TextBlock Text="{Binding ElapsedText}" FontSize="10.5"
                                                    Foreground="{StaticResource Muted}" HorizontalAlignment="Right"
-                                                   Margin="0,2,0,0" />
+                                                   Margin="0,1,0,0" />
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
@@ -147,7 +128,7 @@
                         </StackPanel.Style>
                         <TextBlock Text="🐋" FontSize="30" HorizontalAlignment="Center" Opacity="0.45" />
                         <TextBlock Text="把图片文件夹拖到这里" Style="{StaticResource SubText}"
-                                   HorizontalAlignment="Center" Margin="0,6,0,0" />
+                                   HorizontalAlignment="Center" Margin="0,3,0,0" />
                     </StackPanel>
                 </Grid>
             </GroupBox>
@@ -158,12 +139,12 @@
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.15*" MinHeight="150" />
-                    <RowDefinition Height="10" />
+                    <RowDefinition Height="5" />
                     <RowDefinition Height="*" MinHeight="130" />
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" Header="预览" Padding="10" Margin="0">
-                    <Border Style="{StaticResource Inset}" Background="{StaticResource ImageBackBrush}" Padding="4">
+                <GroupBox Grid.Row="0" Header="预览" Padding="5" Margin="0">
+                    <Border Style="{StaticResource Inset}" Background="{StaticResource ImageBackBrush}" Padding="2">
                         <Grid>
                             <Image Source="{Binding DetailImage}" Stretch="Uniform" />
                             <TextBlock Text="选中队列里的图片即可预览"
@@ -185,11 +166,11 @@
 
                 <GroupBox Grid.Row="2" Header="标签" Padding="0" Margin="0">
                     <DockPanel LastChildFill="True">
-                        <Border DockPanel.Dock="Top" Padding="10,6"
+                        <Border DockPanel.Dock="Top" Padding="5,3"
                                 BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
                             <DockPanel LastChildFill="False">
                                 <Border DockPanel.Dock="Left" Background="{StaticResource AccentSoft}"
-                                        CornerRadius="9" Padding="7,1.5" VerticalAlignment="Center">
+                                        CornerRadius="9" Padding="3.5,0.75" VerticalAlignment="Center">
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Visibility" Value="Visible" />
@@ -203,15 +184,15 @@
                                     <TextBlock Text="{Binding SelectedRating}" FontSize="11"
                                                Foreground="{StaticResource AccentDeep}" FontWeight="SemiBold" />
                                 </Border>
-                                <Button DockPanel.Dock="Right" Content="复制标签"
-                                        Command="{Binding CopyTagsCommand}"
-                                        Style="{StaticResource SecondaryButton}"
-                                        MinHeight="28" Padding="12,4" />
                                 <Button DockPanel.Dock="Right" Content="发送到队列"
                                         Command="{Binding SendTagsToBatchCommand}"
                                         Style="{StaticResource SecondaryButton}"
-                                        MinHeight="28" Padding="12,4" Margin="0,0,6,0"
+                                        MinHeight="28" Padding="6,2"
                                         ToolTip="把这段标签送进「批量提交」模块的正向提示词队列" />
+                                <Button DockPanel.Dock="Right" Content="复制标签"
+                                        Command="{Binding CopyTagsCommand}"
+                                        Style="{StaticResource SecondaryButton}"
+                                        MinHeight="28" Padding="6,2" Margin="0,0,3,0" />
                             </DockPanel>
                         </Border>
 
@@ -227,11 +208,11 @@
 
             <!-- 参数 -->
             <ScrollViewer Grid.Column="4" VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled" Padding="0,0,2,0">
+                          HorizontalScrollBarVisibility="Disabled" Padding="0,0,1,0">
                 <StackPanel>
-                    <GroupBox Header="检测参数" Padding="14,12" Margin="0,0,0,10">
+                    <GroupBox Header="检测参数" Padding="7,6" Margin="0,0,0,5">
                         <StackPanel>
-                            <Grid Margin="0,0,0,4">
+                            <Grid Margin="0,0,0,2">
                                 <TextBlock Text="普通标签阈值" Style="{StaticResource FieldLabel}"
                                            HorizontalAlignment="Left" />
                                 <TextBlock Text="{Binding ThresholdText}" Style="{StaticResource LabelText}"
@@ -240,9 +221,9 @@
                             </Grid>
                             <Slider Style="{StaticResource FlatSlider}" Minimum="0.05" Maximum="0.95"
                                     Value="{Binding Threshold}" SmallChange="0.01" LargeChange="0.05"
-                                    TickFrequency="0.01" Margin="0,0,0,12" />
+                                    TickFrequency="0.01" Margin="0,0,0,6" />
 
-                            <Grid Margin="0,0,0,4">
+                            <Grid Margin="0,0,0,2">
                                 <TextBlock Text="角色标签阈值" Style="{StaticResource FieldLabel}"
                                            HorizontalAlignment="Left" />
                                 <TextBlock Text="{Binding CharacterThresholdText}" Style="{StaticResource LabelText}"
@@ -251,12 +232,12 @@
                             </Grid>
                             <Slider Style="{StaticResource FlatSlider}" Minimum="0.05" Maximum="0.99"
                                     Value="{Binding CharacterThreshold}" SmallChange="0.01" LargeChange="0.05"
-                                    TickFrequency="0.01" Margin="0,0,0,10" />
+                                    TickFrequency="0.01" Margin="0,0,0,5" />
 
                             <CheckBox Content="附带分级标签（general / sensitive / …）"
-                                      IsChecked="{Binding OutputRating}" Margin="0,4,0,10" />
+                                      IsChecked="{Binding OutputRating}" Margin="0,2,0,5" />
 
-                            <Grid Margin="0,0,0,4">
+                            <Grid Margin="0,0,0,2">
                                 <TextBlock Text="推理线程" Style="{StaticResource FieldLabel}"
                                            HorizontalAlignment="Left" />
                                 <TextBlock Text="{Binding ThreadsText}" Style="{StaticResource LabelText}"
@@ -266,15 +247,15 @@
                             <Slider Style="{StaticResource FlatSlider}" Minimum="1" Maximum="32"
                                     Value="{Binding Threads}" TickFrequency="1" IsSnapToTickEnabled="True" />
                             <TextBlock Text="线程数越多不一定越快，8 左右通常最稳。"
-                                       Style="{StaticResource SubText}" FontSize="11" Margin="0,6,0,0"
+                                       Style="{StaticResource SubText}" FontSize="11" Margin="0,3,0,0"
                                        TextWrapping="Wrap" />
                         </StackPanel>
                     </GroupBox>
 
-                    <GroupBox Header="复制格式" Padding="14,12" Margin="0,0,0,10">
+                    <GroupBox Header="复制格式" Padding="7,6" Margin="0,0,0,5">
                         <StackPanel>
                             <TextBlock Text="只影响「复制标签」与「发送到队列」得到的文本，不影响存档结果。"
-                                       Style="{StaticResource SubText}" FontSize="11" Margin="0,0,0,8"
+                                       Style="{StaticResource SubText}" FontSize="11" Margin="0,0,0,4"
                                        TextWrapping="Wrap" />
                             <CheckBox Content="下划线转空格" IsChecked="{Binding ReplaceUnderscore}" />
                             <CheckBox Content="末尾加逗号" IsChecked="{Binding TrailingComma}" />
@@ -293,23 +274,16 @@
         </Grid>
 
         <!-- ══ 底部状态 ══ -->
-        <Border Grid.Row="2" Margin="12,10,12,12" Padding="12,8" Style="{StaticResource PanelCard}">
+        <Border Grid.Row="2" Margin="6,5,6,6" Padding="6,4" Style="{StaticResource PanelCard}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
 
-                <ProgressBar Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource SlimProgress}"
-                             Value="{Binding ProgressValue, Mode=OneWay}" Margin="0,0,0,7" />
-
-                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,8,0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,4,0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Fill" Value="{StaticResource Ok}" />
@@ -324,11 +298,11 @@
                     <TextBlock Text="{Binding StatusText}" Style="{StaticResource SubText}" FontSize="12"
                                VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="560" />
                     <TextBlock Text="{Binding CurrentFile}" Style="{StaticResource SubText}" FontSize="12"
-                               Margin="12,0,0,0" VerticalAlignment="Center" Opacity="0.8"
+                               Margin="6,0,0,0" VerticalAlignment="Center" Opacity="0.8"
                                TextTrimming="CharacterEllipsis" MaxWidth="360" />
                 </StackPanel>
 
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding ProgressText}"
+                <TextBlock Grid.Column="2" Text="{Binding ProgressText}"
                            Style="{StaticResource SubText}"
                            FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Right" />
             </Grid>

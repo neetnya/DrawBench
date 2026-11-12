@@ -125,7 +125,6 @@ public partial class MainWindow : Window
     {
         _activeModuleId = null;
         ContentHost.Content = new Views.SettingsView(_store, _appSection, this);
-        TxtSubtitle.Text = "全局设置";
         SetStatus("设置改动会立即生效。");
         UpdateStatusBar();
     }
@@ -161,7 +160,6 @@ public partial class MainWindow : Window
 
         _activeModuleId = moduleId;
         ContentHost.Content = view;
-        TxtSubtitle.Text = module.Title;
 
         if (module is IActivatableModule activatable)
         {
@@ -250,10 +248,6 @@ public partial class MainWindow : Window
         string comfy = Core.Comfy.ComfyClient.Normalize(batch?.ComfyBaseUrl);
         TxtComfy.Text = "ComfyUI " + comfy.Replace("http://", "");
         TxtComfy.ToolTip = "在「批量提交」页顶部修改 ComfyUI 地址";
-
-        TxtSubtitle.Text = _activeModuleId != null && _modules.TryGetValue(_activeModuleId, out var m)
-            ? m.Title
-            : "全局设置";
     }
 
     private void OnLogLine(string line)

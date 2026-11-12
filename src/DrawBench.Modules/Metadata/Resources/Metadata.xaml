@@ -7,7 +7,7 @@
         <Setter Property="Foreground" Value="{StaticResource Muted}" />
         <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Margin" Value="0,3,10,3" />
+        <Setter Property="Margin" Value="0,1.5,5,1.5" />
         <Setter Property="VerticalAlignment" Value="Top" />
     </Style>
 
@@ -15,7 +15,7 @@
         <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
-        <Setter Property="Margin" Value="0,3,0,3" />
+        <Setter Property="Margin" Value="0,1.5,0,1.5" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
