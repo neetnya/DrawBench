@@ -56,6 +56,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         RemoveSelectedCommand = new RelayCommand(RemoveSelected, () => IsIdle && SelectedItem != null);
         ClearDataCommand = new RelayCommand(ClearData, () => IsIdle);
         CopyTagsCommand = new RelayCommand(CopyTags, () => SelectedItem != null && !string.IsNullOrWhiteSpace(SelectedTagsText));
+        SendTagsToBatchCommand = new RelayCommand(SendTagsToBatch, () => SelectedItem != null && !string.IsNullOrWhiteSpace(SelectedTagsText));
     }
 
     public string ModelsPath => _paths.ModelsDir;
@@ -72,6 +73,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public RelayCommand RemoveSelectedCommand { get; }
     public RelayCommand ClearDataCommand { get; }
     public RelayCommand CopyTagsCommand { get; }
+    public RelayCommand SendTagsToBatchCommand { get; }
 
     /// <summary>无头自检模式（不弹对话框）。</summary>
     public bool Headless { get; set; }
@@ -759,6 +761,17 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>把当前选中的标签送进批量提交模块的正向提示词队列（内容与「复制标签」一致）。</summary>
+    private void SendTagsToBatch()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedTagsText)) return;
+
+        if (AiBridge.SendToBatchQueue(SelectedTagsText, "反推标签"))
+            StatusText = "标签已发送到批量提交队列";
+        else
+            StatusText = "批量提交模块没有接收这段标签";
+    }
+
     private void ApplyUpdate(ItemUpdate u)
     {
         var item = u.Item;
@@ -791,7 +804,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                  {
                      OpenFolderCommand, AddFilesCommand, StartCommand, StartSelectedCommand,
                      PauseCommand, StopCommand, ClearCommand, RemoveSelectedCommand, ClearDataCommand,
-                     CopyTagsCommand
+                     CopyTagsCommand, SendTagsToBatchCommand
                  })
         {
             switch (cmd)

@@ -11,47 +11,19 @@
 <Grid Margin="16,12,16,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- ══ 顶栏 ══ -->
-        <Grid Grid.Row="0" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="{StaticResource AccentBrush}">
-                <TextBlock Text="🐋" FontSize="21" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Border>
-
-            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="WD14 图片反推" Style="{StaticResource TitleText}" FontSize="19" />
-                <TextBlock Text="本地 ONNX 推理 · 结果写入 data\results.csv"
-                           Style="{StaticResource SubText}" FontSize="11.5" Margin="0,1,0,0" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="模型" Style="{StaticResource LabelText}" VerticalAlignment="Center" Margin="0,0,8,0" />
-                <ComboBox Width="240" ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}"
-                          DisplayMemberPath="DisplayName" />
-                <TextBlock Text="{Binding ModelSummary}" Style="{StaticResource SubText}"
-                           VerticalAlignment="Center" Margin="10,0,0,0" />
-            </StackPanel>
-        </Grid>
-
         <!-- ══ 工具条 ══ -->
-        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="10,8" Margin="0,0,0,10">
+        <Border Grid.Row="0" Style="{StaticResource Card}" Padding="10,8" Margin="0,0,0,10">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <WrapPanel Grid.Row="0" Orientation="Horizontal">
                     <Button Content="选择目录" Command="{Binding OpenFolderCommand}"
                             Style="{StaticResource SecondaryButton}" Margin="0,0,6,0" />
                     <Button Content="添加图片" Command="{Binding AddFilesCommand}"
@@ -70,18 +42,26 @@
                             Style="{StaticResource GhostButton}" Margin="0,0,6,0" />
                     <Button Content="清空数据" Command="{Binding ClearDataCommand}"
                             Style="{StaticResource DangerButton}" MinHeight="30" Padding="11,5" FontSize="12.5"
+                            Margin="0"
                             ToolTip="清空 data\results.csv 里保存的全部反推结果，队列里已完成的图片会恢复为待处理" />
-                </StackPanel>
+                </WrapPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                            VerticalAlignment="Center" Margin="0,8,0,0">
+                    <TextBlock Text="模型" Style="{StaticResource LabelText}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox Width="240" ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}"
+                              DisplayMemberPath="DisplayName" />
+                    <TextBlock Text="{Binding ModelSummary}" Style="{StaticResource SubText}"
+                               VerticalAlignment="Center" Margin="10,0,14,0"
+                               TextTrimming="CharacterEllipsis" MaxWidth="220" />
                     <CheckBox Content="跳过已完成" IsChecked="{Binding SkipDone}" />
-                    <CheckBox Content="含子目录" IsChecked="{Binding Recursive}" Margin="0,4,0,4" />
+                    <CheckBox Content="含子目录" IsChecked="{Binding Recursive}" Margin="14,4,0,4" />
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- ══ 三栏内容 ══ -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="344" />
                 <ColumnDefinition Width="*" />
@@ -201,6 +181,10 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <Button Content="复制标签" Command="{Binding CopyTagsCommand}"
                                         Style="{StaticResource SecondaryButton}" MinHeight="28" Padding="12,4" />
+                                <Button Content="发送到队列" Command="{Binding SendTagsToBatchCommand}"
+                                        Style="{StaticResource SecondaryButton}" MinHeight="28" Padding="12,4"
+                                        Margin="6,0,0,0"
+                                        ToolTip="把这段标签送进「批量提交」模块的正向提示词队列" />
                             </StackPanel>
                         </Grid>
 
@@ -276,23 +260,12 @@
                             </CheckBox>
                         </StackPanel>
                     </Border>
-
-                    <Border Style="{StaticResource Card}" Padding="14,12">
-                        <StackPanel>
-                            <TextBlock Text="模型目录" Style="{StaticResource SectionTitle}" Margin="0,0,0,6" />
-                            <TextBlock Text="{Binding ModelsPath}" Style="{StaticResource SubText}" FontSize="11"
-                                       TextWrapping="Wrap" />
-                            <TextBlock Text="把 xxx.onnx 和同名 xxx.csv 放进上面的目录，重启软件即可。"
-                                       Style="{StaticResource SubText}" FontSize="11" Margin="0,6,0,0"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
                 </StackPanel>
             </ScrollViewer>
         </Grid>
 
         <!-- ══ 底部状态 ══ -->
-        <Grid Grid.Row="3" Margin="0,10,0,0">
+        <Grid Grid.Row="2" Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
