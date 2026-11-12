@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>DrawBench.App</RootNamespace>
+    <AssemblyName>DrawBench</AssemblyName>
+    <ApplicationIcon>..\..\assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- 与 WD14 一致：发布时打 x64 自包含，模型和脚本留在目录里 -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DrawBench.Core\DrawBench.Core.csproj" />
+    <ProjectReference Include="..\DrawBench.Modules\DrawBench.Modules.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="..\..\assets\app.ico" Link="Assets\app.ico" />
+  </ItemGroup>
+
+  <!-- Python 脚本随生成拷到 exe 同级：engine\（抽卡）与 scripts\（拼图） -->
+  <ItemGroup>
+    <None Include="..\DrawBench.Modules\Gacha\engine\**\*"
+          Exclude="..\DrawBench.Modules\Gacha\engine\**\__pycache__\**"
+          Link="engine\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\DrawBench.Modules\Collage\gen_sheets_cli.py"
+          Link="scripts\gen_sheets_cli.py"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- 第三方许可随发布包一起走（MIT 要求保留版权声明） -->
+  <ItemGroup>
+    <None Include="..\..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\third-party\*.txt" Link="third-party\%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

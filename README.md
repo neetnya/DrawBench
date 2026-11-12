@@ -1,4 +1,4 @@
-# AIArtToolBox
+# DrawBench
 
 把五个围绕 ComfyUI 出图的小工具装进一个窗口：**抽卡 → 批量提交 → 参数读取 → 反推标签 → 对比图**。
 
@@ -32,7 +32,7 @@
 整个文件夹复制走即可换机器，删掉 `data\` 就是恢复出厂：
 
 ```
-AIArtToolBox.exe
+DrawBench.exe
 api\         ComfyUI 工作流 JSON（批量提交从这里读）
 engine\      抽卡引擎（anima_cli.py + presets）
 scripts\     拼图脚本（gen_sheets_cli.py）
@@ -54,12 +54,12 @@ data\        全部配置与结果
 dotnet build
 ```
 
-调试运行产物：`build\AIArtToolBox.App\Debug\net9.0-windows\win-x64\AIArtToolBox.exe`
+调试运行产物：`build\DrawBench.App\Debug\net9.0-windows\win-x64\DrawBench.exe`
 
 发布（x64 自包含单目录）：
 
 ```bat
-dotnet publish src\AIArtToolBox.App\AIArtToolBox.App.csproj -c Release -r win-x64 --self-contained true -o dist
+dotnet publish src\DrawBench.App\DrawBench.App.csproj -c Release -r win-x64 --self-contained true -o dist
 ```
 
 发布后自己补两样东西（仓库里不含，版权与体积都归原作者）：
@@ -74,15 +74,15 @@ dotnet publish src\AIArtToolBox.App\AIArtToolBox.App.csproj -c Release -r win-x6
 保留原来 WD14 的批量模式：
 
 ```bat
-AIArtToolBox.exe tagger --cli D:\图片 --threshold 0.35 --char-threshold 0.85
-AIArtToolBox.exe --cli D:\图片                      旧写法，等同 tagger
+DrawBench.exe tagger --cli D:\图片 --threshold 0.35 --char-threshold 0.85
+DrawBench.exe --cli D:\图片                      旧写法，等同 tagger
 ```
 
 ## 开发期自检
 
 ```bat
-AIArtToolBox.exe --selftest D:\图片   解析元数据 + 验证跨模块投递
-AIArtToolBox.exe --render shots        依次切模块截图后退出
+DrawBench.exe --selftest D:\图片   解析元数据 + 验证跨模块投递
+DrawBench.exe --render shots        依次切模块截图后退出
 ```
 
 `--render` 会在无人值守时把五个模块各截一张图，用来检查界面是否正常渲染。
@@ -91,9 +91,9 @@ AIArtToolBox.exe --render shots        依次切模块截图后退出
 
 ```
 src/
-  AIArtToolBox.Core/       公共层：路径、配置、Python、ComfyUI 客户端、图片扫描、日志
-  AIArtToolBox.Modules/    五个模块，各占一个文件夹，各带一份独立资源字典
-  AIArtToolBox.App/        外壳：左侧导航、内容区、状态栏、设置页、命令行入口
+  DrawBench.Core/       公共层：路径、配置、Python、ComfyUI 客户端、图片扫描、日志
+  DrawBench.Modules/    五个模块，各占一个文件夹，各带一份独立资源字典
+  DrawBench.App/        外壳：左侧导航、内容区、状态栏、设置页、命令行入口
 ```
 
 模块通过 `Core.IToolModule` 契约被外壳反射加载，加模块只需往 Modules 里放一个类。

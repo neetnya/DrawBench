@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <Version>1.0.0</Version>
-    <Product>AIArtToolBox</Product>
-    <Company>AIArtToolBox</Company>
+    <Product>DrawBench</Product>
+    <Company>DrawBench</Company>
     <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
     <NeutralLanguage>zh-Hans</NeutralLanguage>
     <!-- 各工具原有的 CS 注释里有不少历史说明，保持可见 -->

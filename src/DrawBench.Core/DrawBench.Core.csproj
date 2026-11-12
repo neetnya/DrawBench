@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- 公共层：无界面依赖（只有 WPF 类库默认带来的引用），放路径、配置、Python、ComfyUI、图片扫描等公共能力 -->
+  <PropertyGroup>
+    <RootNamespace>DrawBench.Core</RootNamespace>
+    <AssemblyName>DrawBench.Core</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>
