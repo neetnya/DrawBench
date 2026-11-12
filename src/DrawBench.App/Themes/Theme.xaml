@@ -248,6 +248,10 @@
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!-- 多行输入框（提示词、日志等）文字从上往下排，不继承单行框的垂直居中 -->
+                        <Trigger Property="AcceptsReturn" Value="True">
+                            <Setter TargetName="PART_ContentHost" Property="VerticalAlignment" Value="Top" />
+                        </Trigger>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
                         </Trigger>

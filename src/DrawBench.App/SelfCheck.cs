@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -41,6 +42,13 @@ internal static class SelfCheck
         window.Width = 1400;
         window.Height = 880;
 
+        // 截图时给多行框灌一点样例文本，否则空框看不出文字对齐是否正常
+        foreach (var tb in FindTextBoxes(window)
+                     .Where(t => t.AcceptsReturn && t.IsVisible && string.IsNullOrEmpty(t.Text)))
+        {
+            tb.Text = "第一行示例文本，用来检查文字是否从顶部开始排。\n第二行。\n第三行。";
+        }
+
         window.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(async () =>
         {
             try
@@ -72,6 +80,17 @@ internal static class SelfCheck
                 Application.Current.Shutdown(0);
             }
         }));
+    }
+
+    private static IEnumerable<TextBox> FindTextBoxes(DependencyObject root)
+    {
+        int n = VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < n; i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is TextBox tb) yield return tb;
+            foreach (var nested in FindTextBoxes(child)) yield return nested;
+        }
     }
 
     private static void SaveWindow(Window window, string path)
