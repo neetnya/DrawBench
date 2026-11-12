@@ -5,6 +5,7 @@
         MinHeight="560" MinWidth="1040"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
+        Foreground="{StaticResource Ink}"
         FontFamily="{StaticResource AppFont}"
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Display">

@@ -56,9 +56,13 @@
     <FontFamily x:Key="MonoFont">Consolas, Microsoft YaHei</FontFamily>
 
     <!-- ==================== 文本 ==================== -->
+
+    <!--
+        这里不能给 TextBlock 设 Foreground：样式里的显式 Setter 会盖掉从 Button / CheckBox
+        继承下来的颜色，蓝底、红底按钮里的字就会变回深色。颜色统一由窗口根节点往下继承。
+    -->
     <Style TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
-        <Setter Property="Foreground" Value="{StaticResource Ink}" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
     </Style>
 
