@@ -15,7 +15,6 @@ public sealed class CollageSettings
     public int Format { get; set; }
     public int Match { get; set; }
     public string OutputFolder { get; set; } = "_output";
-    public string? PythonPath { get; set; }
     public bool ShowHeader { get; set; } = true;
     public bool ShowLabels { get; set; } = true;
     public bool OnlyCommon { get; set; }

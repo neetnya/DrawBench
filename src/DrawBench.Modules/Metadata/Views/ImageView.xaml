@@ -26,7 +26,7 @@
         </Grid.RowDefinitions>
 
         <!-- 顶部工具条 -->
-        <Border Grid.Row="0" Margin="6,6,6,0" Padding="6,5" Style="{StaticResource PanelCard}">
+        <Border Grid.Row="0" Margin="12,12,12,0" Padding="12,10" Style="{StaticResource PanelCard}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -37,33 +37,33 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Text="文件夹" Style="{StaticResource FieldLabel}"
-                           Margin="0,0,5,0" />
+                           Margin="0,0,10,0" />
 
                 <TextBox Grid.Column="1"
                          Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged}"
                          ToolTip="也可以把文件夹直接拖进窗口里" />
 
                 <Button Grid.Column="2" Content="浏览…" Style="{StaticResource SecondaryButton}"
-                        Margin="4,0,0,0" Click="BrowseFolder_Click" />
+                        Margin="8,0,0,0" Click="BrowseFolder_Click" />
                 <Button Grid.Column="3" Content="读取全部" Style="{StaticResource PrimaryButton}"
-                        Margin="4,0,0,0" Click="Scan_Click" />
-                <CheckBox Grid.Column="4" Content="包含子文件夹" Margin="7,0,0,0"
+                        Margin="8,0,0,0" Click="Scan_Click" />
+                <CheckBox Grid.Column="4" Content="包含子文件夹" Margin="14,0,0,0"
                           IsChecked="{Binding IncludeSubFolders}" />
             </Grid>
         </Border>
 
         <!-- 主体：文件列表 | 预览与信息 | 参数详情 -->
-        <Grid Grid.Row="1" Margin="6,5,6,0">
+        <Grid Grid.Row="1" Margin="12,10,12,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300" MinWidth="240" />
-                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" MinWidth="520" />
             </Grid.ColumnDefinitions>
 
             <!-- 文件列表 -->
             <GroupBox Grid.Column="0" Header="图片列表" Padding="0" Margin="0">
                 <DockPanel LastChildFill="True">
-                    <Border DockPanel.Dock="Bottom" Padding="6,3.5"
+                    <Border DockPanel.Dock="Bottom" Padding="12,7"
                             BorderBrush="{StaticResource LineSoft}" BorderThickness="0,1,0,0">
                         <TextBlock Text="{Binding Images.Count, StringFormat='共 {0} 张'}"
                                    Style="{StaticResource SubText}" FontSize="11.5" />
@@ -72,13 +72,13 @@
                     <ListBox x:Name="FileList"
                              ItemsSource="{Binding ImagesView}"
                              SelectedItem="{Binding Selected, Mode=TwoWay}"
-                             Margin="3,3,3,2"
+                             Margin="6,6,6,4"
                              VirtualizingPanel.IsVirtualizing="True"
                              VirtualizingPanel.VirtualizationMode="Recycling"
                              MouseDoubleClick="FileList_MouseDoubleClick">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                                <Setter Property="Padding" Value="2.5,2" />
+                                <Setter Property="Padding" Value="5,4" />
                                 <Setter Property="ToolTip" Value="{Binding TooltipText}" />
                                 <Setter Property="ToolTipService.ShowDuration" Value="20000" />
                             </Style>
@@ -90,7 +90,7 @@
                                         <ColumnDefinition Width="66" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Border Background="{StaticResource ImageBackBrush}" CornerRadius="6" Margin="0,0,4.5,0"
+                                    <Border Background="{StaticResource ImageBackBrush}" CornerRadius="6" Margin="0,0,9,0"
                                             ClipToBounds="True">
                                         <Image Source="{Binding Thumbnail}" Stretch="UniformToFill"
                                                RenderOptions.BitmapScalingMode="HighQuality" />
@@ -101,10 +101,10 @@
                                                    TextTrimming="CharacterEllipsis" />
                                         <TextBlock Text="{Binding SubtitleText}" FontSize="11"
                                                    Foreground="{StaticResource InkSoft}"
-                                                   TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
+                                                   TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
                                         <TextBlock Text="{Binding PromptPreview}" FontSize="11"
                                                    Foreground="{StaticResource Muted}"
-                                                   TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
+                                                   TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
@@ -119,11 +119,11 @@
             <Grid Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="340" MinWidth="240" />
-                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="10" />
                     <ColumnDefinition Width="*" MinWidth="320" />
                 </Grid.ColumnDefinitions>
 
-                <GroupBox Grid.Column="0" Header="预览" Padding="6,5" Margin="0">
+                <GroupBox Grid.Column="0" Header="预览" Padding="12,10" Margin="0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" MinHeight="160" />
@@ -131,9 +131,9 @@
                         </Grid.RowDefinitions>
 
                         <Border Grid.Row="0" Style="{StaticResource Inset}"
-                                Background="{StaticResource ImageBackBrush}" Padding="2">
+                                Background="{StaticResource ImageBackBrush}" Padding="4">
                             <Grid>
-                                <Image Source="{Binding Selected.Preview}" Stretch="Uniform" Margin="1"
+                                <Image Source="{Binding Selected.Preview}" Stretch="Uniform" Margin="2"
                                        RenderOptions.BitmapScalingMode="HighQuality" />
                                 <TextBlock Text="左边点一张图看看" Foreground="{StaticResource Muted}" FontSize="12"
                                            HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -151,11 +151,11 @@
                             </Grid>
                         </Border>
 
-                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,5,0,0"
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0"
                                       MaxHeight="200" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel>
                                 <TextBlock Text="{Binding Selected.FileName}" FontWeight="SemiBold"
-                                           TextWrapping="Wrap" Margin="0,0,0,4" />
+                                           TextWrapping="Wrap" Margin="0,0,0,8" />
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -193,7 +193,7 @@
                                 </Grid>
 
                                 <TextBlock Text="{Binding Selected.Error}" Foreground="{StaticResource Danger}"
-                                           TextWrapping="Wrap" FontSize="12" Margin="0,4,0,0" />
+                                           TextWrapping="Wrap" FontSize="12" Margin="0,8,0,0" />
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
@@ -205,71 +205,73 @@
                 <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1.2*" MinHeight="120" />
-                        <RowDefinition Height="5" />
+                        <RowDefinition Height="10" />
                         <RowDefinition Height="0.85*" MinHeight="90" />
-                        <RowDefinition Height="5" />
+                        <RowDefinition Height="10" />
                         <RowDefinition Height="1.5*" MinHeight="150" />
                     </Grid.RowDefinitions>
 
-                    <GroupBox Grid.Row="0" Header="正向提示词" Padding="0" Margin="0">
-                        <DockPanel LastChildFill="True">
-                            <Border DockPanel.Dock="Top" Padding="5,3"
-                                    BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <GroupBox Grid.Row="0" Padding="0" Margin="0">
+                        <GroupBox.Header>
+                            <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                                <TextBlock DockPanel.Dock="Left" Text="正向提示词" VerticalAlignment="Center" />
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                                     <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyPositive_Click" />
                                     <Button Content="发送到队列" Style="{StaticResource SmallButton}"
                                             Click="SendPositiveToBatch_Click"
                                             ToolTip="把这段提示词送进「批量提交」模块的队列" />
                                 </StackPanel>
-                            </Border>
-                            <TextBox Text="{Binding Selected.PositivePrompt, Mode=OneWay}" IsReadOnly="True"
-                                     Style="{StaticResource ConsoleBox}" TextWrapping="Wrap"
-                                     AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
-                        </DockPanel>
+                            </DockPanel>
+                        </GroupBox.Header>
+                        <TextBox Text="{Binding Selected.PositivePrompt, Mode=OneWay}" IsReadOnly="True"
+                                 Style="{StaticResource ConsoleBox}" TextWrapping="Wrap"
+                                 AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
                     </GroupBox>
 
-                    <GroupBox Grid.Row="2" Header="负向提示词" Padding="0" Margin="0">
-                        <DockPanel LastChildFill="True">
-                            <Border DockPanel.Dock="Top" Padding="5,3"
-                                    BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <GroupBox Grid.Row="2" Padding="0" Margin="0">
+                        <GroupBox.Header>
+                            <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                                <TextBlock DockPanel.Dock="Left" Text="负向提示词" VerticalAlignment="Center" />
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                                     <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyNegative_Click" />
                                     <Button Content="发送到队列" Style="{StaticResource SmallButton}"
                                             Click="SendNegativeToBatch_Click"
                                             ToolTip="送进「批量提交」模块的负向提示词框" />
                                 </StackPanel>
-                            </Border>
-                            <TextBox Text="{Binding Selected.NegativePromptText, Mode=OneWay}" IsReadOnly="True"
-                                     Style="{StaticResource ConsoleBox}" TextWrapping="Wrap"
-                                     AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
-                        </DockPanel>
+                            </DockPanel>
+                        </GroupBox.Header>
+                        <TextBox Text="{Binding Selected.NegativePromptText, Mode=OneWay}" IsReadOnly="True"
+                                 Style="{StaticResource ConsoleBox}" TextWrapping="Wrap"
+                                 AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
                     </GroupBox>
 
-                    <GroupBox Grid.Row="4" Header="生成参数" Padding="0" Margin="0">
-                        <DockPanel LastChildFill="True">
-                            <Border DockPanel.Dock="Top" Padding="5,3"
-                                    BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
-                                <Button Content="复制值" HorizontalAlignment="Right"
-                                        Style="{StaticResource SmallButton}" Click="CopyParams_Click"
-                                        ToolTip="复制选中行的参数值（不含项目名）" />
-                            </Border>
-                            <DataGrid x:Name="ParamsGrid" ItemsSource="{Binding Selected.Params.ParameterItems}"
-                                      IsReadOnly="True" ClipboardCopyMode="None"
-                                      PreviewKeyDown="ParamsGrid_PreviewKeyDown"
-                                      VerticalScrollBarVisibility="Auto" Margin="0,0,0,2">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="项目" Binding="{Binding Key}" Width="130" />
-                                    <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="*" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </DockPanel>
+                    <GroupBox Grid.Row="4" Padding="0" Margin="0">
+                        <GroupBox.Header>
+                            <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                                <TextBlock DockPanel.Dock="Left" Text="生成参数" VerticalAlignment="Center" />
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Content="复制值" Style="{StaticResource SmallButton}"
+                                            Click="CopyParams_Click"
+                                            ToolTip="复制选中行的参数值（不含项目名）" />
+                                </StackPanel>
+                            </DockPanel>
+                        </GroupBox.Header>
+                        <DataGrid x:Name="ParamsGrid" ItemsSource="{Binding Selected.Params.ParameterItems}"
+                                  IsReadOnly="True" ClipboardCopyMode="None"
+                                  PreviewKeyDown="ParamsGrid_PreviewKeyDown"
+                                  VerticalScrollBarVisibility="Auto" Margin="0,0,0,4">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="项目" Binding="{Binding Key}" Width="130" />
+                                <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </GroupBox>
                 </Grid>
             </Grid>
         </Grid>
 
         <!-- 状态栏 -->
-        <Border Grid.Row="2" Margin="6,5,6,6" Padding="6,4" Style="{StaticResource PanelCard}">
+        <Border Grid.Row="2" Margin="12,10,12,12" Padding="12,8" Style="{StaticResource PanelCard}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

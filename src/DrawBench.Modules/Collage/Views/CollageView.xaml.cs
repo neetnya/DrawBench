@@ -309,12 +309,9 @@ public partial class CollageView : UserControl
         }
     }
 
-    /// <summary>拼图模块自己填的 Python 路径优先，其次是全局设置里的。</summary>
-    private string? CurrentPythonOverride()
+    /// <summary>Python 解释器统一用全局设置里的（「设置」页那个），这里不再单独配置。</summary>
+    private static string? CurrentPythonOverride()
     {
-        string local = TxtPython.Text.Trim();
-        if (local.Length > 0) return local;
-
         var app = SettingsStore.Shared.Get<AppSection>("app");
         return app?.PythonPath;
     }
@@ -488,7 +485,6 @@ public partial class CollageView : UserControl
         Format = CmbFormat.SelectedIndex,
         Match = CmbMatch.SelectedIndex,
         OutputFolder = TxtOutDir.Text.Trim(),
-        PythonPath = TxtPython.Text.Trim(),
         ShowHeader = ChkHeader.IsChecked == true,
         ShowLabels = ChkLabel.IsChecked == true,
         OnlyCommon = ChkOnlyCommon.IsChecked == true,
@@ -509,7 +505,6 @@ public partial class CollageView : UserControl
         CmbFormat.SelectedIndex = Math.Clamp(settings.Format, 0, 2);
         CmbMatch.SelectedIndex = Math.Clamp(settings.Match, 0, 1);
         TxtOutDir.Text = string.IsNullOrWhiteSpace(settings.OutputFolder) ? DefaultOutputFolder : settings.OutputFolder;
-        TxtPython.Text = settings.PythonPath ?? string.Empty;
         ChkHeader.IsChecked = settings.ShowHeader;
         ChkLabel.IsChecked = settings.ShowLabels;
         ChkOnlyCommon.IsChecked = settings.OnlyCommon;

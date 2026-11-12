@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <!-- 目录 -->
-        <Border Grid.Row="0" Margin="6,6,6,0" Padding="6,5" Style="{StaticResource PanelCard}">
+        <Border Grid.Row="0" Margin="12,12,12,0" Padding="12,10" Style="{StaticResource PanelCard}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -26,59 +26,59 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Text="图片目录" Style="{StaticResource FieldLabel}"
-                           Margin="0,0,5,0" />
+                           Margin="0,0,10,0" />
 
                 <TextBox Grid.Column="1" x:Name="TxtBase" IsReadOnly="True"
                          ToolTip="也可以直接把文件夹拖进窗口"/>
 
                 <Button Grid.Column="2" x:Name="BtnBrowse" Content="浏览…"
-                        Style="{StaticResource SecondaryButton}" Margin="4,0,0,0"
+                        Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
                         Click="BtnBrowse_Click"/>
             </Grid>
         </Border>
 
         <!-- 模型列表 | 参数 -->
-        <Grid Grid.Row="1" Margin="6,5,6,0">
+        <Grid Grid.Row="1" Margin="12,10,12,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.85*" MinWidth="280" />
-                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="1.15*" MinWidth="340" />
             </Grid.ColumnDefinitions>
 
             <GroupBox Grid.Column="0" Header="模型（勾选参与对比，顺序即列顺序）" Padding="0" Margin="0">
                 <DockPanel LastChildFill="True">
-                    <Border DockPanel.Dock="Bottom" Padding="5,3.5"
+                    <Border DockPanel.Dock="Bottom" Padding="10,7"
                             BorderBrush="{StaticResource LineSoft}" BorderThickness="0,1,0,0">
                         <StackPanel>
                             <TextBlock x:Name="TxtModelCount" Foreground="{StaticResource Muted}"
                                        FontSize="11.5" TextWrapping="Wrap"
                                        Text="选择目录后自动列出模型。"/>
-                            <WrapPanel Margin="0,4,0,0">
+                            <WrapPanel Margin="0,8,0,0">
                                 <Button Content="全选" Click="BtnSelectAll_Click"
-                                        Style="{StaticResource SecondaryButton}" Padding="5,1.5" MinHeight="26"
-                                        FontSize="12" Margin="0,0,3,0"/>
+                                        Style="{StaticResource SecondaryButton}" Padding="10,3" MinHeight="26"
+                                        FontSize="12" Margin="0,0,6,0"/>
                                 <Button Content="全不选" Click="BtnSelectNone_Click"
-                                        Style="{StaticResource SecondaryButton}" Padding="5,1.5" MinHeight="26"
-                                        FontSize="12" Margin="0,0,3,0"/>
+                                        Style="{StaticResource SecondaryButton}" Padding="10,3" MinHeight="26"
+                                        FontSize="12" Margin="0,0,6,0"/>
                                 <Button Content="上移" Click="BtnMoveUp_Click"
-                                        Style="{StaticResource GhostButton}" Padding="5,1.5" MinHeight="26"
-                                        FontSize="12" Margin="0,0,3,0"/>
+                                        Style="{StaticResource GhostButton}" Padding="10,3" MinHeight="26"
+                                        FontSize="12" Margin="0,0,6,0"/>
                                 <Button Content="下移" Click="BtnMoveDown_Click"
-                                        Style="{StaticResource GhostButton}" Padding="5,1.5" MinHeight="26"
-                                        FontSize="12" Margin="0,0,3,0"/>
+                                        Style="{StaticResource GhostButton}" Padding="10,3" MinHeight="26"
+                                        FontSize="12" Margin="0,0,6,0"/>
                                 <Button Content="刷新" Click="BtnRefreshModels_Click"
-                                        Style="{StaticResource GhostButton}" Padding="5,1.5" MinHeight="26"
+                                        Style="{StaticResource GhostButton}" Padding="10,3" MinHeight="26"
                                         FontSize="12" Margin="0"/>
                             </WrapPanel>
                         </StackPanel>
                     </Border>
 
-                    <ListBox x:Name="LstModels" Margin="3,3,3,2" SelectionMode="Extended">
+                    <ListBox x:Name="LstModels" Margin="6,6,6,4" SelectionMode="Extended">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}"
                                           IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                          Margin="0" Padding="3,2" HorizontalAlignment="Stretch"
+                                          Margin="0" Padding="6,4" HorizontalAlignment="Stretch"
                                           ToolTip="{Binding Name}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -90,7 +90,7 @@
 
             <GroupBox Grid.Column="2" Header="参数" Padding="0" Margin="0">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <Grid Margin="7,6">
+                    <Grid Margin="14,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -103,29 +103,28 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="单元格边长" Style="{StaticResource FormLabel}"/>
                         <TextBox x:Name="CmbTile" Grid.Row="0" Grid.Column="1" Text="500"
-                                 Margin="0,1,8,4"
+                                 Margin="0,2,16,8"
                                  ToolTip="每格图片的边长（64–4096 像素）"/>
 
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="每张行数" Style="{StaticResource FormLabel}"/>
                         <TextBox x:Name="CmbRows" Grid.Row="0" Grid.Column="3" Text="3"
-                                 Margin="0,1,0,4"
+                                 Margin="0,2,0,8"
                                  ToolTip="0 表示把所有行放进同一张长图"/>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="缩放方式" Style="{StaticResource FormLabel}"/>
                         <ComboBox x:Name="CmbFit" Grid.Row="1" Grid.Column="1" SelectedIndex="0"
-                                  Margin="0,1,8,4" VerticalContentAlignment="Center">
+                                  Margin="0,2,16,8" VerticalContentAlignment="Center">
                             <ComboBoxItem Content="完整显示（不裁切）"/>
                             <ComboBoxItem Content="填满并居中裁切"/>
                         </ComboBox>
 
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="输出格式" Style="{StaticResource FormLabel}"/>
                         <ComboBox x:Name="CmbFormat" Grid.Row="1" Grid.Column="3" SelectedIndex="0"
-                                  Margin="0,1,0,4" VerticalContentAlignment="Center">
+                                  Margin="0,2,0,8" VerticalContentAlignment="Center">
                             <ComboBoxItem Content="PNG"/>
                             <ComboBoxItem Content="JPG"/>
                             <ComboBoxItem Content="WebP"/>
@@ -133,7 +132,7 @@
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="文件匹配" Style="{StaticResource FormLabel}"/>
                         <ComboBox x:Name="CmbMatch" Grid.Row="2" Grid.Column="1" SelectedIndex="0"
-                                  Margin="0,1,8,4" VerticalContentAlignment="Center"
+                                  Margin="0,2,16,8" VerticalContentAlignment="Center"
                                   ToolTip="忽略扩展名时，001.png 与 001.jpg 视为同一张">
                             <ComboBoxItem Content="完整文件名"/>
                             <ComboBoxItem Content="忽略扩展名"/>
@@ -141,35 +140,29 @@
 
                         <TextBlock Grid.Row="2" Grid.Column="2" Text="间距" Style="{StaticResource FormLabel}"/>
                         <TextBox x:Name="TxtGap" Grid.Row="2" Grid.Column="3" Text="8"
-                                 Margin="0,1,0,4"/>
+                                 Margin="0,2,0,8"/>
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="画质 (JPG/WebP)"
                                    Style="{StaticResource FormLabel}"/>
                         <TextBox x:Name="TxtQuality" Grid.Row="3" Grid.Column="1" Text="92"
-                                 Margin="0,1,8,4"/>
+                                 Margin="0,2,16,8"/>
 
                         <TextBlock Grid.Row="3" Grid.Column="2" Text="输出目录" Style="{StaticResource FormLabel}"/>
                         <TextBox x:Name="TxtOutDir" Grid.Row="3" Grid.Column="3" Text="_output"
-                                 Margin="0,1,0,4"
+                                 Margin="0,2,0,8"
                                  ToolTip="相对图片目录的文件夹名，也可以是绝对路径"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Python" Style="{StaticResource FormLabel}"
-                                   ToolTip="留空则自动依次尝试 python / py -3 / python3"/>
-                        <TextBox x:Name="TxtPython" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3"
-                                 Margin="0,1,0,4"
-                                 ToolTip="可填写 python.exe 的完整路径；留空自动查找"/>
-
-                        <WrapPanel Grid.Row="5" Grid.ColumnSpan="4" Margin="0,3,0,0">
-                            <CheckBox x:Name="ChkHeader" Content="显示模型标题" IsChecked="True" Margin="0,2,8,0"/>
-                            <CheckBox x:Name="ChkLabel" Content="显示文件名" IsChecked="True" Margin="0,2,8,0"/>
-                            <CheckBox x:Name="ChkOnlyCommon" Content="只要共有文件" Margin="0,2,8,0"
+                        <WrapPanel Grid.Row="4" Grid.ColumnSpan="4" Margin="0,6,0,0">
+                            <CheckBox x:Name="ChkHeader" Content="显示模型标题" IsChecked="True" Margin="0,4,16,0"/>
+                            <CheckBox x:Name="ChkLabel" Content="显示文件名" IsChecked="True" Margin="0,4,16,0"/>
+                            <CheckBox x:Name="ChkOnlyCommon" Content="只要共有文件" Margin="0,4,16,0"
                                       ToolTip="仅保留所有模型都存在的文件名"/>
-                            <CheckBox x:Name="ChkSkipSingle" Content="跳过无可对比" IsChecked="True" Margin="0,2,8,0"
+                            <CheckBox x:Name="ChkSkipSingle" Content="跳过无可对比" IsChecked="True" Margin="0,4,16,0"
                                       ToolTip="某张图只在一个模型里出现时，整行跳过（仅一个模型时自动失效）"/>
-                            <CheckBox x:Name="ChkClean" Content="清理旧图" Margin="0,2,8,0"
+                            <CheckBox x:Name="ChkClean" Content="清理旧图" Margin="0,4,16,0"
                                       ToolTip="删除本次没有重新生成的旧拼图"/>
-                            <CheckBox x:Name="ChkOpenAfter" Content="完成后打开目录" Margin="0,2,8,0"/>
-                            <CheckBox x:Name="ChkPreview" Content="仅预览" Margin="0,2,0,0"
+                            <CheckBox x:Name="ChkOpenAfter" Content="完成后打开目录" Margin="0,4,16,0"/>
+                            <CheckBox x:Name="ChkPreview" Content="仅预览" Margin="0,4,0,0"
                                       ToolTip="只打印生成计划，不写入文件"/>
                         </WrapPanel>
                     </Grid>
@@ -178,7 +171,7 @@
         </Grid>
 
         <!-- 日志 -->
-        <GroupBox Grid.Row="2" Header="运行日志" Padding="0" Margin="6,5,6,0" MinHeight="140" MaxHeight="260">
+        <GroupBox Grid.Row="2" Header="运行日志" Padding="0" Margin="12,10,12,0" MinHeight="140" MaxHeight="260">
             <TextBox x:Name="TxtLog"
                      Style="{StaticResource ConsoleBox}"
                      IsReadOnly="True"
@@ -192,7 +185,7 @@
         </GroupBox>
 
         <!-- 底栏：进度 + 操作 -->
-        <Border Grid.Row="3" Margin="6,6,6,6" Padding="6" Style="{StaticResource PanelCard}">
+        <Border Grid.Row="3" Margin="12,12,12,12" Padding="12" Style="{StaticResource PanelCard}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -203,16 +196,16 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" x:Name="BtnRun" Content="生成对比图"
-                        Style="{StaticResource PrimaryButton}" Padding="12,3.5" MinWidth="140"
+                        Style="{StaticResource PrimaryButton}" Padding="24,7" MinWidth="140"
                         Click="BtnRun_Click"/>
 
                 <ProgressBar Grid.Column="1" x:Name="PrgBar" Height="6" Minimum="0" Maximum="100" Value="0"
-                             Margin="8,0" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" x:Name="TxtProgress" Margin="0,0,8,0"
+                             Margin="16,0" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="TxtProgress" Margin="0,0,16,0"
                            VerticalAlignment="Center" Foreground="{StaticResource Muted}" FontSize="12"/>
 
                 <Button Grid.Column="3" x:Name="BtnCancel" Content="取消" IsEnabled="False"
-                        Style="{StaticResource SecondaryButton}" MinWidth="76" Margin="0,0,4,0"
+                        Style="{StaticResource SecondaryButton}" MinWidth="76" Margin="0,0,8,0"
                         Click="BtnCancel_Click"/>
 
                 <Button Grid.Column="4" x:Name="BtnOpenOutput" Content="打开输出目录"

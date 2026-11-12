@@ -13,13 +13,13 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled" Padding="6,6,6,0">
+                      HorizontalScrollBarVisibility="Disabled" Padding="12,12,12,0">
             <StackPanel MaxWidth="820" HorizontalAlignment="Left">
 
                 <!-- ==================== Python ==================== -->
-                <GroupBox Header="Python 解释器" Padding="7,6" Margin="0,0,0,5">
+                <GroupBox Header="Python 解释器" Padding="14,12" Margin="0,0,0,10">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource SubText}" Margin="0,0,0,4"
+                        <TextBlock Style="{StaticResource SubText}" Margin="0,0,0,8"
                                    Text="抽卡与拼图两个功能需要本机 Python。留空则自动探测（PATH → py -3 → python3）。" />
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -30,31 +30,31 @@
                             <TextBox x:Name="TxtPython" Grid.Column="0"
                                      ToolTip="可填 python.exe 的完整路径，也可以填它所在的目录" />
                             <Button x:Name="BtnBrowsePython" Grid.Column="1" Content="浏览…"
-                                    Style="{StaticResource SecondaryButton}" Margin="4,0,0,0"
+                                    Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
                                     Click="BrowsePython_Click" />
                             <Button x:Name="BtnRedetect" Grid.Column="2" Content="重新检测"
-                                    Style="{StaticResource SecondaryButton}" Margin="4,0,0,0"
+                                    Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
                                     Click="Redetect_Click" />
                         </Grid>
                         <TextBlock x:Name="TxtPythonHint" Style="{StaticResource SubText}"
-                                   Margin="0,4,0,0" TextWrapping="Wrap" />
+                                   Margin="0,8,0,0" TextWrapping="Wrap" />
                     </StackPanel>
                 </GroupBox>
 
                 <!-- ==================== 数据目录 ==================== -->
-                <GroupBox Header="数据目录（便携）" Padding="7,6" Margin="0,0,0,5">
+                <GroupBox Header="数据目录（便携）" Padding="14,12" Margin="0,0,0,10">
                     <StackPanel>
                         <TextBlock x:Name="TxtDataDir" Style="{StaticResource SubText}"
                                    Foreground="{StaticResource InkSoft}" TextWrapping="Wrap" />
-                        <WrapPanel Margin="0,6,0,0">
+                        <WrapPanel Margin="0,12,0,0">
                             <Button Content="打开数据目录" Style="{StaticResource SecondaryButton}"
-                                    Margin="0,0,4,0" Click="OpenData_Click" />
+                                    Margin="0,0,8,0" Click="OpenData_Click" />
                             <Button Content="打开工作流目录 (api)" Style="{StaticResource SecondaryButton}"
-                                    Margin="0,0,4,0" Click="OpenApi_Click" />
+                                    Margin="0,0,8,0" Click="OpenApi_Click" />
                             <Button Content="打开反推模型目录 (models)" Style="{StaticResource SecondaryButton}"
                                     Click="OpenModels_Click" />
                         </WrapPanel>
-                        <TextBlock Style="{StaticResource SubText}" Margin="0,5,0,0"
+                        <TextBlock Style="{StaticResource SubText}" Margin="0,10,0,0"
                                    TextWrapping="Wrap"
                                    Text="api / engine / scripts / models / data 都在程序目录下，整个文件夹复制走即可换机器。" />
                     </StackPanel>
@@ -64,7 +64,7 @@
         </ScrollViewer>
 
         <!-- 底栏：说明 -->
-        <Border Grid.Row="1" Margin="6,6,6,6" Padding="6,4" Style="{StaticResource PanelCard}">
+        <Border Grid.Row="1" Margin="12,12,12,12" Padding="12,8" Style="{StaticResource PanelCard}">
             <TextBlock Style="{StaticResource SubText}" FontSize="12" TextWrapping="Wrap"
                        Text="改动立即生效并自动保存。ComfyUI 地址不在这里——它只给「批量提交」用，在那一页顶部改。" />
         </Border>
