@@ -1,0 +1,50 @@
+# ==================== 编译输出 ====================
+build/
+dist/
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ll]og/
+[Tt]est[Rr]esult*/
+
+# ==================== Visual Studio / Rider ====================
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+_ReSharper*/
+*.DotSettings.user
+
+# ==================== 运行期数据（便携目录约定，不进版本库） ====================
+# 各目录由程序首次启动时自动创建（AppPaths.EnsureCreated）
+data/
+api/*.json
+models/*.onnx
+models/*.csv
+scripts/*.pyc
+
+# ==================== 自检产物 ====================
+shots/
+
+# ==================== Python ====================
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ==================== 其它 ====================
+*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+Thumbs.db
+desktop.ini
+.DS_Store

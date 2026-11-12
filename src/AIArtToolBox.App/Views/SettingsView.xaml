@@ -1,0 +1,82 @@
+<UserControl x:Class="AIArtToolBox.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BgBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24,20">
+        <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+
+            <TextBlock Text="全局设置" Style="{StaticResource TitleText}" />
+            <TextBlock Style="{StaticResource SubText}" Margin="0,4,0,18"
+                       Text="这里的设置对所有模块生效。各模块自己的参数在各自界面里，会自动保存。" />
+
+            <!-- ==================== ComfyUI ==================== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="ComfyUI 服务地址" Style="{StaticResource SectionTitle}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TxtComfyUrl" Grid.Column="0" />
+                        <Button x:Name="BtnTestComfy" Grid.Column="1" Content="测试连接"
+                                Style="{StaticResource ToolButton}" Click="TestComfy_Click" />
+                    </Grid>
+                    <TextBlock x:Name="TxtComfyHint" Style="{StaticResource SubText}" Margin="0,6,0,0"
+                               Text="默认 http://127.0.0.1:8188，批量提交模块用它把任务送进 ComfyUI 队列。" />
+                </StackPanel>
+            </Border>
+
+            <!-- ==================== Python ==================== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="Python 解释器" Style="{StaticResource SectionTitle}" />
+                    <TextBlock Style="{StaticResource SubText}" Margin="0,0,0,8"
+                               Text="抽卡与拼图两个功能需要本机 Python。留空则自动探测（PATH → py -3 → python3）。" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TxtPython" Grid.Column="0"
+                                 ToolTip="可填 python.exe 的完整路径，也可以填它所在的目录" />
+                        <Button x:Name="BtnBrowsePython" Grid.Column="1" Content="浏览…"
+                                Style="{StaticResource ToolButton}" Click="BrowsePython_Click" />
+                        <Button x:Name="BtnRedetect" Grid.Column="2" Content="重新检测"
+                                Style="{StaticResource ToolButton}" Click="Redetect_Click" />
+                    </Grid>
+                    <TextBlock x:Name="TxtPythonHint" Style="{StaticResource SubText}" Margin="0,6,0,0" />
+                </StackPanel>
+            </Border>
+
+            <!-- ==================== 数据目录 ==================== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="数据目录（便携）" Style="{StaticResource SectionTitle}" />
+                    <TextBlock x:Name="TxtDataDir" Style="{StaticResource SubText}" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="打开数据目录" Style="{StaticResource BaseButton}" Click="OpenData_Click" />
+                        <Button Content="打开工作流目录 (api)" Style="{StaticResource BaseButton}"
+                                Margin="8,0,0,0" Click="OpenApi_Click" />
+                        <Button Content="打开反推模型目录 (models)" Style="{StaticResource BaseButton}"
+                                Margin="8,0,0,0" Click="OpenModels_Click" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource SubText}" Margin="0,8,0,0"
+                               Text="api / engine / scripts / models / data 都在程序目录下，整个文件夹复制走即可换机器。" />
+                </StackPanel>
+            </Border>
+
+            <!-- ==================== 关于 ==================== -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="关于" Style="{StaticResource SectionTitle}" />
+                    <TextBlock x:Name="TxtAbout" Style="{StaticResource SubText}" TextWrapping="Wrap" />
+                    <Button Content="打开日志文件" Style="{StaticResource BaseButton}"
+                            HorizontalAlignment="Left" Margin="0,10,0,0" Click="OpenLog_Click" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

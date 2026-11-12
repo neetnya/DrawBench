@@ -1,0 +1,255 @@
+<UserControl x:Class="AIArtToolBox.Modules.Collage.Views.CollageView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        AllowDrop="True" Drop="View_Drop" DragOver="View_DragOver"
+        Loaded="View_Loaded">
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 根目录 -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="图片目录"
+                       VerticalAlignment="Center"
+                       FontWeight="SemiBold"/>
+
+            <TextBox Grid.Column="1"
+                     x:Name="TxtBase"
+                     Margin="8,0"
+                     IsReadOnly="True"
+                     VerticalContentAlignment="Center"
+                     FontSize="14"
+                     Padding="7"
+                     ToolTip="也可以直接把文件夹拖进窗口"/>
+
+            <Button Grid.Column="2"
+                    x:Name="BtnBrowse"
+                    Content="浏览…"
+                    Click="BtnBrowse_Click"
+                    Padding="20,7"
+                    FontSize="14"/>
+        </Grid>
+
+        <!-- 模型列表 + 参数 -->
+        <Grid Grid.Row="1" Height="300" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.85*"/>
+                <ColumnDefinition Width="1.15*"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="模型（勾选参与对比，顺序即列顺序）" Margin="0,0,10,0" Padding="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ListBox x:Name="LstModels"
+                             Grid.Row="0"
+                             SelectionMode="Extended"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Name}"
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                          Margin="2,2"
+                                          ToolTip="{Binding Name}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <TextBlock x:Name="TxtModelCount"
+                               Grid.Row="1"
+                               Margin="2,6,0,0"
+                               Foreground="#777"
+                               FontSize="12"
+                               Text="选择目录后自动列出模型。"/>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,6,0,0">
+                        <Button Content="全选" Click="BtnSelectAll_Click" Padding="10,4" Margin="0,0,6,0"/>
+                        <Button Content="全不选" Click="BtnSelectNone_Click" Padding="10,4" Margin="0,0,6,0"/>
+                        <Button Content="上移" Click="BtnMoveUp_Click" Padding="10,4" Margin="0,0,6,0"/>
+                        <Button Content="下移" Click="BtnMoveDown_Click" Padding="10,4" Margin="0,0,6,0"/>
+                        <Button Content="刷新" Click="BtnRefreshModels_Click" Padding="10,4"/>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Column="1" Header="参数" Padding="8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="单元格边长" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <ComboBox x:Name="CmbTile" Grid.Column="1" IsEditable="True" Text="500"
+                                  Margin="0,0,14,8" VerticalContentAlignment="Center">
+                            <ComboBoxItem Content="256"/>
+                            <ComboBoxItem Content="384"/>
+                            <ComboBoxItem Content="500"/>
+                            <ComboBoxItem Content="640"/>
+                            <ComboBoxItem Content="768"/>
+                            <ComboBoxItem Content="1024"/>
+                        </ComboBox>
+
+                        <TextBlock Grid.Column="2" Text="每张行数" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <ComboBox x:Name="CmbRows" Grid.Column="3" IsEditable="True" Text="3"
+                                  Margin="0,0,0,8" VerticalContentAlignment="Center"
+                                  ToolTip="0 表示把所有行放进同一张长图">
+                            <ComboBoxItem Content="0"/>
+                            <ComboBoxItem Content="1"/>
+                            <ComboBoxItem Content="2"/>
+                            <ComboBoxItem Content="3"/>
+                            <ComboBoxItem Content="4"/>
+                            <ComboBoxItem Content="5"/>
+                            <ComboBoxItem Content="6"/>
+                            <ComboBoxItem Content="8"/>
+                        </ComboBox>
+
+                        <TextBlock Grid.Row="1" Text="缩放方式" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <ComboBox x:Name="CmbFit" Grid.Row="1" Grid.Column="1" SelectedIndex="0"
+                                  Margin="0,0,14,8" VerticalContentAlignment="Center">
+                            <ComboBoxItem Content="完整显示（不裁切）"/>
+                            <ComboBoxItem Content="填满并居中裁切"/>
+                        </ComboBox>
+
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="输出格式" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <ComboBox x:Name="CmbFormat" Grid.Row="1" Grid.Column="3" SelectedIndex="0"
+                                  Margin="0,0,0,8" VerticalContentAlignment="Center">
+                            <ComboBoxItem Content="PNG"/>
+                            <ComboBoxItem Content="JPG"/>
+                            <ComboBoxItem Content="WebP"/>
+                        </ComboBox>
+
+                        <TextBlock Grid.Row="2" Text="文件匹配" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <ComboBox x:Name="CmbMatch" Grid.Row="2" Grid.Column="1" SelectedIndex="0"
+                                  Margin="0,0,14,8" VerticalContentAlignment="Center"
+                                  ToolTip="忽略扩展名时，001.png 与 001.jpg 视为同一张">
+                            <ComboBoxItem Content="完整文件名"/>
+                            <ComboBoxItem Content="忽略扩展名"/>
+                        </ComboBox>
+
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="间距" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <TextBox x:Name="TxtGap" Grid.Row="2" Grid.Column="3" Text="8"
+                                 Margin="0,0,0,8" Padding="6,4" VerticalContentAlignment="Center"/>
+
+                        <TextBlock Grid.Row="3" Text="画质 (JPG/WebP)" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <TextBox x:Name="TxtQuality" Grid.Row="3" Grid.Column="1" Text="92"
+                                 Margin="0,0,14,8" Padding="6,4" VerticalContentAlignment="Center"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="输出目录" VerticalAlignment="Center" Margin="0,0,8,8"/>
+                        <TextBox x:Name="TxtOutDir" Grid.Row="3" Grid.Column="3" Text="_output"
+                                 Margin="0,0,0,8" Padding="6,4" VerticalContentAlignment="Center"
+                                 ToolTip="相对图片目录的文件夹名，也可以是绝对路径"/>
+
+                        <TextBlock Grid.Row="4" Text="Python" VerticalAlignment="Center" Margin="0,0,8,8"
+                                   ToolTip="留空则自动依次尝试 python / py -3 / python3"/>
+                        <TextBox x:Name="TxtPython" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3"
+                                 Margin="0,0,0,8" Padding="6,4" VerticalContentAlignment="Center"
+                                 ToolTip="可填写 python.exe 的完整路径；留空自动查找"/>
+
+                        <WrapPanel Grid.Row="5" Grid.ColumnSpan="4" Margin="0,2,0,0">
+                            <CheckBox x:Name="ChkHeader" Content="显示模型标题" IsChecked="True" Margin="0,4,14,0"/>
+                            <CheckBox x:Name="ChkLabel" Content="显示文件名" IsChecked="True" Margin="0,4,14,0"/>
+                            <CheckBox x:Name="ChkOnlyCommon" Content="只要共有文件" Margin="0,4,14,0"
+                                      ToolTip="仅保留所有模型都存在的文件名"/>
+                            <CheckBox x:Name="ChkSkipSingle" Content="跳过无可对比" IsChecked="True" Margin="0,4,14,0"
+                                      ToolTip="某张图只在一个模型里出现时，整行跳过（仅一个模型时自动失效）"/>
+                            <CheckBox x:Name="ChkClean" Content="清理旧图" Margin="0,4,14,0"
+                                      ToolTip="删除本次没有重新生成的旧拼图"/>
+                            <CheckBox x:Name="ChkOpenAfter" Content="完成后打开目录" Margin="0,4,14,0"/>
+                            <CheckBox x:Name="ChkPreview" Content="仅预览" Margin="0,4,0,0"
+                                      ToolTip="只打印生成计划，不写入文件"/>
+                        </WrapPanel>
+                    </Grid>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
+
+        <!-- 操作按钮 -->
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="BtnRun"
+                    Content="生成对比图"
+                    Style="{StaticResource PrimaryButton}"
+                    FontSize="15"
+                    Padding="12"
+                    Margin="0,0,10,0"
+                    Click="BtnRun_Click"/>
+
+            <Button x:Name="BtnCancel"
+                    Grid.Column="1"
+                    Content="取消"
+                    IsEnabled="False"
+                    Padding="18,8"
+                    Margin="0,0,10,0"
+                    Click="BtnCancel_Click"/>
+
+            <Button x:Name="BtnOpenOutput"
+                    Grid.Column="2"
+                    Content="打开输出目录"
+                    Padding="18,8"
+                    Click="BtnOpenOutput_Click"/>
+        </Grid>
+
+        <!-- 进度 -->
+        <Grid Grid.Row="3" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ProgressBar x:Name="PrgBar" Height="6" Minimum="0" Maximum="100" Value="0"
+                         VerticalAlignment="Center"/>
+            <TextBlock x:Name="TxtProgress" Grid.Column="1" Margin="10,0,0,0"
+                       VerticalAlignment="Center" Foreground="#666" FontSize="12"/>
+        </Grid>
+
+        <!-- 日志 -->
+        <GroupBox Grid.Row="4" Header="运行日志" Padding="8">
+            <TextBox x:Name="TxtLog"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="NoWrap"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     Background="#1E1E1E"
+                     Foreground="#D4D4D4"
+                     FontFamily="Consolas"
+                     FontSize="13"
+                     BorderThickness="0"
+                     Padding="10"
+                     Text="准备就绪。选择图片根目录（或把文件夹拖进窗口），勾选模型后点击生成。"/>
+        </GroupBox>
+    </Grid>
+</UserControl>

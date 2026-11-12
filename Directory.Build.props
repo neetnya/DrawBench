@@ -1,0 +1,23 @@
+<Project>
+
+  <!-- 三个工程共享的编译设置。改版本号、目标框架只改这里。 -->
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Version>1.0.0</Version>
+    <Product>AIArtToolBox</Product>
+    <Company>AIArtToolBox</Company>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+    <NeutralLanguage>zh-Hans</NeutralLanguage>
+    <!-- 各工具原有的 CS 注释里有不少历史说明，保持可见 -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- 三个工程统一输出到同一个目录：exe + dll 放一起，Python 脚本与模型目录也在这里 -->
+  <PropertyGroup>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)build\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+
+</Project>

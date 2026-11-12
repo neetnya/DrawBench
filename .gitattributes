@@ -1,0 +1,32 @@
+# 统一换行：文本入库用 LF，检出时按平台
+* text=auto
+
+# Windows 批处理脚本保留 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 源码与文档
+*.cs    text eol=lf
+*.xaml  text eol=lf
+*.csproj text eol=lf
+*.props text eol=lf
+*.sln   text eol=lf
+*.py    text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+*.xml   text eol=lf
+*.config text eol=lf
+*.manifest text eol=lf
+.gitignore       text eol=lf
+.gitattributes   text eol=lf
+
+# 二进制（不要做任何换行处理，也不要尝试 diff）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.onnx binary
+*.dll binary
+*.exe binary
+*.pdb binary
