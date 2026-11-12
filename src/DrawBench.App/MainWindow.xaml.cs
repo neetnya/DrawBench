@@ -96,11 +96,11 @@ public partial class MainWindow : Window
     {
         UpdateStatusBar();
 
-        // 恢复上次停留的模块；没有就用第一个
+        // 恢复上次停留的模块；没有就用导航里的第一个
         string? last = _appSection.LastModule;
         var target = (last != null && _modules.ContainsKey(last))
             ? last
-            : _modules.Keys.FirstOrDefault();
+            : _navButtons.FirstOrDefault()?.Tag as string;
 
         if (target != null)
         {

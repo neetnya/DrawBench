@@ -50,11 +50,11 @@ internal static class ReflectiveModuleFactory
         return result;
     }
 
-    /// <summary>流水线顺序：抽卡 → 提交 → 回读 → 反推 → 对比。</summary>
+    /// <summary>导航顺序：批量提交打头，其后是抽卡 → 回读 → 反推 → 对比。</summary>
     private static int ModuleOrder(string id) => id.ToLowerInvariant() switch
     {
-        "gacha" => 0,
-        "batch" => 1,
+        "batch" => 0,
+        "gacha" => 1,
         "metadata" => 2,
         "tagger" => 3,
         "collage" => 4,
