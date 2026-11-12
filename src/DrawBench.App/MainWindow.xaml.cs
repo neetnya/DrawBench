@@ -33,9 +33,14 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
-        TxtVersion.Text = "v" + (Assembly.GetExecutingAssembly()
+        // 版本号只显示到语义化版本，后面那串 +commit 太长，放在侧栏会被截断
+        string version = Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0");
+            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+            ?? "1.0.0";
+        int plus = version.IndexOf('+');
+        if (plus > 0) version = version[..plus];
+        TxtVersion.Text = "v" + version;
 
         AppLog.Line += OnLogLine;
 
@@ -69,14 +74,14 @@ public partial class MainWindow : Window
                 {
                     Text = module.Glyph,
                     FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                    FontSize = 14,
+                    FontSize = 17,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(0, 0, 9, 0)
+                    Margin = new Thickness(0, 0, 12, 0)
                 },
                 new TextBlock
                 {
                     Text = module.Title,
-                    FontSize = 12.5,
+                    FontSize = 14.5,
                     VerticalAlignment = VerticalAlignment.Center
                 }
             }

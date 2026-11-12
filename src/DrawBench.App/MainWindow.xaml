@@ -10,7 +10,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="196" />
+            <ColumnDefinition Width="216" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -28,17 +28,17 @@
                 </StackPanel>
 
                 <!-- 底部：设置 + 版本 -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,10">
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
                     <RadioButton x:Name="BtnSettings" Style="{StaticResource NavButton}"
-                                 GroupName="Nav" Checked="Settings_Checked" Margin="8,2">
+                                 GroupName="Nav" Checked="Settings_Checked" Margin="10,3">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                                       VerticalAlignment="Center" Margin="0,0,9,0" />
-                            <TextBlock Text="设置" FontSize="12.5" VerticalAlignment="Center" />
+                            <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="17"
+                                       VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="设置" FontSize="14.5" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
                     <TextBlock x:Name="TxtVersion" Style="{StaticResource SubText}"
-                               Margin="18,10,14,0" FontSize="11" />
+                               Margin="22,12,14,0" FontSize="11" />
                 </StackPanel>
 
                 <!-- 模块列表（代码里填充） -->

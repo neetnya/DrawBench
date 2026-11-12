@@ -397,19 +397,22 @@
 
     <!-- ==================== 左侧导航 ==================== -->
 
-    <Style x:Key="NavButton" TargetType="RadioButton">        <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+    <Style x:Key="NavButton" TargetType="RadioButton">
+        <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Margin" Value="8,2" />
+        <Setter Property="Margin" Value="10,3" />
+        <Setter Property="MinHeight" Value="56" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
                     <Grid>
-                        <Border x:Name="Bd" Background="Transparent" CornerRadius="6" Padding="10,8" />
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="8" Padding="12,12" />
                         <Border x:Name="Marker" Background="{StaticResource AccentBrush}"
-                                Width="3" Height="18" CornerRadius="2"
+                                Width="3" Height="26" CornerRadius="2"
                                 HorizontalAlignment="Left" Visibility="Collapsed" />
-                        <ContentPresenter Margin="14,0,10,0" VerticalAlignment="Center" />
+                        <ContentPresenter Margin="16,0,10,0" VerticalAlignment="Center" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
