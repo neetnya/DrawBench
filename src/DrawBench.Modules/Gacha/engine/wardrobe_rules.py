@@ -1087,7 +1087,7 @@ def scene_pool():
 
 
 def _build_scene_pool():
-    places, ambience, details = [], [], []
+    places, ambience, details, psychology = [], [], [], []
     sec = (presets().get("sections") or {}).get("scene") or {}
     for g in sec.get("groups", []):
         head = g["group"]
@@ -1098,6 +1098,11 @@ def _build_scene_pool():
                 places.append({"label": it.get("label") or "", "tags": it["tags"],
                                "privacy": priv,
                                "indoor": (it.get("label") or "") not in OUTDOOR_PLACES})
+        elif head.startswith("场景心理"):
+            for it in g.get("items", []):
+                tags = [t for t in (it.get("tags") or []) if t not in set(it.get("warn") or [])]
+                if tags:
+                    psychology.append({"label": it.get("label") or "", "tags": tags})
         elif head.startswith("天气/时辰"):
             for it in g.get("items", []):
                 warn = set(it.get("warn") or [])
@@ -1110,7 +1115,7 @@ def _build_scene_pool():
     extreme_details = [{"label": label, "tags": list(tags)}
                        for label, tags in EXTREME_GROUPS.get("scene_details", [])]
     return {"places": places, "ambience": ambience, "details": details,
-            "extreme_details": extreme_details}
+            "psychology": psychology, "extreme_details": extreme_details}
 
 
 # ---------------------------------------------------------------------------
@@ -1127,6 +1132,51 @@ def _pool_allowed(tag, level):
     if limit >= 99:
         return True
     return grade_nsfw([tag])["num"] <= limit
+
+
+def _curated_outfit_candidates(level):
+    """返回经过等级过滤和槽位修复的完整穿搭候选，保留预设条目内部的搭配关系。"""
+    sec = (presets().get("sections") or {}).get("clothing") or {}
+    preferred = {"SFM 服装套装（扩充）"}
+    result, seen = [], set()
+    for group in sec.get("groups", []):
+        if group.get("group") not in preferred:
+            continue
+        for item in group.get("items", []):
+            tags = [t for t in (item.get("tags") or [])
+                    if t and _pool_allowed(t, level)]
+            # 只保留衣物/穿搭相关槽位，避免把姿势、人物动作等混进服装。
+            tags = [t for t in tags if classify_wear(t) not in ("misc", "prop", "act", "device", "mark")]
+            if len(tags) < 2:
+                continue
+            tags = repair_outfit(tags)
+            if len(tags) < 3 or not any(classify_wear(t) in ("set", "onepiece", "top", "bottom", "swim", "underwear", "nude") for t in tags):
+                continue
+            if not tags or validate_outfit(tags):
+                continue
+            slots = {classify_wear(t) for t in tags}
+            forms = _forms_present(slots)
+            if len(forms) != 1:
+                continue
+            # 分体必须同时有上装和下装；只有一件上衣/裙子不算完整穿搭。
+            if "two_piece" in forms and not ("top" in slots and "bottom" in slots):
+                continue
+            # 一个条目必须有完整主体服装，避免只抽到袜子/饰品/单件零碎。
+            if not any(x in slots for x in ("set", "onepiece", "swim", "underwear", "nude")) and not ("top" in slots and "bottom" in slots):
+                continue
+            # 控制标签数量，优先保留主体、再保留有辨识度的搭配细节。
+            if len(tags) > 8:
+                priority = {"set": 0, "onepiece": 0, "top": 0, "bottom": 0,
+                            "swim": 0, "underwear": 0, "nude": 0,
+                            "socks": 1, "shoes": 1, "accessory": 2,
+                            "state": 3, "material": 4}
+                tags = sorted(tags, key=lambda t: priority.get(classify_wear(t), 9))[:8]
+                tags = repair_outfit(tags)
+            key = tuple(t.lower() for t in tags)
+            if key not in seen:
+                seen.add(key)
+                result.append(tags)
+    return result
 
 
 def roll_outfit(level="suggestive", seed=None, allow_public=False):
@@ -1163,30 +1213,49 @@ def roll_outfit(level="suggestive", seed=None, allow_public=False):
         forms += ["swim", "underwear"]
         if TARGET_NUM.get(want, 1) >= 2:
             forms += ["nude", "nude"]      # 高等级提高全裸权重
-    form = rng.choice(forms)
-
+    # 优先从预设中抽取「完整穿搭条目」，而不是把所有衣物标签打散后拼盘。
+    # SFM 套装本身就是人工整理过的组合；先按等级过滤，再做槽位校验。
+    curated = _curated_outfit_candidates(level)
+    use_curated = bool(curated)
     outfit = []
-    if form == "nude":
-        outfit += ["completely nude"]
-    elif form == "two_piece":
-        outfit += draw("top", 1) + draw("bottom", 1)
+    if use_curated:
+        # 组合完整度越高、冲突越少，权重越高；仍然保留随机性。
+        weighted = []
+        for candidate in curated:
+            slots = [classify_wear(t) for t in candidate]
+            body = sum(1 for x in slots if x in ("set", "onepiece", "two_piece", "swim", "underwear", "nude"))
+            detail = sum(1 for x in slots if x in ("accessory", "socks", "shoes"))
+            weight = 1.0 + min(body, 2) * 1.5 + min(detail, 3) * 0.35
+            weighted.append(weight)
+        outfit = list(rng.choices(curated, weights=weighted, k=1)[0])
+        forms_found = _forms_present({classify_wear(t) for t in outfit})
+        form = next(iter(forms_found)) if forms_found else "set"
+        if form == "two_piece":
+            form = "two_piece"
     else:
-        outfit += draw(form, 1)
+        form = rng.choice(forms)
+        if form == "nude":
+            outfit += ["completely nude"]
+        elif form == "two_piece":
+            outfit += draw("top", 1) + draw("bottom", 1)
+        else:
+            outfit += draw(form, 1)
 
     high = TARGET_NUM.get(want, 99) >= 2
+    # 细节只做少量点缀，且从已有穿搭的风格线索中挑选；避免袜、鞋、材质、状态全都堆满。
     if form != "nude" or high:
-        outfit += draw("socks", 1)
-        if "barefoot" not in outfit:
+        if not any(classify_wear(t) == "socks" for t in outfit) and rng.random() < 0.28:
+            outfit += draw("socks", 1)
+        if not any(classify_wear(t) == "shoes" for t in outfit) and rng.random() < 0.32:
             outfit += draw("shoes", 1)
-        outfit += draw("accessory", rng.randint(0, 2))
-        # ⚠️ 材质/改造必须有依附对象（validate_outfit 的 M1）——
-        #    全裸主体没有可依附的衣服，此时一律不抽材质，否则必然违规
-        if form != "nude" and rng.random() < 0.45:
-            outfit += draw("material", rng.randint(1, 2))
-        if rng.random() < 0.55:
-            outfit += draw("state", rng.randint(1, 2))
-        if high and rng.random() < 0.35:
-            outfit += draw("prop", rng.randint(1, 2))
+        if not any(classify_wear(t) == "accessory" for t in outfit) and rng.random() < 0.38:
+            outfit += draw("accessory", 1)
+        if form != "nude" and rng.random() < 0.20:
+            outfit += draw("material", 1)
+        if rng.random() < 0.24:
+            outfit += draw("state", 1)
+        if high and rng.random() < 0.18:
+            outfit += draw("prop", 1)
 
     # ---- 第 5 级专属叠加：行为 + 装置（+ 极限体液/标记）----
     # 装置必须有行为承载（validate_outfit 的 E1），所以两者成对抽取
@@ -1310,6 +1379,24 @@ def roll_scene(level="sfw", seed=None, allow_public=False, place_hint=None,
 
     out = list(place["tags"])
 
+    # 场景心理标签与具体地点绑定：不再从所有场景细节中无差别抽取。
+    place_text = (place.get("label", "") + " " + " ".join(place.get("tags", []))).lower()
+    scene_keys = {
+        "卧室": ("bedroom",), "浴室": ("bathroom", "shower"),
+        "厨房": ("kitchen",), "客厅/沙发": ("couch", "sofa", "living room"),
+        "办公室": ("office",), "窗边": ("window",),
+        "电梯": ("elevator",), "楼梯间": ("stairwell",),
+        "教堂": ("cathedral",),
+    }
+    matched_keys = scene_keys.get(place.get("label", ""), ())
+    psych = [g for g in pools.get("psychology", [])
+             if any(k in " ".join(g.get("tags", [])).lower() for k in matched_keys)]
+    if psych and rng.random() < 0.72:
+        chosen = rng.choice(psych)
+        extra = [t for t in chosen["tags"] if t.lower() not in {x.lower() for x in out}
+                 and _pool_allowed(t, level)]
+        out += extra[:2]
+
     # 天气/时辰：室内只取时辰类，且跳过命中 Skill 禁光表的标签
     amb = [a for a in pools["ambience"]
            if not (place["indoor"] and any(WEATHER_RE.search(t) for t in a["tags"]))]
@@ -1323,9 +1410,26 @@ def roll_scene(level="sfw", seed=None, allow_public=False, place_hint=None,
     det_groups = list(pools["details"])
     if num >= NSFW_MAX:
         det_groups += list(pools.get("extreme_details", []))
-    rng.shuffle(det_groups)
+    # 场景细节按地点筛选，避免「车内 + 床单」「教室 + 避孕套」等穿帮组合。
+    place_label = place.get("label", "")
+    private_detail_groups = {"避孕套", "事后痕迹", "道具散落"}
+    detail_allowed = []
     for g in det_groups:
-        if rng.random() > 0.35:
+        label = g.get("label", "")
+        if label in private_detail_groups and place["privacy"] != "private":
+            continue
+        if label == "衣物散落" and place_label not in ("卧室", "客厅/沙发", "办公室", "浴室"):
+            continue
+        if label == "饮食物品" and not any(k in place_text for k in ("kitchen", "restaurant", "couch", "living room")):
+            continue
+        if label == "电子设备" and not any(k in place_text for k in ("office", "classroom", "bedroom", "car")):
+            continue
+        if label == "空间细节":
+            continue  # 空间材质/家具细节已由地点自身标签提供
+        detail_allowed.append(g)
+    rng.shuffle(detail_allowed)
+    for g in detail_allowed:
+        if rng.random() > 0.22:
             continue
         tags = list(g["tags"])
         if num < 2:
@@ -1609,7 +1713,7 @@ def match_expression(nsfw_num, tags, rng=None):
     if not pool:
         pool = list(EXPRESSION_TAGS["neutral"])
     rng.shuffle(pool)
-    expressions = pool[:rng.randint(1, 3)]
+    expressions = pool[:rng.randint(1, 2)]
 
     reactions = []
     if nsfw_num >= 3 or emotion == "ahegao":
