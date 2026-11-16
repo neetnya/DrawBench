@@ -112,27 +112,50 @@ public partial class ImageView : UserControl
     private void CopyNegative_Click(object sender, RoutedEventArgs e)
         => CopyToClipboard(_vm.Selected?.NegativePromptText);
 
-    /// <summary>把读到的正向提示词送到批量提交模块的队列里。</summary>
-    private void SendPositiveToBatch_Click(object sender, RoutedEventArgs e) => SendToBatch(_vm.Selected?.PositivePrompt);
+    /// <summary>把读到的正向/负向提示词发送或追加到批量提交模块。</summary>
+    private void SendPositiveToBatch_Click(object sender, RoutedEventArgs e)
+        => DeliverToBatch(_vm.Selected?.PositivePrompt, negative: false, append: false);
 
-    private void SendNegativeToBatch_Click(object sender, RoutedEventArgs e) => SendToBatch(_vm.Selected?.NegativePromptText, negative: true);
+    private void AppendPositiveToBatch_Click(object sender, RoutedEventArgs e)
+        => DeliverToBatch(_vm.Selected?.PositivePrompt, negative: false, append: true);
 
-    private void SendToBatch(string? text, bool negative = false)
+    private void SendNegativeToBatch_Click(object sender, RoutedEventArgs e)
+        => DeliverToBatch(_vm.Selected?.NegativePromptText, negative: true, append: false);
+
+    private void AppendNegativeToBatch_Click(object sender, RoutedEventArgs e)
+        => DeliverToBatch(_vm.Selected?.NegativePromptText, negative: true, append: true);
+
+    private void DeliverToBatch(string? text, bool negative, bool append)
     {
-        // 点「发送到队列」就切到批量提交页，内容为空也照样切过去
-        SharedContext.Current.RequestModule(ModuleIds.Batch);
-
         if (string.IsNullOrWhiteSpace(text))
         {
-            UiHost.Info("这里还没有内容可以发送呢～");
+            UiHost.Info(append ? "这里还没有内容可以追加呢～" : "这里还没有内容可以发送呢～");
             return;
         }
 
-        bool ok = negative
-            ? AiBridge.SendToBatchNegative(text, "参数读取")
-            : AiBridge.SendToBatchQueue(text, "参数读取");
+        bool ok = (negative, append) switch
+        {
+            (false, false) => AiBridge.SendToBatchQueue(text, "参数读取"),
+            (false, true)  => AiBridge.AppendToBatchQueue(text, "参数读取"),
+            (true, false)  => AiBridge.SendToBatchNegative(text, "参数读取"),
+            (true, true)   => AiBridge.AppendToBatchNegative(text, "参数读取"),
+        };
 
-        if (!ok) UiHost.Warn("批量提交模块没有接收这段文本。");
+        if (!ok)
+        {
+            UiHost.Warn("批量提交模块没有接收这段文本。");
+            return;
+        }
+
+        if (append)
+        {
+            _vm.StatusText = negative ? "已追加到批量提交的负向提示词" : "已追加到批量提交的正向队列";
+        }
+        else
+        {
+            _vm.StatusText = negative ? "已发送到批量提交的负向提示词" : "已发送到批量提交的正向队列";
+            SharedContext.Current.RequestModule(ModuleIds.Batch);
+        }
     }
 
     private void CopyToClipboard(string? text)

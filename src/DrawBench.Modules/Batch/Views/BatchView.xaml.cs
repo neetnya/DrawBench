@@ -744,6 +744,18 @@ public partial class BatchView : UserControl
     /// <summary>正向队列当前内容（供自检核对投递结果）。</summary>
     public string PromptQueueText => TxtPromptQueue.Text;
 
+    /// <summary>外部（其他模块）送来的提示词覆盖正向队列（先清空再写入）。</summary>
+    public void SetPositive(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        var lines = ParsePromptLines(text).ToList();
+        TxtPromptQueue.Text = string.Join(Environment.NewLine, lines);
+        TxtPromptQueue.CaretIndex = TxtPromptQueue.Text.Length;
+        TxtPromptQueue.ScrollToEnd();
+        SetStatus("已清空原队列并填入外部提示词。");
+    }
+
     /// <summary>外部（其他模块）送来的提示词追加到正向队列。</summary>
     public void AppendPositive(string text)
     {
@@ -764,7 +776,21 @@ public partial class BatchView : UserControl
     {
         if (string.IsNullOrWhiteSpace(text)) return;
         TxtNegativePrompt.Text = text.Trim();
+        TxtNegativePrompt.CaretIndex = TxtNegativePrompt.Text.Length;
+        TxtNegativePrompt.ScrollToEnd();
         SetStatus("已填入负向提示词。");
+    }
+
+    /// <summary>外部送来的负向提示词追加到负向框末尾。</summary>
+    public void AppendNegative(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+        var existing = TxtNegativePrompt.Text.TrimEnd();
+        var addition = text.Trim();
+        TxtNegativePrompt.Text = existing.Length == 0 ? addition : existing + Environment.NewLine + addition;
+        TxtNegativePrompt.CaretIndex = TxtNegativePrompt.Text.Length;
+        TxtNegativePrompt.ScrollToEnd();
+        SetStatus("已追加负向提示词。");
     }
 
     private static IEnumerable<string> ParsePromptLines(string text)

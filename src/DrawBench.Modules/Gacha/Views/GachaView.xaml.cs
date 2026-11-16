@@ -17,7 +17,7 @@ namespace DrawBench.Modules.Gacha.Views;
 /// <summary>
 /// 抽卡模块：调 engine\anima_cli.py 抽角色特征与装扮。
 /// 与旧版的区别：Python 探测走统一 PythonLocator、引擎目录走 AppPaths.EngineDir、
-/// 结果多两个「发送到队列」入口。
+/// 结果支持「发送到」与「追加到」批量提交队列。
 /// </summary>
 public partial class GachaView : UserControl
 {
@@ -274,11 +274,9 @@ public partial class GachaView : UserControl
         }
     }
 
-    /// <summary>把当前结果直接送进批量提交模块的队列。</summary>
+    /// <summary>清空批量提交队列，把当前结果送进去并跳转到批量提交页。</summary>
     private void OnSendToBatch(object sender, RoutedEventArgs e)
     {
-        SharedContext.Current.RequestModule(ModuleIds.Batch);
-
         string text = TxtResult.Text ?? "";
         if (text.Trim().Length == 0)
         {
@@ -287,7 +285,28 @@ public partial class GachaView : UserControl
         }
 
         if (AiBridge.SendToBatchQueue(text, "抽卡"))
+        {
             TxtStatus.Text = "已发送到批量提交队列";
+            SharedContext.Current.RequestModule(ModuleIds.Batch);
+        }
+        else
+        {
+            UiHost.Warn("批量提交模块没有接收这段文本。");
+        }
+    }
+
+    /// <summary>把当前结果追加到批量提交队列末尾，不清空也不跳转。</summary>
+    private void OnAppendToBatch(object sender, RoutedEventArgs e)
+    {
+        string text = TxtResult.Text ?? "";
+        if (text.Trim().Length == 0)
+        {
+            UiHost.Info("还没有抽卡结果可以追加。");
+            return;
+        }
+
+        if (AiBridge.AppendToBatchQueue(text, "抽卡"))
+            TxtStatus.Text = "已追加到批量提交队列";
         else
             UiHost.Warn("批量提交模块没有接收这段文本。");
     }

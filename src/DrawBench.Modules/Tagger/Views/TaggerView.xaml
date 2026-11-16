@@ -191,11 +191,16 @@
                                         Command="{Binding CopyTagsCommand}"
                                         Style="{StaticResource SecondaryButton}"
                                         MinHeight="28" Padding="12,4" />
-                                <Button Content="发送到队列"
+                                <Button Content="发送到"
                                         Command="{Binding SendTagsToBatchCommand}"
                                         Style="{StaticResource SecondaryButton}"
                                         MinHeight="28" Padding="12,4" Margin="6,0,0,0"
-                                        ToolTip="把这段标签送进「批量提交」模块的正向提示词队列" />
+                                        ToolTip="清空「批量提交」的正向队列，填入这段标签并跳转过去" />
+                                <Button Content="追加到"
+                                        Command="{Binding AppendTagsToBatchCommand}"
+                                        Style="{StaticResource SecondaryButton}"
+                                        MinHeight="28" Padding="12,4" Margin="6,0,0,0"
+                                        ToolTip="把这段标签追加到「批量提交」的正向队列末尾，不清空且不跳转" />
                             </StackPanel>
                         </DockPanel>
                     </GroupBox.Header>
@@ -257,7 +262,7 @@
 
                     <GroupBox Header="复制格式" Padding="14,12" Margin="0,0,0,10">
                         <StackPanel>
-                            <TextBlock Text="只影响「复制标签」与「发送到队列」得到的文本，不影响存档结果。"
+                            <TextBlock Text="只影响「复制标签」与「发送到 / 追加到」得到的文本，不影响存档结果。"
                                        Style="{StaticResource SubText}" FontSize="11" Margin="0,0,0,8"
                                        TextWrapping="Wrap" />
                             <CheckBox Content="下划线转空格" IsChecked="{Binding ReplaceUnderscore}" />

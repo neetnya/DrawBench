@@ -57,6 +57,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ClearDataCommand = new RelayCommand(ClearData, () => IsIdle);
         CopyTagsCommand = new RelayCommand(CopyTags, () => SelectedItem != null && !string.IsNullOrWhiteSpace(SelectedTagsText));
         SendTagsToBatchCommand = new RelayCommand(SendTagsToBatch, () => SelectedItem != null && !string.IsNullOrWhiteSpace(SelectedTagsText));
+        AppendTagsToBatchCommand = new RelayCommand(AppendTagsToBatch, () => SelectedItem != null && !string.IsNullOrWhiteSpace(SelectedTagsText));
     }
 
     public string ModelsPath => _paths.ModelsDir;
@@ -74,6 +75,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public RelayCommand ClearDataCommand { get; }
     public RelayCommand CopyTagsCommand { get; }
     public RelayCommand SendTagsToBatchCommand { get; }
+    public RelayCommand AppendTagsToBatchCommand { get; }
 
     /// <summary>无头自检模式（不弹对话框）。</summary>
     public bool Headless { get; set; }
@@ -761,22 +763,35 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    /// <summary>把当前选中的标签送进批量提交模块的正向提示词队列（内容与「复制标签」一致）。</summary>
+    /// <summary>清空批量提交模块的正向队列，把当前选中的标签送进去并跳转。</summary>
     private void SendTagsToBatch()
     {
-        // 点按钮就切到批量提交页，没标签也跳过去
-        SharedContext.Current.RequestModule(ModuleIds.Batch);
-
         if (string.IsNullOrWhiteSpace(SelectedTagsText)) return;
 
         if (AiBridge.SendToBatchQueue(SelectedTagsText, "反推标签"))
         {
             StatusText = "标签已发送到批量提交队列";
+            SharedContext.Current.RequestModule(ModuleIds.Batch);
             return;
         }
 
         StatusText = "批量提交模块没有接收这段标签";
-        UiHost.Warn("标签没能送进队列。\n请先打开一次「批量提交」页，再回来重试。", "发送失败");
+        UiHost.Warn("标签没能送进队列。", "发送失败");
+    }
+
+    /// <summary>把当前选中的标签追加到批量提交模块的正向队列末尾，不清空且不跳转。</summary>
+    private void AppendTagsToBatch()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedTagsText)) return;
+
+        if (AiBridge.AppendToBatchQueue(SelectedTagsText, "反推标签"))
+        {
+            StatusText = "标签已追加到批量提交队列";
+            return;
+        }
+
+        StatusText = "批量提交模块没有接收这段标签";
+        UiHost.Warn("标签没能追加进队列。", "追加失败");
     }
 
     private void ApplyUpdate(ItemUpdate u)
@@ -811,7 +826,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                  {
                      OpenFolderCommand, AddFilesCommand, StartCommand, StartSelectedCommand,
                      PauseCommand, StopCommand, ClearCommand, RemoveSelectedCommand, ClearDataCommand,
-                     CopyTagsCommand, SendTagsToBatchCommand
+                     CopyTagsCommand, SendTagsToBatchCommand, AppendTagsToBatchCommand
                  })
         {
             switch (cmd)

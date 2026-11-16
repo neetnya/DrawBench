@@ -159,10 +159,14 @@
                             <Button DockPanel.Dock="Right" x:Name="BtnCopy" Content="复制"
                                     Style="{StaticResource SecondaryButton}"
                                     MinHeight="28" Padding="12,4" Click="OnCopy" />
-                            <Button DockPanel.Dock="Right" x:Name="BtnSendToBatch" Content="发送到队列"
+                            <Button DockPanel.Dock="Right" x:Name="BtnAppendToBatch" Content="追加到"
+                                    Style="{StaticResource SecondaryButton}"
+                                    MinHeight="28" Padding="12,4" Margin="0,0,6,0" Click="OnAppendToBatch"
+                                    ToolTip="把结果追加到「批量提交」的正向提示词队列末尾，不清空且不跳转" />
+                            <Button DockPanel.Dock="Right" x:Name="BtnSendToBatch" Content="发送到"
                                     Style="{StaticResource SecondaryButton}"
                                     MinHeight="28" Padding="12,4" Margin="0,0,6,0" Click="OnSendToBatch"
-                                    ToolTip="把结果直接送进「批量提交」模块的正向提示词队列" />
+                                    ToolTip="清空「批量提交」的正向提示词队列，填入当前结果并跳转过去" />
                             <Button DockPanel.Dock="Right" x:Name="BtnSave" Content="保存…"
                                     Style="{StaticResource SecondaryButton}"
                                     MinHeight="28" Padding="12,4" Margin="0,0,6,0" Click="OnSave" />

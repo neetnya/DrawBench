@@ -179,7 +179,7 @@ public partial class MainWindow : Window
         if (button != null) button.IsChecked = true;
     }
 
-    /// <summary>模块点「发送到队列」后请求切到目标页，统一在这里处理线程与存在性。</summary>
+    /// <summary>模块点「发送到」后请求切到目标页，统一在这里处理线程与存在性。</summary>
     private void OnModuleNavigationRequested(string moduleId)
     {
         if (Dispatcher.CheckAccess()) NavigateTo(moduleId);
@@ -188,50 +188,6 @@ public partial class MainWindow : Window
 
     /// <summary>打开全局设置页。</summary>
     public void NavigateToSettings() => BtnSettings.IsChecked = true;
-
-    /// <summary>把一段文本投递给目标模块，并切到它那里。</summary>
-    public bool SendText(string moduleId, string text, string source)
-    {
-        if (!_modules.TryGetValue(moduleId, out var module)) return false;
-
-        // 目标模块还没创建时先创建，否则投递会落在空处
-        if (!_views.ContainsKey(moduleId))
-        {
-            var button = _navButtons.FirstOrDefault(b => string.Equals((string)b.Tag, moduleId, StringComparison.OrdinalIgnoreCase));
-            if (button == null) return false;
-            var previous = _activeModuleId;
-            button.IsChecked = true;
-            if (previous != null) NavigateBackAfterCreate(previous);
-        }
-
-        if (!_views.TryGetValue(moduleId, out var view)) return false;
-        if (view is not ITextReceiver receiver) return false;
-
-        try
-        {
-            bool ok = receiver.ReceiveText(text, source);
-            if (ok) SetStatus($"{source} → {module.Title}");
-            return ok;
-        }
-        catch (Exception ex)
-        {
-            AppLog.Error($"投递文本到「{module.Title}」失败", ex);
-            return false;
-        }
-    }
-
-    private void NavigateBackAfterCreate(string previousId)
-    {
-        // 创建过程中会触发模块自身的初始化，这里只在目标模块不接收文本时把用户切回原处
-        var target = _activeModuleId;
-        if (target == null) return;
-
-        var view = _views.TryGetValue(target, out var v) ? v : null;
-        if (view is ITextReceiver) return;
-
-        var button = _navButtons.FirstOrDefault(b => string.Equals((string)b.Tag, previousId, StringComparison.OrdinalIgnoreCase));
-        if (button != null) button.IsChecked = true;
-    }
 
     public void SetStatus(string message)
     {

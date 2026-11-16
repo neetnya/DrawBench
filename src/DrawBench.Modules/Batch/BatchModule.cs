@@ -8,16 +8,18 @@ namespace DrawBench.Modules.Batch;
 
 /// <summary>
 /// 批量提交模块：把提示词队列依次写进 api\ 下的 API 格式工作流并送进 ComfyUI 队列。
-/// 同时接收其他模块投递过来的提示词（抽卡结果、读到的提示词、反推标签都能直接填进来）。
+/// 同时接收其他模块投递过来的提示词（支持覆盖发送与末尾追加）。
 /// </summary>
 public sealed class BatchModule : IToolModule, ITextReceiver
 {
     private readonly SettingsStore _store = SettingsStore.Shared;
+    private readonly List<(string Text, string Source)> _pending = new();
     private BatchView? _view;
 
-    /// <summary>外壳创建模块时可能还没有视图，先暂存的文本。</summary>
-    private string? _pendingPositive;
-    private string? _pendingNegative;
+    public BatchModule()
+    {
+        SharedContext.Current.RegisterSink(ModuleIds.Batch, ReceiveTextInternal);
+    }
 
     public string Id => ModuleIds.Batch;
     public string Title => "批量提交";
@@ -29,33 +31,30 @@ public sealed class BatchModule : IToolModule, ITextReceiver
         if (_view != null) return _view;
 
         _view = new BatchView(_store);
-        _view.Loaded += (_, _) => FlushPending();
         SharedContext.Current.RegisterSink(ModuleIds.Batch, ReceiveTextInternal);
+        FlushPending();
 
         return _view;
     }
 
     /// <summary>
-    /// 接收投递：以 "negative:" 开头的是负向提示词，其余按正向处理。
-    /// 视图还没建好时先存起来，建好后自动补上。
+    /// 接收投递：
+    /// - "replace:" 开头：清空正向队列并写入
+    /// - "append:" 开头：追加到正向队列末尾
+    /// - "negative:" 开头：替换负向提示词
+    /// - "negative-append:" 开头：追加到负向提示词末尾
     /// </summary>
     public bool ReceiveText(string text, string source)
     {
         if (string.IsNullOrWhiteSpace(text)) return false;
 
-        bool negative = text.StartsWith("negative:", StringComparison.Ordinal);
-        string payload = negative ? text["negative:".Length..] : text;
-
         if (_view == null)
         {
-            if (negative) _pendingNegative = payload;
-            else _pendingPositive = payload;
+            _pending.Add((text, source));
             return true;
         }
 
-        if (negative) _view.SetNegative(payload);
-        else _view.AppendPositive(payload);
-
+        ApplyToView(_view, text);
         return true;
     }
 
@@ -63,18 +62,35 @@ public sealed class BatchModule : IToolModule, ITextReceiver
 
     private void FlushPending()
     {
-        if (_view == null) return;
+        if (_view == null || _pending.Count == 0) return;
 
-        if (_pendingPositive != null)
+        foreach (var item in _pending)
+            ApplyToView(_view, item.Text);
+
+        _pending.Clear();
+    }
+
+    private static void ApplyToView(BatchView view, string text)
+    {
+        if (text.StartsWith("negative-append:", StringComparison.Ordinal))
         {
-            _view.AppendPositive(_pendingPositive);
-            _pendingPositive = null;
+            view.AppendNegative(text["negative-append:".Length..]);
         }
-
-        if (_pendingNegative != null)
+        else if (text.StartsWith("negative:", StringComparison.Ordinal))
         {
-            _view.SetNegative(_pendingNegative);
-            _pendingNegative = null;
+            view.SetNegative(text["negative:".Length..]);
+        }
+        else if (text.StartsWith("append:", StringComparison.Ordinal))
+        {
+            view.AppendPositive(text["append:".Length..]);
+        }
+        else if (text.StartsWith("replace:", StringComparison.Ordinal))
+        {
+            view.SetPositive(text["replace:".Length..]);
+        }
+        else
+        {
+            view.SetPositive(text);
         }
     }
 }

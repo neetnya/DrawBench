@@ -217,9 +217,12 @@
                                 <TextBlock DockPanel.Dock="Left" Text="正向提示词" VerticalAlignment="Center" />
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                                     <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyPositive_Click" />
-                                    <Button Content="发送到队列" Style="{StaticResource SmallButton}"
+                                    <Button Content="发送到" Style="{StaticResource SmallButton}"
                                             Click="SendPositiveToBatch_Click"
-                                            ToolTip="把这段提示词送进「批量提交」模块的队列" />
+                                            ToolTip="清空「批量提交」的正向队列，填入这段提示词并跳转过去" />
+                                    <Button Content="追加到" Style="{StaticResource SmallButton}"
+                                            Click="AppendPositiveToBatch_Click"
+                                            ToolTip="把这段提示词追加到「批量提交」的正向队列末尾，不清空且不跳转" />
                                 </StackPanel>
                             </DockPanel>
                         </GroupBox.Header>
@@ -234,9 +237,12 @@
                                 <TextBlock DockPanel.Dock="Left" Text="负向提示词" VerticalAlignment="Center" />
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                                     <Button Content="复制" Style="{StaticResource SmallButton}" Click="CopyNegative_Click" />
-                                    <Button Content="发送到队列" Style="{StaticResource SmallButton}"
+                                    <Button Content="发送到" Style="{StaticResource SmallButton}"
                                             Click="SendNegativeToBatch_Click"
-                                            ToolTip="送进「批量提交」模块的负向提示词框" />
+                                            ToolTip="替换「批量提交」模块的负向提示词并跳转过去" />
+                                    <Button Content="追加到" Style="{StaticResource SmallButton}"
+                                            Click="AppendNegativeToBatch_Click"
+                                            ToolTip="追加到「批量提交」模块的负向提示词末尾，不清空且不跳转" />
                                 </StackPanel>
                             </DockPanel>
                         </GroupBox.Header>
