@@ -65,7 +65,7 @@ public partial class BatchView : UserControl
         TxtCount.Text = "1";
         TxtDate.Text = DateTime.Now.ToString("yyMMdd");
         TxtSeed.Text = "-1";
-        ChkLockSeed.IsChecked = false;
+        ChkLockSeed.IsChecked = true;
         ChkGlobalLockSeed.IsChecked = false;
 
         UpdateSeedControls();

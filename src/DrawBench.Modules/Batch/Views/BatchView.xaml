@@ -211,6 +211,7 @@
 
                             <CheckBox x:Name="ChkLockSeed" Grid.Row="3" Grid.ColumnSpan="2"
                                       Margin="0,2,0,0" VerticalAlignment="Center"
+                                      IsChecked="True"
                                       Content="🔒 锁定 seed"
                                       ToolTip="勾选后：同一条提示词提交到所有工作流时使用同一个 seed，方便对比不同工作流；不同提示词之间仍然各自随机。填了固定种子时以固定种子为准。"/>
 
