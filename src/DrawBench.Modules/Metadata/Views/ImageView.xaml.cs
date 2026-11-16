@@ -35,7 +35,13 @@ public partial class ImageView : UserControl
 
         try
         {
-            string? folder = FindImageFolder(Environment.CurrentDirectory);
+            var settings = SettingsStore.Shared.Get<MetadataSettings>(ModuleIds.Metadata);
+            if (settings != null)
+                _vm.IncludeSubFolders = settings.IncludeSubFolders;
+
+            string? folder = settings?.LastFolder;
+            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
+                folder = FindImageFolder(Environment.CurrentDirectory);
 
             if (!string.IsNullOrEmpty(folder))
             {
@@ -46,6 +52,22 @@ public partial class ImageView : UserControl
         catch (Exception ex)
         {
             UiHost.Warn("初始化失败：" + ex.Message);
+        }
+    }
+
+    public void SaveSettings()
+    {
+        try
+        {
+            SettingsStore.Shared.Set(ModuleIds.Metadata, new MetadataSettings
+            {
+                LastFolder = string.IsNullOrWhiteSpace(_vm.FolderPath) ? null : _vm.FolderPath.Trim(),
+                IncludeSubFolders = _vm.IncludeSubFolders
+            });
+        }
+        catch
+        {
+            // 保存失败不阻塞
         }
     }
 
@@ -84,6 +106,7 @@ public partial class ImageView : UserControl
         try
         {
             _vm.FolderPath = dialog.FolderName;
+            SaveSettings();
             await _vm.LoadFolderAsync(dialog.FolderName);
         }
         catch (Exception ex)
@@ -96,6 +119,7 @@ public partial class ImageView : UserControl
     {
         try
         {
+            SaveSettings();
             await _vm.LoadFolderAsync(_vm.FolderPath);
         }
         catch (Exception ex)
@@ -303,6 +327,7 @@ public partial class ImageView : UserControl
             if (!Directory.Exists(target)) return;
 
             _vm.FolderPath = target;
+            SaveSettings();
             await _vm.LoadFolderAsync(target);
         }
         catch (Exception ex)

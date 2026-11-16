@@ -4,8 +4,15 @@ using DrawBench.Modules.Metadata.Views;
 
 namespace DrawBench.Modules.Metadata;
 
+/// <summary>参数读取模块设置，保存在统一 settings.json 的 "metadata" 段。</summary>
+public sealed class MetadataSettings
+{
+    public string? LastFolder { get; set; }
+    public bool IncludeSubFolders { get; set; } = true;
+}
+
 /// <summary>参数读取模块：读 ComfyUI / WebUI / NovelAI 图片里的提示词与生成参数。</summary>
-public sealed class MetadataModule : IToolModule
+public sealed class MetadataModule : IToolModule, IActivatableModule
 {
     private ImageView? _view;
 
@@ -15,4 +22,8 @@ public sealed class MetadataModule : IToolModule
     public string Glyph => "\uE8B7";   // Photo
 
     public System.Windows.FrameworkElement CreateView() => _view ??= new ImageView();
+
+    public void OnActivated() { }
+
+    public void OnDeactivated() => _view?.SaveSettings();
 }
