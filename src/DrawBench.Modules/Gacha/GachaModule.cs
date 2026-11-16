@@ -4,7 +4,7 @@ using DrawBench.Core;
 namespace DrawBench.Modules.Gacha;
 
 /// <summary>抽卡模块：抽「女性外观特征」和「服装/姿势/表情/场景」，拼成可直接出图的提示词。</summary>
-public sealed class GachaModule : IToolModule
+public sealed class GachaModule : IToolModule, IActivatableModule
 {
     private Views.GachaView? _view;
 
@@ -14,4 +14,8 @@ public sealed class GachaModule : IToolModule
     public string Glyph => "\uE8EC";   // Game
 
     public System.Windows.FrameworkElement CreateView() => _view ??= new Views.GachaView();
+
+    public void OnActivated() { }
+
+    public void OnDeactivated() => _view?.SaveSettings();
 }

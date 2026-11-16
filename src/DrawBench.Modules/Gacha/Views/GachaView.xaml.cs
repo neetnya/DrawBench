@@ -28,10 +28,60 @@ public partial class GachaView : UserControl
     {
         InitializeComponent();
 
+        var saved = SettingsStore.Shared.Get<AnimaOptions>(ModuleIds.Gacha);
+        if (saved != null) ApplyOptions(saved);
+
         _engineDir = AppPaths.Current.EngineDir;
         if (!File.Exists(Path.Combine(_engineDir, "anima_cli.py")))
         {
             AppendLog("找不到引擎：未在程序目录的 engine\\ 下发现 anima_cli.py（" + _engineDir + "）");
+        }
+    }
+
+    public void SaveSettings()
+    {
+        try
+        {
+            SettingsStore.Shared.Set(ModuleIds.Gacha, CollectOptions());
+        }
+        catch
+        {
+            // 保存失败不阻塞
+        }
+    }
+
+    private void ApplyOptions(AnimaOptions o)
+    {
+        SelectComboItem(CmbLevel, o.Level);
+        TxtRepeat.Text = Math.Clamp(o.Repeat, 1, 99).ToString();
+        SelectComboItem(CmbPool, o.Pool);
+        SelectComboItem(CmbRelation, o.Relation);
+        SelectComboItem(CmbCount, Math.Clamp(o.Count, 1, 3).ToString());
+        ChkHuge.IsChecked = o.HugeBreasts;
+        ChkNoAvoid.IsChecked = o.NoAvoidRepeat;
+        ChkNoOutfit.IsChecked = o.NoOutfit;
+        ChkNoPose.IsChecked = o.NoPose;
+        ChkNoExpr.IsChecked = o.NoExpression;
+        ChkNoScene.IsChecked = o.NoScene;
+        ChkAllowPublic.IsChecked = o.AllowPublic;
+    }
+
+    private static void SelectComboItem(ComboBox cmb, string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return;
+        for (int i = 0; i < cmb.Items.Count; i++)
+        {
+            if (cmb.Items[i] is ComboBoxItem item)
+            {
+                string? tag = item.Tag as string;
+                string? content = Convert.ToString(item.Content);
+                if (string.Equals(tag, value, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(content, value, StringComparison.OrdinalIgnoreCase))
+                {
+                    cmb.SelectedIndex = i;
+                    return;
+                }
+            }
         }
     }
 
@@ -126,6 +176,7 @@ public partial class GachaView : UserControl
     /// <summary>清空日志 → 跑一次抽卡流程 → 把结果摊到界面上。</summary>
     private async Task DrawAsync(Func<CancellationToken, Task<RunOutcome>> body)
     {
+        SaveSettings();
         if (!File.Exists(Path.Combine(_engineDir, "anima_cli.py")))
         {
             UiHost.Warn("软件目录下没有 anima_cli.py，引擎不完整。\n期望位置：" +

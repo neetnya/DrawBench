@@ -16,22 +16,22 @@ namespace DrawBench.Modules.Gacha;
 public sealed class AnimaOptions
 {
     // girl
-    public string Pool = "热门 TOP200";
-    public int Count = 1;
-    public string Relation = "auto";
-    public bool HugeBreasts;
-    public bool NoAvoidRepeat;
+    public string Pool { get; set; } = "热门 TOP200";
+    public int Count { get; set; } = 1;
+    public string Relation { get; set; } = "auto";
+    public bool HugeBreasts { get; set; }
+    public bool NoAvoidRepeat { get; set; }
 
     // roll
-    public bool NoOutfit;
-    public bool NoPose;
-    public bool NoExpression;
-    public bool NoScene;
-    public bool AllowPublic;
+    public bool NoOutfit { get; set; }
+    public bool NoPose { get; set; }
+    public bool NoExpression { get; set; }
+    public bool NoScene { get; set; }
+    public bool AllowPublic { get; set; }
 
     // 通用
-    public string Level = "suggestive";
-    public int Repeat = 1;
+    public string Level { get; set; } = "any";
+    public int Repeat { get; set; } = 1;
 
     public AnimaOptions Clone() => (AnimaOptions)MemberwiseClone();
 
