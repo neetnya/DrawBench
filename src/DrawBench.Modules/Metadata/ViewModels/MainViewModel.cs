@@ -54,7 +54,7 @@ public sealed class MainViewModel : ObservableObject
         }
     }
 
-    private string _statusText = "选一个放着 AI 图片的文件夹，鱼鱼帮你把 Tag 全捞出来～";
+    private string _statusText = "选择或拖入图片文件夹以读取生成参数";
     public string StatusText
     {
         get => _statusText;
@@ -168,7 +168,7 @@ public sealed class MainViewModel : ObservableObject
     {
         if (Images.Count == 0)
         {
-            StatusText = "选一个放着 AI 图片的文件夹，鱼鱼帮你把 Tag 全捞出来～";
+            StatusText = "选择或拖入图片文件夹以读取生成参数";
             return;
         }
 

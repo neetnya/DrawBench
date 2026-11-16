@@ -129,7 +129,7 @@ public partial class ImageView : UserControl
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            UiHost.Info(append ? "这里还没有内容可以追加呢～" : "这里还没有内容可以发送呢～");
+            UiHost.Info(append ? "还没有可追加的内容。" : "还没有可发送的内容。");
             return;
         }
 
@@ -162,14 +162,14 @@ public partial class ImageView : UserControl
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            UiHost.Info("这里还没有内容可以复制呢～");
+            UiHost.Info("还没有可复制的内容。");
             return;
         }
 
         try
         {
             Clipboard.SetText(text);
-            _vm.StatusText = "已经复制到剪贴板啦～";
+            _vm.StatusText = "已复制到剪贴板";
         }
         catch (Exception ex)
         {
@@ -198,7 +198,7 @@ public partial class ImageView : UserControl
         var values = rows.Where(kv => kv.Value.Length > 0).Select(kv => kv.Value).ToList();
         if (values.Count == 0)
         {
-            UiHost.Info("这里还没有内容可以复制呢～");
+            UiHost.Info("还没有可复制的内容。");
             return;
         }
 
