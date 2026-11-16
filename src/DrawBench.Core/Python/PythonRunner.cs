@@ -127,30 +127,4 @@ public static class PythonRunner
         }
     }
 
-    /// <summary>把脚本从软件目录 / 源码目录里找出来：先看约定目录，再向上回溯几层。</summary>
-    public static string ResolveScript(string fileName, string preferredDir)
-    {
-        try
-        {
-            string direct = Path.Combine(preferredDir, fileName);
-            if (File.Exists(direct)) return direct;
-
-            string current = Path.Combine(Environment.CurrentDirectory, fileName);
-            if (File.Exists(current)) return current;
-
-            var info = new DirectoryInfo(preferredDir);
-            for (int i = 0; i < 6 && info != null; i++)
-            {
-                string candidate = Path.Combine(info.FullName, fileName);
-                if (File.Exists(candidate)) return candidate;
-                info = info.Parent;
-            }
-
-            return direct;
-        }
-        catch
-        {
-            return Path.Combine(preferredDir, fileName);
-        }
-    }
 }

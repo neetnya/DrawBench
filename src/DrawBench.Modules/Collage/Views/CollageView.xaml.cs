@@ -233,7 +233,7 @@ public partial class CollageView : UserControl
         if (!TryGetInt(TxtGap.Text, 0, 200, "间距", out int gap)) return;
         if (!TryGetInt(TxtQuality.Text, 1, 100, "画质", out int quality)) return;
 
-        string scriptPath = PythonRunner.ResolveScript("gen_sheets_cli.py", AppPaths.Current.ScriptsDir);
+        string scriptPath = AppPaths.Current.ScriptPath("gen_sheets_cli.py");
         if (!File.Exists(scriptPath))
         {
             UiHost.Error($"找不到拼图脚本：\n{scriptPath}\n\n发布包里应在程序目录的 scripts\\ 下。", "缺少文件");
