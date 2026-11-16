@@ -13,6 +13,9 @@
     <NeutralLanguage>zh-Hans</NeutralLanguage>
     <!-- 各工具原有的 CS 注释里有不少历史说明，保持可见 -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- 编译与发布均不生成 .pdb 调试符号文件 -->
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <!-- 三个工程统一输出到同一个目录：exe + dll 放一起，Python 脚本与模型目录也在这里 -->
