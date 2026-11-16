@@ -65,7 +65,7 @@ public partial class SettingsView : UserControl
         TxtPythonHint.Text = python.Found
             ? "已找到：" + python.Describe()
             : "未找到 Python。抽卡与拼图功能需要 Python 3.8+，装好并把 python.exe 加进 PATH，或在上面的框里指定路径。";
-        TxtPythonHint.Foreground = (System.Windows.Media.Brush)FindResource(python.Found ? "SubTextBrush" : "DangerBrush");
+        TxtPythonHint.Foreground = (System.Windows.Media.Brush)FindResource(python.Found ? "Muted" : "Danger");
     }
 
     // ==================== 目录 ====================

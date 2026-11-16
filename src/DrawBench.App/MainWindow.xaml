@@ -18,7 +18,7 @@
 
         <!-- ==================== 左侧竖排导航 ==================== -->
         <Border Grid.Column="0" Background="{StaticResource SidebarBrush}"
-                BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,1,0">
+                BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
             <DockPanel LastChildFill="True">
 
                 <!-- 标题 -->
@@ -29,7 +29,7 @@
 
                 <!-- 底部：设置 + 环境状态 + 版本 -->
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
-                    <Border Height="1" Background="{StaticResource LineBrush}" Margin="14,0,14,8" />
+                    <Border Height="1" Background="{StaticResource Line}" Margin="14,0,14,8" />
                     <RadioButton x:Name="BtnSettings" Style="{StaticResource NavButton}"
                                  GroupName="Nav" Checked="Settings_Checked" Margin="10,3">
                         <StackPanel Orientation="Horizontal">

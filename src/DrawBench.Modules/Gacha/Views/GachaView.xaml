@@ -180,7 +180,7 @@
                                  VerticalContentAlignment="Top" Padding="8,6" FontSize="13"
                                  Foreground="{StaticResource Ink}" />
                         <TextBlock IsHitTestVisible="False" Margin="16,15,16,0" VerticalAlignment="Top"
-                                   TextWrapping="Wrap" FontSize="12.5" Foreground="#AEB7C6"
+                                   TextWrapping="Wrap" FontSize="12.5" Foreground="{StaticResource Muted}"
                                    Text="点下面的按钮抽一次，抽中的提示词会显示在这里">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">

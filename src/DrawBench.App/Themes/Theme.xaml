@@ -5,8 +5,7 @@
         全局主题：外壳和五个模块共用同一套配色与控件样式，外观以「提示词抽卡」页为准。
         页面里只写布局，颜色、圆角、内边距一律从这里的键取，不再各页各调一套。
 
-        调色板键名沿用抽卡页的短名（Ink / Line / Card / Accent …），
-        后面一组 BgBrush / AccentBrush 之类的旧键指同一批颜色，兼容模块里尚未改到的引用。
+        调色板键名统一使用短名（Ink / Line / Card / Accent …）。
     -->
 
     <!-- ==================== 调色板 ==================== -->
@@ -37,20 +36,10 @@
     <!-- 输入框里放提示词的浅底 -->
     <SolidColorBrush x:Key="InputSoftBrush" Color="#FBFCFE" />
 
-    <!-- 旧键名：值与前一组相同，给还在用它们的模块兜底 -->
+    <!-- 界面背景、侧边栏与悬停底色 -->
     <SolidColorBrush x:Key="BgBrush" Color="#F3F6FB" />
-    <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="LineBrush" Color="#E3E8F1" />
-    <SolidColorBrush x:Key="TextBrush" Color="#232A3B" />
-    <SolidColorBrush x:Key="SubTextBrush" Color="#7C8798" />
     <SolidColorBrush x:Key="HoverBrush" Color="#F1F5FC" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#4F6BED" />
-    <SolidColorBrush x:Key="AccentHoverBrush" Color="#3F58D8" />
-    <SolidColorBrush x:Key="AccentSoftBrush" Color="#EEF1FF" />
-    <SolidColorBrush x:Key="DangerBrush" Color="#E1574C" />
-    <SolidColorBrush x:Key="OkBrush" Color="#1FA971" />
     <SolidColorBrush x:Key="SidebarBrush" Color="#FBFCFE" />
-    <SolidColorBrush x:Key="SoftBorderBrush" Color="#E3E8F1" />
 
     <FontFamily x:Key="AppFont">Microsoft YaHei UI, Segoe UI, Microsoft YaHei</FontFamily>
     <FontFamily x:Key="MonoFont">Consolas, Microsoft YaHei</FontFamily>
@@ -661,7 +650,7 @@
                                 <Thumb Width="14" Height="14">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
-                                            <Ellipse Fill="{StaticResource AccentBrush}" Stroke="White" StrokeThickness="2" />
+                                            <Ellipse Fill="{StaticResource Accent}" Stroke="White" StrokeThickness="2" />
                                         </ControlTemplate>
                                     </Thumb.Template>
                                 </Thumb>
@@ -676,7 +665,7 @@
     <!-- ==================== 进度条 ==================== -->
     <Style TargetType="ProgressBar">
         <Setter Property="Height" Value="6" />
-        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource Accent}" />
         <Setter Property="Background" Value="#E7ECF5" />
         <Setter Property="BorderThickness" Value="0" />
     </Style>
@@ -684,7 +673,7 @@
     <Style x:Key="SlimProgress" TargetType="ProgressBar">
         <Setter Property="Height" Value="6" />
         <Setter Property="Background" Value="#E7ECF5" />
-        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource Accent}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>

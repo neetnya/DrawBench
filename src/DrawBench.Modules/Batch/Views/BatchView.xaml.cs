@@ -847,13 +847,13 @@ public partial class BatchView : UserControl
     private void SetStatus(string msg)
     {
         TxtStatus.Text = msg;
-        TxtStatus.Foreground = Brushes.Gray;
+        TxtStatus.Foreground = (Brush)FindResource("Muted");
     }
 
     private void SetError(string msg)
     {
         TxtStatus.Text = msg;
-        TxtStatus.Foreground = Brushes.Firebrick;
+        TxtStatus.Foreground = (Brush)FindResource("Danger");
     }
 
     private void ShowSubmitted(int done, int failed, IReadOnlyList<long> batchSeeds, long? fixedSeed)

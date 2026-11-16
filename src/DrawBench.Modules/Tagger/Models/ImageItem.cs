@@ -71,13 +71,16 @@ public sealed class ImageItem : INotifyPropertyChanged
 
     public Brush StateBrush => State switch
     {
-        ItemState.Done => Brushes.SeaGreen,
-        ItemState.Running => Brushes.DodgerBlue,
-        ItemState.Failed => Brushes.IndianRed,
-        ItemState.Skipped => Brushes.Gray,
-        ItemState.Canceled => Brushes.Gray,
-        _ => Brushes.SlateGray
+        ItemState.Done => ThemeBrush("Ok", Brushes.SeaGreen),
+        ItemState.Running => ThemeBrush("Accent", Brushes.DodgerBlue),
+        ItemState.Failed => ThemeBrush("Danger", Brushes.IndianRed),
+        ItemState.Skipped => ThemeBrush("Muted", Brushes.Gray),
+        ItemState.Canceled => ThemeBrush("Muted", Brushes.Gray),
+        _ => ThemeBrush("InkSoft", Brushes.SlateGray)
     };
+
+    private static Brush ThemeBrush(string key, Brush fallback)
+        => System.Windows.Application.Current?.TryFindResource(key) as Brush ?? fallback;
 
     public string? Error
     {
