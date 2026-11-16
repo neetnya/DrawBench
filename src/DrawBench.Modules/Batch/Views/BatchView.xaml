@@ -113,11 +113,38 @@
                     <ColumnDefinition Width="330" />
                 </Grid.ColumnDefinitions>
 
-                <GroupBox Grid.Column="0" Header="正向提示词队列" Padding="0" Margin="0">
+                <GroupBox Grid.Column="0" Padding="0" Margin="0">
+                    <GroupBox.Header>
+                        <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="正向提示词队列" VerticalAlignment="Center" />
+                                <Border Background="{StaticResource AccentSoft}"
+                                        CornerRadius="9" Padding="7,1.5" Margin="8,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=TxtPromptCount}" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock x:Name="TxtPromptCount" FontSize="11"
+                                               Foreground="{StaticResource AccentDeep}" FontWeight="SemiBold" Text="" />
+                                </Border>
+                            </StackPanel>
+                            <Button DockPanel.Dock="Right" Content="清空"
+                                    Style="{StaticResource SmallButton}" Margin="0"
+                                    Click="BtnClearPositive_Click" />
+                        </DockPanel>
+                    </GroupBox.Header>
                     <TextBox x:Name="TxtPromptQueue"
                              Style="{StaticResource ConsoleBox}"
                              AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                              TextWrapping="Wrap" FontSize="13" Text="" AllowDrop="True"
+                             TextChanged="TxtPromptQueue_TextChanged"
                              PreviewDragOver="Prompt_PreviewDragOver"
                              PreviewDrop="Prompt_PreviewDrop"
                              ToolTip="每行一组提示词，会依次写入标题含 Positive 的正向提示词节点。"/>
@@ -130,7 +157,15 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <GroupBox Grid.Row="0" Header="负面提示词" Padding="0" Margin="0,0,0,10">
+                    <GroupBox Grid.Row="0" Padding="0" Margin="0,0,0,10">
+                        <GroupBox.Header>
+                            <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                                <TextBlock DockPanel.Dock="Left" Text="负面提示词" VerticalAlignment="Center" />
+                                <Button DockPanel.Dock="Right" Content="清空"
+                                        Style="{StaticResource SmallButton}" Margin="0"
+                                        Click="BtnClearNegative_Click" />
+                            </DockPanel>
+                        </GroupBox.Header>
                         <StackPanel>
                             <TextBox x:Name="TxtNegativePrompt"
                                      AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
@@ -159,7 +194,7 @@
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="每组生成数量"
                                        Style="{StaticResource FormLabel}" />
                             <TextBox x:Name="TxtCount" Grid.Row="0" Grid.Column="1" Text="1"
-                                     Margin="0,2,0,6" />
+                                     Margin="0,2,0,6" TextChanged="TxtCount_TextChanged" />
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="日期后缀"
                                        Style="{StaticResource FormLabel}" />

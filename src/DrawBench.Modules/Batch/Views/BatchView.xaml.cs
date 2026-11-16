@@ -169,11 +169,16 @@ public partial class BatchView : UserControl
     {
         // 列表重建过程中不要回写；列表为空时也不要把已保存的勾选状态清掉
         if (_suppressSelectionSave) return;
-        if (_workflows.Count == 0) return;
+        if (_workflows.Count == 0)
+        {
+            UpdateBatchPreview();
+            return;
+        }
 
         _settings.EnabledWorkflows = _workflows.Where(w => w.IsEnabled).Select(w => w.FileName).ToList();
         _settings.HasSavedSelection = true;
         _store.Set(ModuleIds.Batch, _settings);
+        UpdateBatchPreview();
     }
 
     private void BtnSelectAll_Click(object sender, RoutedEventArgs e) => SetAllWorkflowsEnabled(true);
@@ -222,6 +227,59 @@ public partial class BatchView : UserControl
     {
         UpdateSeedControls();
         Persist();
+    }
+
+    private void TxtCount_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (!_uiReady) return;
+        UpdateBatchPreview();
+    }
+
+    private void TxtPromptQueue_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (TxtPromptCount != null)
+        {
+            int count = ParsePromptLines(TxtPromptQueue.Text).Count();
+            TxtPromptCount.Text = count > 0 ? $"{count} 组" : string.Empty;
+        }
+        if (!_uiReady) return;
+        UpdateBatchPreview();
+    }
+
+    private void BtnClearPositive_Click(object sender, RoutedEventArgs e)
+    {
+        TxtPromptQueue.Clear();
+    }
+
+    private void BtnClearNegative_Click(object sender, RoutedEventArgs e)
+    {
+        TxtNegativePrompt.Clear();
+    }
+
+    private void UpdateBatchPreview()
+    {
+        if (TxtPromptQueue is null || TxtCount is null || TxtStatus is null) return;
+
+        int prompts = ParsePromptLines(TxtPromptQueue.Text).Count();
+        int workflows = _workflows.Count(w => w.IsEnabled);
+        int perCount = int.TryParse(TxtCount.Text.Trim(), out int n) && n > 0 ? n : 1;
+
+        if (prompts == 0)
+        {
+            SetStatus(_workflows.Count == 0
+                ? "就绪"
+                : $"就绪 · 已勾选 {workflows}/{_workflows.Count} 个工作流");
+            return;
+        }
+
+        if (workflows == 0)
+        {
+            SetStatus($"队列共 {prompts} 组提示词 · 请至少勾选 1 个工作流");
+            return;
+        }
+
+        long total = (long)prompts * workflows * perCount;
+        SetStatus($"预计生成：{prompts} 组提示词 × {workflows} 个工作流 × {perCount} 张 = 共 {total} 张");
     }
 
     /// <summary>填了固定 seed（-1 以外的整数）后，随机相关的两个勾选项都不再起作用，置灰避免误解。</summary>
