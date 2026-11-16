@@ -63,10 +63,42 @@
             <!-- 文件列表 -->
             <GroupBox Grid.Column="0" Header="图片列表" Padding="0" Margin="0">
                 <DockPanel LastChildFill="True">
-                    <Border DockPanel.Dock="Bottom" Padding="12,7"
+                    <Border DockPanel.Dock="Top" Padding="8,6"
+                            BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
+                        <Grid>
+                            <TextBox x:Name="TxtSearch"
+                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="按文件名、提示词、模型或采样器筛选" />
+                            <TextBlock Text="搜索文件名 / 提示词 / 模型…"
+                                       IsHitTestVisible="False" VerticalAlignment="Center"
+                                       Margin="10,0,8,0" FontSize="12" Foreground="{StaticResource Muted}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=TxtSearch}" Value="">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+
+                    <Border DockPanel.Dock="Bottom" Padding="10,6"
                             BorderBrush="{StaticResource LineSoft}" BorderThickness="0,1,0,0">
-                        <TextBlock Text="{Binding Images.Count, StringFormat='共 {0} 张'}"
-                                   Style="{StaticResource SubText}" FontSize="11.5" />
+                        <DockPanel LastChildFill="True">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="导出 CSV" Style="{StaticResource SmallButton}"
+                                        Click="ExportCsv_Click" ToolTip="将当前列表全部图片的参数导出为 CSV 表格" />
+                                <Button Content="导出 JSON" Style="{StaticResource SmallButton}" Margin="0"
+                                        Click="ExportJson_Click" ToolTip="将当前列表全部图片的参数导出为 JSON 文件" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding Images.Count, StringFormat='共 {0} 张'}"
+                                       VerticalAlignment="Center"
+                                       Style="{StaticResource SubText}" FontSize="11.5" />
+                        </DockPanel>
                     </Border>
 
                     <ListBox x:Name="FileList"

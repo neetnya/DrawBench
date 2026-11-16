@@ -205,6 +205,62 @@ public partial class ImageView : UserControl
         CopyToClipboard(string.Join(Environment.NewLine, values));
     }
 
+    // ---------------------------------------------------------------- 导出
+
+    private void ExportCsv_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_vm.HasImages)
+        {
+            UiHost.Info("当前列表没有可导出的图片。");
+            return;
+        }
+
+        var dlg = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "导出参数为 CSV",
+            Filter = "CSV 表格|*.csv|所有文件|*.*",
+            FileName = "metadata_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv"
+        };
+
+        if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
+
+        try
+        {
+            _vm.ExportCsv(dlg.FileName);
+        }
+        catch (Exception ex)
+        {
+            UiHost.Warn("导出 CSV 失败：" + ex.Message);
+        }
+    }
+
+    private void ExportJson_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_vm.HasImages)
+        {
+            UiHost.Info("当前列表没有可导出的图片。");
+            return;
+        }
+
+        var dlg = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "导出参数为 JSON",
+            Filter = "JSON 文件|*.json|所有文件|*.*",
+            FileName = "metadata_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".json"
+        };
+
+        if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
+
+        try
+        {
+            _vm.ExportJson(dlg.FileName);
+        }
+        catch (Exception ex)
+        {
+            UiHost.Warn("导出 JSON 失败：" + ex.Message);
+        }
+    }
+
     // ---------------------------------------------------------------- 其他交互
 
     private void FileList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
