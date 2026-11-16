@@ -177,6 +177,15 @@ public partial class CollageView : UserControl
         UpdateModelCount();
     }
 
+    private void ModelCheckBox_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (sender is DependencyObject d &&
+            ItemsControl.ContainerFromElement(LstModels, d) is ListBoxItem item)
+        {
+            item.IsSelected = true;
+        }
+    }
+
     private void BtnMoveUp_Click(object sender, RoutedEventArgs e) => MoveSelected(-1);
 
     private void BtnMoveDown_Click(object sender, RoutedEventArgs e) => MoveSelected(1);

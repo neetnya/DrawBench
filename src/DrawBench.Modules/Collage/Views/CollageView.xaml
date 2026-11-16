@@ -73,13 +73,22 @@
                         </StackPanel>
                     </Border>
 
-                    <ListBox x:Name="LstModels" Margin="6,6,6,4" SelectionMode="Extended">
+                    <ListBox x:Name="LstModels" Margin="6,6,6,4" SelectionMode="Single">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Content="{Binding Name}"
-                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                          Margin="0" Padding="6,4" HorizontalAlignment="Stretch"
-                                          ToolTip="{Binding Name}"/>
+                                <Grid Background="Transparent" ToolTip="{Binding Name}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0"
+                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              Margin="4,0,6,0" VerticalAlignment="Center"
+                                              PreviewMouseLeftButtonDown="ModelCheckBox_PreviewMouseLeftButtonDown" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}"
+                                               VerticalAlignment="Center" Padding="2,4"
+                                               TextTrimming="CharacterEllipsis" />
+                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
