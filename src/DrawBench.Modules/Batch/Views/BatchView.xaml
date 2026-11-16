@@ -36,6 +36,7 @@
                         <TextBlock Text="服务地址" Style="{StaticResource FieldLabel}"
                                    HorizontalAlignment="Left" Margin="0,0,0,4" />
                         <TextBox x:Name="TxtBaseUrl" Text="http://127.0.0.1:8188"
+                                 LostFocus="TxtBaseUrl_LostFocus"
                                  ToolTip="ComfyUI 服务地址，整个软件只有这里能改"/>
                     </StackPanel>
                 </GroupBox>

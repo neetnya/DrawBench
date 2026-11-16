@@ -75,6 +75,15 @@ public partial class BatchView : UserControl
     }
 
     /// <summary>把 ComfyUI 地址写回设置并落盘（勾选状态由 SaveSelection 维护）。</summary>
+    public void SaveSettings() => Persist();
+
+    private void TxtBaseUrl_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (!_uiReady) return;
+        TxtBaseUrl.Text = ComfyClient.Normalize(TxtBaseUrl.Text);
+        Persist();
+    }
+
     private void Persist()
     {
         if (!_uiReady) return;

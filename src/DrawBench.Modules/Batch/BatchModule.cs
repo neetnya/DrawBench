@@ -10,7 +10,7 @@ namespace DrawBench.Modules.Batch;
 /// 批量提交模块：把提示词队列依次写进 api\ 下的 API 格式工作流并送进 ComfyUI 队列。
 /// 同时接收其他模块投递过来的提示词（支持覆盖发送与末尾追加）。
 /// </summary>
-public sealed class BatchModule : IToolModule, ITextReceiver
+public sealed class BatchModule : IToolModule, IActivatableModule, ITextReceiver
 {
     private readonly SettingsStore _store = SettingsStore.Shared;
     private readonly List<(string Text, string Source)> _pending = new();
@@ -36,6 +36,10 @@ public sealed class BatchModule : IToolModule, ITextReceiver
 
         return _view;
     }
+
+    public void OnActivated() { }
+
+    public void OnDeactivated() => _view?.SaveSettings();
 
     /// <summary>
     /// 接收投递：

@@ -120,6 +120,12 @@ public partial class MainWindow : Window
 
     private void Settings_Checked(object sender, RoutedEventArgs e)
     {
+        if (_activeModuleId != null && _modules.TryGetValue(_activeModuleId, out var previous)
+            && previous is IActivatableModule previousActivatable)
+        {
+            try { previousActivatable.OnDeactivated(); } catch (Exception ex) { AppLog.Error("模块停用失败", ex); }
+        }
+
         _activeModuleId = null;
         ContentHost.Content = new Views.SettingsView(_store, _appSection, this);
         SetStatus("设置改动会立即生效。");
