@@ -35,10 +35,7 @@ public partial class ImageView : UserControl
 
         try
         {
-            // 优先用共享的「当前图片目录」——在别的模块里选过目录就直接读它
-            string? folder = SharedContext.Current.CurrentImageFolder;
-            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
-                folder = FindImageFolder(Environment.CurrentDirectory);
+            string? folder = FindImageFolder(Environment.CurrentDirectory);
 
             if (!string.IsNullOrEmpty(folder))
             {
@@ -87,7 +84,6 @@ public partial class ImageView : UserControl
         try
         {
             _vm.FolderPath = dialog.FolderName;
-            SharedContext.Current.CurrentImageFolder = dialog.FolderName;
             await _vm.LoadFolderAsync(dialog.FolderName);
         }
         catch (Exception ex)
@@ -228,7 +224,6 @@ public partial class ImageView : UserControl
             if (!Directory.Exists(target)) return;
 
             _vm.FolderPath = target;
-            SharedContext.Current.CurrentImageFolder = target;
             await _vm.LoadFolderAsync(target);
         }
         catch (Exception ex)

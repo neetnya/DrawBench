@@ -43,16 +43,9 @@ public partial class TaggerView : UserControl
 
     private MainViewModel Vm => (MainViewModel)DataContext;
 
-    private async void OnViewLoaded(object sender, RoutedEventArgs e)
+    private void OnViewLoaded(object sender, RoutedEventArgs e)
     {
         Loaded -= OnViewLoaded;
-
-        // 首次进入时如果别的模块已经选过图片目录，直接把那里的图加进队列
-        string folder = SharedContext.Current.CurrentImageFolder;
-        if (folder.Length > 0 && Directory.Exists(folder) && Vm.Items.Count == 0)
-        {
-            try { await Vm.AddPathAsync(folder); } catch (Exception ex) { AppLog.Error("添加目录失败", ex); }
-        }
 
         if (!_activationRescan)
         {

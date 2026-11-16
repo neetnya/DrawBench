@@ -49,11 +49,6 @@ public partial class CollageView : UserControl
         ApplySettings(_settings);
         AppendLog("[INFO] 就绪。参数会自动保存，下次启动沿用。");
 
-        // 优先用共享的当前图片目录
-        string shared = SharedContext.Current.CurrentImageFolder;
-        if (shared.Length > 0 && Directory.Exists(shared))
-            TxtBase.Text = shared;
-
         if (!string.IsNullOrWhiteSpace(TxtBase.Text) && Directory.Exists(TxtBase.Text.Trim()))
             RefreshModels();
     }
@@ -98,7 +93,6 @@ public partial class CollageView : UserControl
         TxtBase.ToolTip = path;
         _models.Clear();
         AppendLog($"[INFO] 已选择目录：{path}");
-        SharedContext.Current.CurrentImageFolder = path;
         RefreshModels();
     }
 
