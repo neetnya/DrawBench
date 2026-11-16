@@ -150,11 +150,16 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     }
 
     private string _selectedTagsText = "";
-    /// <summary>文本框内容 = 实际复制出去的内容（受复制格式选项影响）。</summary>
+    /// <summary>文本框内容 = 实际复制/发送出去的内容（支持用户直接在框内手动增删编辑）。</summary>
     public string SelectedTagsText
     {
         get => _selectedTagsText;
-        private set => Set(ref _selectedTagsText, value);
+        set
+        {
+            if (!Set(ref _selectedTagsText, value)) return;
+            if (_selectedItem != null) _selectedItem.Tags = value;
+            RefreshCommands();
+        }
     }
 
     private string _selectedRating = "";

@@ -209,7 +209,7 @@
                         </DockPanel>
                     </GroupBox.Header>
 
-                    <TextBox Text="{Binding SelectedTagsText, Mode=OneWay}" IsReadOnly="True"
+                    <TextBox Text="{Binding SelectedTagsText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource ConsoleBox}"
                              AcceptsReturn="True" TextWrapping="Wrap"
                              VerticalScrollBarVisibility="Auto" FontSize="13" />
