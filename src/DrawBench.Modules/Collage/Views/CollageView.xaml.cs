@@ -514,6 +514,16 @@ public partial class CollageView : UserControl
         ChkSkipSingle.IsChecked = settings.SkipSingle;
         ChkClean.IsChecked = settings.Clean;
         ChkOpenAfter.IsChecked = settings.OpenAfter;
+        UpdateQualityState();
+    }
+
+    private void CmbFormat_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        => UpdateQualityState();
+
+    private void UpdateQualityState()
+    {
+        if (TxtQuality == null || CmbFormat == null) return;
+        TxtQuality.IsEnabled = CmbFormat.SelectedIndex != 0;
     }
 
     private sealed class ModelInfo : INotifyPropertyChanged

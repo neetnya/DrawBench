@@ -133,6 +133,7 @@
 
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="输出格式" Style="{StaticResource FormLabel}"/>
                         <ComboBox x:Name="CmbFormat" Grid.Row="1" Grid.Column="3" SelectedIndex="0"
+                                  SelectionChanged="CmbFormat_SelectionChanged"
                                   Margin="0,2,0,8" VerticalContentAlignment="Center">
                             <ComboBoxItem Content="PNG"/>
                             <ComboBoxItem Content="JPG"/>
