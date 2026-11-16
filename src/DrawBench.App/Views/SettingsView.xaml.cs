@@ -10,13 +10,11 @@ public partial class SettingsView : UserControl
 {
     private readonly SettingsStore _store;
     private readonly AppSection _section;
-    private readonly MainWindow _shell;
 
-    public SettingsView(SettingsStore store, AppSection section, MainWindow shell)
+    public SettingsView(SettingsStore store, AppSection section)
     {
         _store = store;
         _section = section;
-        _shell = shell;
 
         InitializeComponent();
 
@@ -31,7 +29,6 @@ public partial class SettingsView : UserControl
     private void Save(AppSection section)
     {
         _store.Set("app", section);
-        _shell.UpdateStatusBar();
     }
 
     // ==================== Python ====================

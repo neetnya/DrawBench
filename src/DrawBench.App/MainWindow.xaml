@@ -27,7 +27,7 @@
                     <TextBlock Text="DrawBench" Style="{StaticResource SubText}" FontSize="11" Margin="0,1,0,0" />
                 </StackPanel>
 
-                <!-- 底部：设置 + 环境状态 + 版本 -->
+                <!-- 底部：设置 -->
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
                     <Border Height="1" Background="{StaticResource Line}" Margin="14,0,14,8" />
                     <RadioButton x:Name="BtnSettings" Style="{StaticResource NavButton}"
@@ -38,14 +38,6 @@
                             <TextBlock Text="设置" FontSize="14.5" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
-                    <StackPanel Margin="22,8,14,0">
-                        <TextBlock x:Name="TxtPython" Style="{StaticResource SubText}"
-                                   FontSize="11.5" TextTrimming="CharacterEllipsis" />
-                        <TextBlock x:Name="TxtComfy" Style="{StaticResource SubText}"
-                                   FontSize="11.5" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
-                        <TextBlock x:Name="TxtVersion" Style="{StaticResource SubText}"
-                                   FontSize="11" Margin="0,6,0,0" />
-                    </StackPanel>
                 </StackPanel>
 
                 <!-- 模块列表（代码里填充） -->

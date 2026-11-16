@@ -1,19 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DrawBench.Core;
 using DrawBench.Core.Logging;
-using DrawBench.Core.Python;
 using DrawBench.Core.Ui;
 
 namespace DrawBench.App;
 
 /// <summary>
-/// 外壳：左侧竖排导航（底部带设置与环境状态） + 右侧内容区。
+/// 外壳：左侧竖排导航 + 右侧内容区。
 /// 模块视图首次进入时创建，之后一直保留（切走不销毁，避免丢掉队列/日志）。
 /// </summary>
 public partial class MainWindow : Window
@@ -32,15 +30,6 @@ public partial class MainWindow : Window
         _appSection = appSection;
 
         InitializeComponent();
-
-        // 版本号只显示到语义化版本，后面那串 +commit 太长，放在侧栏会被截断
-        string version = Assembly.GetExecutingAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
-            ?? "1.0.0";
-        int plus = version.IndexOf('+');
-        if (plus > 0) version = version[..plus];
-        TxtVersion.Text = "v" + version;
 
         SharedContext.Current.ModuleNavigationRequested += OnModuleNavigationRequested;
 
@@ -94,8 +83,6 @@ public partial class MainWindow : Window
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        UpdateStatusBar();
-
         // 启动时停在导航里的第一个模块
         var target = _navButtons.FirstOrDefault()?.Tag as string;
         if (target != null)
@@ -125,8 +112,7 @@ public partial class MainWindow : Window
         }
 
         _activeModuleId = null;
-        ContentHost.Content = new Views.SettingsView(_store, _appSection, this);
-        UpdateStatusBar();
+        ContentHost.Content = new Views.SettingsView(_store, _appSection);
     }
 
     private void Activate(string moduleId)
@@ -165,8 +151,6 @@ public partial class MainWindow : Window
         {
             try { activatable.OnActivated(); } catch (Exception ex) { AppLog.Error("模块激活失败", ex); }
         }
-
-        UpdateStatusBar();
     }
 
     // ==================== 供模块调用 ====================
@@ -190,20 +174,6 @@ public partial class MainWindow : Window
 
     /// <summary>打开全局设置页。</summary>
     public void NavigateToSettings() => BtnSettings.IsChecked = true;
-
-    public void UpdateStatusBar()
-    {
-        // Python 探测结果（抽卡与拼图共用同一个解释器）
-        var python = PythonLocator.Resolve(_appSection.PythonPath);
-        TxtPython.Text = python.Found ? "Python 就绪" : "Python 未找到";
-        TxtPython.ToolTip = python.Describe();
-
-        // ComfyUI 地址只在「批量提交」页里维护，这里从批量模块的配置里读，避免两处不一致
-        var batch = _store.Get<DrawBench.Modules.Batch.BatchSettings>(DrawBench.Modules.ModuleIds.Batch);
-        string comfy = Core.Comfy.ComfyClient.Normalize(batch?.ComfyBaseUrl);
-        TxtComfy.Text = "ComfyUI " + comfy.Replace("http://", "");
-        TxtComfy.ToolTip = "在「批量提交」页顶部修改 ComfyUI 地址";
-    }
 
     // ==================== 收尾 ====================
 

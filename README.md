@@ -18,7 +18,6 @@
 | 反推标签 | WD14 本地 ONNX 反推标签 | 自备 onnx + csv 模型 |
 | 对比图 | 多模型同名出图横向拼成对比图 | Python 3.8+ 与 Pillow |
 
-左侧栏底部常驻显示 Python 与 ComfyUI 的状态。
 
 ### 模块之间能互通
 
