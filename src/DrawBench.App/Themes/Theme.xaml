@@ -43,6 +43,7 @@
 
     <FontFamily x:Key="AppFont">Microsoft YaHei UI, Segoe UI, Microsoft YaHei</FontFamily>
     <FontFamily x:Key="MonoFont">Consolas, Microsoft YaHei</FontFamily>
+    <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <!-- ==================== 文本 ==================== -->
 

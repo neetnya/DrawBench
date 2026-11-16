@@ -33,7 +33,7 @@
                     <RadioButton x:Name="BtnSettings" Style="{StaticResource NavButton}"
                                  GroupName="Nav" Checked="Settings_Checked" Margin="10,3">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="17"
+                            <TextBlock Text="&#xE713;" FontFamily="{StaticResource IconFont}" FontSize="17"
                                        VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="设置" FontSize="14.5" VerticalAlignment="Center" />
                         </StackPanel>

@@ -73,7 +73,7 @@ public partial class MainWindow : Window
                 new TextBlock
                 {
                     Text = module.Glyph,
-                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontFamily = (FontFamily)FindResource("IconFont"),
                     FontSize = 17,
                     VerticalAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(0, 0, 12, 0)
