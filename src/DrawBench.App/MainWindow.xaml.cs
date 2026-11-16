@@ -13,7 +13,7 @@ using DrawBench.Core.Ui;
 namespace DrawBench.App;
 
 /// <summary>
-/// 外壳：左侧竖排导航 + 右侧内容区 + 底部状态栏。
+/// 外壳：左侧竖排导航（底部带设置与环境状态） + 右侧内容区。
 /// 模块视图首次进入时创建，之后一直保留（切走不销毁，避免丢掉队列/日志）。
 /// </summary>
 public partial class MainWindow : Window
@@ -42,7 +42,6 @@ public partial class MainWindow : Window
         if (plus > 0) version = version[..plus];
         TxtVersion.Text = "v" + version;
 
-        AppLog.Line += OnLogLine;
         SharedContext.Current.ModuleNavigationRequested += OnModuleNavigationRequested;
 
         Loaded += MainWindow_Loaded;
@@ -110,7 +109,6 @@ public partial class MainWindow : Window
         if (_modules.Count == 0)
         {
             AppLog.Error("没有加载到任何模块，导航栏会是空的");
-            SetStatus("没有加载到任何模块。请检查 Modules 程序集是否随程序一起部署。");
         }
         else
         {
@@ -128,7 +126,6 @@ public partial class MainWindow : Window
 
         _activeModuleId = null;
         ContentHost.Content = new Views.SettingsView(_store, _appSection, this);
-        SetStatus("设置改动会立即生效。");
         UpdateStatusBar();
     }
 
@@ -169,7 +166,6 @@ public partial class MainWindow : Window
             try { activatable.OnActivated(); } catch (Exception ex) { AppLog.Error("模块激活失败", ex); }
         }
 
-        SetStatus(module.Description);
         UpdateStatusBar();
     }
 
@@ -195,11 +191,6 @@ public partial class MainWindow : Window
     /// <summary>打开全局设置页。</summary>
     public void NavigateToSettings() => BtnSettings.IsChecked = true;
 
-    public void SetStatus(string message)
-    {
-        TxtStatus.Text = message;
-    }
-
     public void UpdateStatusBar()
     {
         // Python 探测结果（抽卡与拼图共用同一个解释器）
@@ -214,13 +205,6 @@ public partial class MainWindow : Window
         TxtComfy.ToolTip = "在「批量提交」页顶部修改 ComfyUI 地址";
     }
 
-    private void OnLogLine(string line)
-    {
-        // 错误行顺带显示在状态栏，正常日志只进文件
-        if (!line.Contains("[ERROR]", StringComparison.Ordinal)) return;
-        Dispatcher.BeginInvoke(new Action(() => SetStatus(line)));
-    }
-
     // ==================== 收尾 ====================
 
     private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -231,7 +215,6 @@ public partial class MainWindow : Window
             try { activatable.OnDeactivated(); } catch { }
         }
 
-        AppLog.Line -= OnLogLine;
         SharedContext.Current.ModuleNavigationRequested -= OnModuleNavigationRequested;
     }
 }

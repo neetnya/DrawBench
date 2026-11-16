@@ -27,7 +27,7 @@
                     <TextBlock Text="DrawBench" Style="{StaticResource SubText}" FontSize="11" Margin="0,1,0,0" />
                 </StackPanel>
 
-                <!-- 底部：设置 + 版本 -->
+                <!-- 底部：设置 + 环境状态 + 版本 -->
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
                     <Border Height="1" Background="{StaticResource LineBrush}" Margin="14,0,14,8" />
                     <RadioButton x:Name="BtnSettings" Style="{StaticResource NavButton}"
@@ -38,8 +38,14 @@
                             <TextBlock Text="设置" FontSize="14.5" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
-                    <TextBlock x:Name="TxtVersion" Style="{StaticResource SubText}"
-                               Margin="22,12,14,0" FontSize="11" />
+                    <StackPanel Margin="22,8,14,0">
+                        <TextBlock x:Name="TxtPython" Style="{StaticResource SubText}"
+                                   FontSize="11.5" TextTrimming="CharacterEllipsis" />
+                        <TextBlock x:Name="TxtComfy" Style="{StaticResource SubText}"
+                                   FontSize="11.5" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
+                        <TextBlock x:Name="TxtVersion" Style="{StaticResource SubText}"
+                                   FontSize="11" Margin="0,6,0,0" />
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- 模块列表（代码里填充） -->
@@ -51,34 +57,6 @@
         </Border>
 
         <!-- ==================== 右侧内容区 ==================== -->
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <ContentControl x:Name="ContentHost" Grid.Row="0" Margin="0" />
-
-            <!-- 状态栏 -->
-            <Border Grid.Row="1" Background="{StaticResource SidebarBrush}"
-                    BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0"
-                    Padding="14,5">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock x:Name="TxtStatus" Grid.Column="0" Style="{StaticResource SubText}"
-                               Foreground="{StaticResource InkSoft}"
-                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                    <TextBlock x:Name="TxtPython" Grid.Column="1" Style="{StaticResource SubText}"
-                               VerticalAlignment="Center" Margin="12,0,0,0" />
-                    <TextBlock x:Name="TxtComfy" Grid.Column="2" Style="{StaticResource SubText}"
-                               VerticalAlignment="Center" Margin="14,0,0,0" />
-                </Grid>
-            </Border>
-        </Grid>
+        <ContentControl x:Name="ContentHost" Grid.Column="1" Margin="0" />
     </Grid>
 </Window>

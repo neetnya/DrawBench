@@ -57,7 +57,6 @@ public partial class SettingsView : UserControl
 
         var python = PythonLocator.Refresh(section.PythonPath);
         ShowPython(python);
-        _shell.SetStatus(python.Found ? "Python 就绪：" + python.Describe() : "未找到 Python。");
     }
 
     private void ShowPython(PythonInterpreter python)
