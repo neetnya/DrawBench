@@ -297,6 +297,8 @@
                         <DataGrid x:Name="ParamsGrid" ItemsSource="{Binding Selected.Params.ParameterItems}"
                                   IsReadOnly="True" ClipboardCopyMode="None"
                                   PreviewKeyDown="ParamsGrid_PreviewKeyDown"
+                                  MouseDoubleClick="ParamsGrid_MouseDoubleClick"
+                                  ToolTip="双击任意行可直接复制该项的值"
                                   VerticalScrollBarVisibility="Auto" Margin="0,0,0,4">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="项目" Binding="{Binding Key}" Width="130" />

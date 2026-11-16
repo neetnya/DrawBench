@@ -204,6 +204,22 @@ public partial class ImageView : UserControl
     /// <summary>生成参数表只复制值：选中的每一行取「值」列，一行一个，不带项目名和表头。</summary>
     private void CopyParams_Click(object sender, RoutedEventArgs e) => CopyParamValues();
 
+    private void ParamsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (ParamsGrid.SelectedItem is not KeyValuePair<string, string> row) return;
+        if (string.IsNullOrWhiteSpace(row.Value)) return;
+
+        try
+        {
+            Clipboard.SetText(row.Value);
+            _vm.StatusText = $"已复制 {row.Key}：{row.Value}";
+        }
+        catch (Exception ex)
+        {
+            UiHost.Warn("复制失败：" + ex.Message);
+        }
+    }
+
     private void ParamsGrid_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.C) return;
