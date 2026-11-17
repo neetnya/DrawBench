@@ -233,9 +233,18 @@ public partial class GachaView : UserControl
         ChkVerbs.IsChecked = value;
 
         ChkLocations.IsChecked = value;
-        ChkBackgrounds.IsChecked = value;
+        ChkBackgrounds.IsChecked = false;
         ChkLighting.IsChecked = value;
         ChkComposition.IsChecked = value;
+    }
+
+    private void OnSceneBgToggleChanged(object sender, RoutedEventArgs e)
+    {
+        if (ChkLocations == null || ChkBackgrounds == null) return;
+        if (ReferenceEquals(sender, ChkLocations) && ChkLocations.IsChecked == true)
+            ChkBackgrounds.IsChecked = false;
+        else if (ReferenceEquals(sender, ChkBackgrounds) && ChkBackgrounds.IsChecked == true)
+            ChkLocations.IsChecked = false;
     }
 
     private void OnNsfwToggleChanged(object sender, RoutedEventArgs e) => SyncNsfwPanelState();

@@ -166,8 +166,8 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkLocations" Content="地点环境" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkBackgrounds" Content="纯色/抽象背景" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkLocations" Content="地点环境" IsChecked="True" Margin="0,0,14,3" Checked="OnSceneBgToggleChanged" ToolTip="与「纯色/抽象背景」互斥" />
+                                <CheckBox x:Name="ChkBackgrounds" Content="纯色/抽象背景" Margin="0,0,14,3" Checked="OnSceneBgToggleChanged" ToolTip="与「地点环境」互斥" />
                                 <CheckBox x:Name="ChkLighting" Content="光影" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkComposition" Content="构图/视角" IsChecked="True" Margin="0,0,14,3" />
                             </WrapPanel>

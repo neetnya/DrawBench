@@ -220,8 +220,14 @@ public static class GachaEngine
 
             AddFixedTags(options.PrefixTags, item.Tags);
 
+            bool pickLocation = !(options.Locations && options.Backgrounds) || rng.Next(2) == 0;
             foreach (var slot in activeSlots)
             {
+                if (options.Locations && options.Backgrounds)
+                {
+                    if (slot.SubCategory == "locations" && !pickLocation) continue;
+                    if (slot.SubCategory == "backgrounds" && pickLocation) continue;
+                }
                 if (!bank.TryGetValue(slot.Module, out var subMap) ||
                     !subMap.TryGetValue(slot.SubCategory, out var pool) ||
                     pool.Count == 0)
