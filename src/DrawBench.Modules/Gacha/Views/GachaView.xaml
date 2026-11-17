@@ -198,10 +198,9 @@
                           ResizeBehavior="PreviousAndNext" />
 
             <!-- ============ 右：提示词 / 抽取明细 ============ -->
-            <TabControl Grid.Column="2" x:Name="TabsOutput" Margin="0" Padding="0"
-                        Background="Transparent" BorderThickness="0">
+            <TabControl Grid.Column="2" x:Name="TabsOutput" Margin="0" Padding="0">
                 <TabItem Header="提示词" x:Name="TabPrompt" IsSelected="True">
-                    <DockPanel LastChildFill="True" Margin="0,6,0,0">
+                    <DockPanel LastChildFill="True" Margin="0">
                         <Border DockPanel.Dock="Top" Padding="10,6"
                                 BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
                             <DockPanel LastChildFill="False">
@@ -260,7 +259,7 @@
                     </DockPanel>
                 </TabItem>
                 <TabItem Header="抽取明细" x:Name="TabLog">
-                    <TextBox x:Name="TxtLog" IsReadOnly="True" AcceptsReturn="True" Margin="0,6,0,0"
+                    <TextBox x:Name="TxtLog" IsReadOnly="True" AcceptsReturn="True" Margin="8,8,8,8"
                              Style="{StaticResource ConsoleBox}"
                              TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Top"

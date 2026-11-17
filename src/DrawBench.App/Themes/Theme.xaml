@@ -799,10 +799,87 @@
         </Style.Triggers>
     </Style>
 
-    <!-- ==================== 其它 ==================== -->
+    <!-- ==================== 选项卡（右侧 提示词 / 抽取明细） ==================== -->
+
+    <!--
+        整块做成一张白卡片：顶部浅色条里放选中态胶囊标签，选中项白底蓝字并和内容区连成一片。
+        别再让 TabControl 走系统默认的灰色方角页签，那套外观和这里的圆角卡片完全不是一个风格。
+    -->
+    <Style TargetType="TabControl">
+        <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+        <Setter Property="Background" Value="{StaticResource Card}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <Border x:Name="Root" CornerRadius="10"
+                            Background="{StaticResource Card}"
+                            BorderBrush="{StaticResource Line}" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270"
+                                              Opacity="0.05" Color="#0E1A38" />
+                        </Border.Effect>
+                        <DockPanel LastChildFill="True">
+                            <Border DockPanel.Dock="Top" Background="{StaticResource CardHead}"
+                                    BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1"
+                                    CornerRadius="10,10,0,0" Padding="8,7,8,0">
+                                <TabPanel x:Name="HeaderPanel" IsItemsHost="True"
+                                          HorizontalAlignment="Left" />
+                            </Border>
+                            <ContentPresenter x:Name="PART_SelectedContentHost"
+                                              ContentSource="SelectedContent" Margin="0" />
+                        </DockPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.55" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="TabItem">
         <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
         <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Foreground" Value="{StaticResource Muted}" />
+        <Setter Property="Padding" Value="14,6" />
+        <Setter Property="Margin" Value="0,0,3,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border x:Name="Bd" CornerRadius="8,8,0,0" Background="Transparent"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter ContentSource="Header" HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#EDF1F9" />
+                            <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <!-- 选中项白底、下边缘压住 1px 分隔线，视觉上与下面的白色内容区连成一体 -->
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Card}" />
+                            <Setter TargetName="Bd" Property="Margin" Value="0,0,0,-1" />
+                            <Setter TargetName="Bd" Property="Padding" Value="14,6,14,7" />
+                            <Setter Property="Foreground" Value="{StaticResource AccentDeep}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="MenuItem">
