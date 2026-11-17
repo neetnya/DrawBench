@@ -195,7 +195,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="0,2" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="8,0" />
+        <Setter Property="Padding" Value="5,2" />
         <Setter Property="Foreground" Value="{StaticResource Ink}" />
         <Setter Property="Background" Value="{StaticResource InputBg}" />
         <Setter Property="BorderBrush" Value="{StaticResource Line}" />
@@ -213,7 +213,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <ScrollViewer x:Name="PART_ContentHost"
-                                      Margin="{TemplateBinding Padding}"
+                                      Margin="0"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Focusable="False" />
                     </Border>
@@ -263,7 +263,7 @@
         <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
         <Setter Property="FontSize" Value="12.5" />
         <Setter Property="MinHeight" Value="27" />
-        <Setter Property="Padding" Value="8,2" />
+        <Setter Property="Padding" Value="5,2" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderBrush" Value="{StaticResource Line}" />
         <Setter Property="Background" Value="{StaticResource InputBg}" />
