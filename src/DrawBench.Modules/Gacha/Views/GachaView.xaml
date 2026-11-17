@@ -116,8 +116,8 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkBreasts" Content="胸部" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkAss" Content="臀部" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkBreasts" Content="胸部" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkAss" Content="臀部" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHands" Content="手部" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkFeet" Content="脚部" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkShoulders" Content="肩部" Margin="0,0,14,3" />

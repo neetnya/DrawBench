@@ -27,8 +27,8 @@ public sealed class GachaOptions
     public bool Ears { get; set; } = false;
 
     // 3. 身体部位 (body_parts)
-    public bool Breasts { get; set; } = false;
-    public bool Ass { get; set; } = false;
+    public bool Breasts { get; set; } = true;
+    public bool Ass { get; set; } = true;
     public bool Hands { get; set; } = false;
     public bool Feet { get; set; } = false;
     public bool Shoulders { get; set; } = false;
