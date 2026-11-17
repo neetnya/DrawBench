@@ -76,6 +76,7 @@ public partial class GachaView : UserControl
         ChkSleeves.IsChecked = o.Sleeves;
         ChkHandwear.IsChecked = o.Handwear;
         ChkLegwear.IsChecked = o.Legwear;
+        ChkFootwear.IsChecked = o.Footwear;
         ChkAccessories.IsChecked = o.Accessories;
 
         ChkPosture.IsChecked = o.Posture;
@@ -88,6 +89,7 @@ public partial class GachaView : UserControl
         ChkBackgrounds.IsChecked = o.Backgrounds;
         ChkLighting.IsChecked = o.Lighting;
         ChkComposition.IsChecked = o.ImageComposition;
+        ChkSceneObjects.IsChecked = o.SceneObjects;
 
         ChkEnableNsfw.IsChecked = o.EnableNsfw;
         ChkNsfwNudity.IsChecked = o.NsfwNudityAndCovering;
@@ -127,6 +129,7 @@ public partial class GachaView : UserControl
         Sleeves = ChkSleeves.IsChecked == true,
         Handwear = ChkHandwear.IsChecked == true,
         Legwear = ChkLegwear.IsChecked == true,
+        Footwear = ChkFootwear.IsChecked == true,
         Accessories = ChkAccessories.IsChecked == true,
 
         Posture = ChkPosture.IsChecked == true,
@@ -139,6 +142,7 @@ public partial class GachaView : UserControl
         Backgrounds = ChkBackgrounds.IsChecked == true,
         Lighting = ChkLighting.IsChecked == true,
         ImageComposition = ChkComposition.IsChecked == true,
+        SceneObjects = ChkSceneObjects.IsChecked == true,
 
         EnableNsfw = ChkEnableNsfw.IsChecked == true,
         NsfwNudityAndCovering = ChkNsfwNudity.IsChecked == true,
@@ -221,6 +225,7 @@ public partial class GachaView : UserControl
         ChkSleeves.IsChecked = value;
         ChkHandwear.IsChecked = value;
         ChkLegwear.IsChecked = value;
+        ChkFootwear.IsChecked = value;
         ChkAccessories.IsChecked = value;
 
         ChkPosture.IsChecked = value;
@@ -233,6 +238,7 @@ public partial class GachaView : UserControl
         ChkBackgrounds.IsChecked = false;
         ChkLighting.IsChecked = value;
         ChkComposition.IsChecked = value;
+        ChkSceneObjects.IsChecked = value;
     }
 
     private void OnSceneBgToggleChanged(object sender, RoutedEventArgs e)

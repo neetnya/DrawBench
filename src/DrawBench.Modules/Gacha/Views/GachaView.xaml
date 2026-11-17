@@ -139,6 +139,7 @@
                                 <CheckBox x:Name="ChkSleeves" Content="袖型" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHandwear" Content="手套/手饰" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkLegwear" Content="袜类/腿饰" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkFootwear" Content="鞋类" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkAccessories" Content="其他配饰" Margin="0,0,14,3" />
                             </WrapPanel>
 
@@ -169,6 +170,7 @@
                                 <CheckBox x:Name="ChkBackgrounds" Content="纯色/抽象背景" Margin="0,0,14,3" Checked="OnSceneBgToggleChanged" ToolTip="与「地点环境」互斥" />
                                 <CheckBox x:Name="ChkLighting" Content="光影" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkComposition" Content="构图/视角" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkSceneObjects" Content="场景物件" Margin="0,0,14,3" ToolTip="灯具、道具、背景铺陈物等" />
                             </WrapPanel>
 
                             <!-- 7. 成人向 (NSFW) -->

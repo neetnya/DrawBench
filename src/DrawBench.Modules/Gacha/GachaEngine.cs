@@ -42,6 +42,7 @@ public sealed class GachaOptions
     public bool Sleeves { get; set; } = false;
     public bool Handwear { get; set; } = false;
     public bool Legwear { get; set; } = true;
+    public bool Footwear { get; set; } = false;
     public bool Accessories { get; set; } = false;
 
     // 5. 姿势与动作 (pose_and_action)
@@ -56,6 +57,7 @@ public sealed class GachaOptions
     public bool Backgrounds { get; set; } = false;
     public bool Lighting { get; set; } = true;
     public bool ImageComposition { get; set; } = true;
+    public bool SceneObjects { get; set; } = false;
 
     // 7. 成人向 (nsfw)
     public bool EnableNsfw { get; set; } = false;
@@ -155,6 +157,7 @@ public static class GachaEngine
         new("attire_and_accessories", "sleeves", "袖型", o => o.Sleeves),
         new("attire_and_accessories", "handwear", "手套/手饰", o => o.Handwear),
         new("attire_and_accessories", "legwear", "袜类/腿饰", o => o.Legwear),
+        new("attire_and_accessories", "footwear", "鞋类", o => o.Footwear),
         new("attire_and_accessories", "accessories", "其他配饰", o => o.Accessories),
 
         // 5. 姿势与动作
@@ -169,6 +172,7 @@ public static class GachaEngine
         new("scene_and_composition", "backgrounds", "背景", o => o.Backgrounds),
         new("scene_and_composition", "lighting", "光影", o => o.Lighting),
         new("scene_and_composition", "image_composition", "构图/视角", o => o.ImageComposition),
+        new("scene_and_composition", "objects", "场景物件", o => o.SceneObjects),
 
         // 7. 成人向 (NSFW)
         new("nsfw", "nudity_and_covering", "裸露/遮挡", o => o.EnableNsfw && o.NsfwNudityAndCovering),
