@@ -84,6 +84,12 @@ public sealed class RatingPool
 
     /// <summary>NSFW / ANY 模式下是否两池各抽一条（用于「尺寸在 sfw、细节在 nsfw」的组）。</summary>
     public bool Both { get; set; }
+
+    /// <summary>
+    /// 可选的相对权重（tag 名 → 权重，越大约容易被抽到；未列出的默认 1）。
+    /// 只改变随机概率，不增删词池，用于「常见/正常」的 tag 压过极端 tag。
+    /// </summary>
+    public Dictionary<string, int>? Weights { get; set; }
 }
 
 public sealed class GachaDrawItem
@@ -211,7 +217,7 @@ public static class GachaEngine
         }
 
         // 提前按模式挑好每个槽位要用的池，避免连抽时反复合并
-        var activePools = new List<(SlotSpec Slot, List<List<string>> Pools, int Pick)>();
+        var activePools = new List<(SlotSpec Slot, List<List<string>> Pools, int Pick, Dictionary<string, int>? Weights)>();
         foreach (var slot in Slots)
         {
             if (!slot.IsEnabled(options)) continue;
@@ -223,7 +229,7 @@ public static class GachaEngine
 
             var picked = SelectPools(pool, options.Mode);
             if (picked.Count > 0)
-                activePools.Add((slot, picked, Math.Clamp(pool.Pick, 1, 4)));
+                activePools.Add((slot, picked, Math.Clamp(pool.Pick, 1, 4), pool.Weights));
         }
 
         if (activePools.Count == 0 &&
@@ -252,7 +258,7 @@ public static class GachaEngine
             bool pickLocation = !(options.Locations && options.Backgrounds) || rng.Next(2) == 0;
             // 全身姿势与舞蹈互斥：同时勾选时每次只抽其中一个
             bool pickPosture = !(options.Posture && options.Dances) || rng.Next(2) == 0;
-            foreach (var (slot, pools, pick) in activePools)
+            foreach (var (slot, pools, pick, weights) in activePools)
             {
                 if (options.Locations && options.Backgrounds)
                 {
@@ -270,7 +276,7 @@ public static class GachaEngine
                 for (int k = 0; k < totalDraws; k++)
                 {
                     var pool = pools[k % pools.Count];
-                    string rawTag = DrawUnique(pool, drawn, rng);
+                    string rawTag = DrawUnique(pool, drawn, rng, weights);
                     drawn.Add(rawTag);
 
                     string formatted = options.ReplaceUnderscoreWithSpace
@@ -335,14 +341,44 @@ public static class GachaEngine
         return result;
     }
 
-    /// <summary>从池里抽一条，尽量不与本次已抽的 tag 重复。</summary>
-    private static string DrawUnique(List<string> pool, List<string> drawn, Random rng)
+    /// <summary>
+    /// 从池里抽一条，尽量不与本次已抽的 tag 重复。
+    /// 带权重时按权重加权随机（权重 &lt;= 0 视为不出现），否则等概率；
+    /// 池子很小时（如胸部/臀部尺寸只有几条），权重能让「常见/正常」的 tag 明显更容易被抽到。
+    /// </summary>
+    private static string DrawUnique(List<string> pool, List<string> drawn, Random rng,
+                                     Dictionary<string, int>? weights)
     {
-        if (pool.Count == 1) return pool[0];
-        string tag = pool[rng.Next(pool.Count)];
-        for (int i = 0; i < 5 && drawn.Contains(tag); i++)
-            tag = pool[rng.Next(pool.Count)];
-        return tag;
+        // 收集本次还能抽的候选（排除已经抽过的）
+        var candidates = new List<(string Tag, int Weight)>(pool.Count);
+        int total = 0;
+        foreach (string tag in pool)
+        {
+            if (drawn.Contains(tag)) continue;
+            int w = 1;
+            if (weights != null && weights.TryGetValue(tag, out int configured))
+                w = configured;
+            if (w <= 0) continue;
+            candidates.Add((tag, w));
+            total += w;
+        }
+
+        if (candidates.Count == 0)
+        {
+            // 全被抽过了：退化为不检查重复，保持原有容错行为
+            return pool.Count > 0 ? pool[rng.Next(pool.Count)] : string.Empty;
+        }
+
+        if (candidates.Count == 1 || total <= 0)
+            return candidates[0].Tag;
+
+        int roll = rng.Next(total);
+        foreach (var (tag, weight) in candidates)
+        {
+            if (roll < weight) return tag;
+            roll -= weight;
+        }
+        return candidates[^1].Tag;
     }
 
     private static void AddFixedTags(string? raw, List<string> target)
