@@ -73,7 +73,6 @@ public partial class GachaView : UserControl
         ChkShoulders.IsChecked = o.Shoulders;
         ChkBodyOther.IsChecked = o.OtherBodyParts;
 
-        ChkFashionStyle.IsChecked = o.FashionStyle;
         ChkClothing.IsChecked = o.Clothing;
         ChkHeadwear.IsChecked = o.Headwear;
         ChkNeckwear.IsChecked = o.Neckwear;
@@ -137,7 +136,6 @@ public partial class GachaView : UserControl
         Shoulders = ChkShoulders.IsChecked == true,
         OtherBodyParts = ChkBodyOther.IsChecked == true,
 
-        FashionStyle = ChkFashionStyle.IsChecked == true,
         Clothing = ChkClothing.IsChecked == true,
         Headwear = ChkHeadwear.IsChecked == true,
         Neckwear = ChkNeckwear.IsChecked == true,
@@ -161,8 +159,11 @@ public partial class GachaView : UserControl
 
     // ==================== 快捷方案 ====================
 
-    /// <summary>以当前前置/后置/重复数为基准套用一套子组开关。</summary>
-    private void ApplyPreset(Action<GachaOptions> configure, GachaMode mode)
+    /// <summary>
+    /// 以当前前置/后置/重复数为基准套用一套子组开关。
+    /// 预设不再改动 SFW / NSFW / ANY：沿用此刻界面上的模式，切预设不会把模式带跑。
+    /// </summary>
+    private void ApplyPreset(Action<GachaOptions> configure)
     {
         var d = new GachaOptions
         {
@@ -170,7 +171,7 @@ public partial class GachaView : UserControl
             ReplaceUnderscoreWithSpace = ChkSpace.IsChecked == true,
             PrefixTags = TxtPrefix.Text ?? "",
             SuffixTags = TxtSuffix.Text ?? "",
-            Mode = mode,
+            Mode = GetMode(),
         };
         configure(d);
         ApplyOptions(d);
@@ -191,13 +192,12 @@ public partial class GachaView : UserControl
             o.BreastsDetails = true;
             o.AssSize = true;
             o.AssDetails = true;
-            o.FashionStyle = true;
             o.Clothing = true;
             o.Legwear = true;
             o.Posture = true;
             o.Locations = true;
             o.Backgrounds = false;
-        }, GachaMode.Sfw);
+        });
     }
 
     // 仅人设外貌：脸、眼、发、体型，不带服装、姿势与场景
@@ -222,7 +222,7 @@ public partial class GachaView : UserControl
             o.Feet = true;
             o.Shoulders = true;
             o.OtherBodyParts = true;
-        }, GachaMode.Sfw);
+        });
     }
 
     // 服装展示：风格、衣物、配饰、鞋袜
@@ -230,7 +230,6 @@ public partial class GachaView : UserControl
     {
         ApplyPreset(o =>
         {
-            o.FashionStyle = true;
             o.Clothing = true;
             o.Headwear = true;
             o.Neckwear = true;
@@ -241,7 +240,7 @@ public partial class GachaView : UserControl
             o.Accessories = true;
             o.HairAccessories = true;
             o.Posture = true;
-        }, GachaMode.Sfw);
+        });
     }
 
     private void OnPresetClear(object sender, RoutedEventArgs e)
@@ -272,7 +271,6 @@ public partial class GachaView : UserControl
         ChkShoulders.IsChecked = value;
         ChkBodyOther.IsChecked = value;
 
-        ChkFashionStyle.IsChecked = value;
         ChkClothing.IsChecked = value;
         ChkHeadwear.IsChecked = value;
         ChkNeckwear.IsChecked = value;

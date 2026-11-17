@@ -152,7 +152,6 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkFashionStyle" Content="穿搭风格" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkClothing" Content="主服装" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHeadwear" Content="帽子/头饰" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkNeckwear" Content="颈饰/领饰" Margin="0,0,14,3" />

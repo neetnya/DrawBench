@@ -49,7 +49,6 @@ public sealed class GachaOptions
     public bool OtherBodyParts { get; set; } = false;
 
     // 4. 服装与配饰 (attire_and_accessories)
-    public bool FashionStyle { get; set; } = true;
     public bool Clothing { get; set; } = true;
     public bool Headwear { get; set; } = false;
     public bool Neckwear { get; set; } = false;
@@ -178,7 +177,6 @@ public static class GachaEngine
         new("body_parts", "other_body_parts", "其他部位", o => o.OtherBodyParts),
 
         // 4. 服装与配饰
-        new("attire_and_accessories", "fashion_style", "穿搭风格", o => o.FashionStyle),
         new("attire_and_accessories", "clothing", "主服装", o => o.Clothing),
         new("attire_and_accessories", "headwear", "头饰/帽子", o => o.Headwear),
         new("attire_and_accessories", "neckwear", "颈饰/领饰", o => o.Neckwear),
