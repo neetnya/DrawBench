@@ -53,16 +53,21 @@ public partial class GachaView : UserControl
         TxtSuffix.Text = o.SuffixTags ?? "";
 
         ChkHairColor.IsChecked = o.HairColor;
+        ChkHairLength.IsChecked = o.HairLength;
         ChkHairStyles.IsChecked = o.HairStyles;
         ChkHairAccessories.IsChecked = o.HairAccessories;
-        ChkHairTraits.IsChecked = o.HairTraitsAndActions;
+        ChkHairTraits.IsChecked = o.HairTraits;
+        ChkHairActions.IsChecked = o.HairActions;
 
+        ChkEyeColor.IsChecked = o.EyeColor;
         ChkEyes.IsChecked = o.Eyes;
         ChkFace.IsChecked = o.FaceAndExpression;
         ChkEars.IsChecked = o.Ears;
 
-        ChkBreasts.IsChecked = o.Breasts;
-        ChkAss.IsChecked = o.Ass;
+        ChkBreastsSize.IsChecked = o.BreastsSize;
+        ChkBreastsDetails.IsChecked = o.BreastsDetails;
+        ChkAssSize.IsChecked = o.AssSize;
+        ChkAssDetails.IsChecked = o.AssDetails;
         ChkHands.IsChecked = o.Hands;
         ChkFeet.IsChecked = o.Feet;
         ChkShoulders.IsChecked = o.Shoulders;
@@ -86,9 +91,6 @@ public partial class GachaView : UserControl
 
         ChkLocations.IsChecked = o.Locations;
         ChkBackgrounds.IsChecked = o.Backgrounds;
-        ChkLighting.IsChecked = o.Lighting;
-        ChkComposition.IsChecked = o.ImageComposition;
-        ChkSceneObjects.IsChecked = o.SceneObjects;
 
         SetMode(o.Mode);
     }
@@ -115,16 +117,21 @@ public partial class GachaView : UserControl
         SuffixTags = TxtSuffix.Text ?? "",
 
         HairColor = ChkHairColor.IsChecked == true,
+        HairLength = ChkHairLength.IsChecked == true,
         HairStyles = ChkHairStyles.IsChecked == true,
         HairAccessories = ChkHairAccessories.IsChecked == true,
-        HairTraitsAndActions = ChkHairTraits.IsChecked == true,
+        HairTraits = ChkHairTraits.IsChecked == true,
+        HairActions = ChkHairActions.IsChecked == true,
 
+        EyeColor = ChkEyeColor.IsChecked == true,
         Eyes = ChkEyes.IsChecked == true,
         FaceAndExpression = ChkFace.IsChecked == true,
         Ears = ChkEars.IsChecked == true,
 
-        Breasts = ChkBreasts.IsChecked == true,
-        Ass = ChkAss.IsChecked == true,
+        BreastsSize = ChkBreastsSize.IsChecked == true,
+        BreastsDetails = ChkBreastsDetails.IsChecked == true,
+        AssSize = ChkAssSize.IsChecked == true,
+        AssDetails = ChkAssDetails.IsChecked == true,
         Hands = ChkHands.IsChecked == true,
         Feet = ChkFeet.IsChecked == true,
         Shoulders = ChkShoulders.IsChecked == true,
@@ -148,16 +155,14 @@ public partial class GachaView : UserControl
 
         Locations = ChkLocations.IsChecked == true,
         Backgrounds = ChkBackgrounds.IsChecked == true,
-        Lighting = ChkLighting.IsChecked == true,
-        ImageComposition = ChkComposition.IsChecked == true,
-        SceneObjects = ChkSceneObjects.IsChecked == true,
 
         Mode = GetMode(),
     };
 
     // ==================== 快捷方案 ====================
 
-    private void OnPresetStandard(object sender, RoutedEventArgs e)
+    /// <summary>以当前前置/后置/重复数为基准套用一套子组开关。</summary>
+    private void ApplyPreset(Action<GachaOptions> configure, GachaMode mode)
     {
         var d = new GachaOptions
         {
@@ -165,27 +170,78 @@ public partial class GachaView : UserControl
             ReplaceUnderscoreWithSpace = ChkSpace.IsChecked == true,
             PrefixTags = TxtPrefix.Text ?? "",
             SuffixTags = TxtSuffix.Text ?? "",
+            Mode = mode,
         };
+        configure(d);
         ApplyOptions(d);
     }
 
-    private void OnPresetCharacterOnly(object sender, RoutedEventArgs e)
+    // 常规全身：人物 + 穿搭 + 姿势 + 地点，故意不含光影与构图/视角
+    private void OnPresetStandard(object sender, RoutedEventArgs e)
     {
-        SetAllSubChecks(false);
-        ChkHairColor.IsChecked = true;
-        ChkHairStyles.IsChecked = true;
-        ChkHairAccessories.IsChecked = true;
-        ChkEyes.IsChecked = true;
-        ChkFace.IsChecked = true;
-        ChkFashionStyle.IsChecked = true;
-        ChkClothing.IsChecked = true;
-        ChkLegwear.IsChecked = true;
+        ApplyPreset(o =>
+        {
+            o.HairColor = true;
+            o.HairLength = true;
+            o.HairStyles = true;
+            o.EyeColor = true;
+            o.Eyes = true;
+            o.FaceAndExpression = true;
+            o.BreastsSize = true;
+            o.BreastsDetails = true;
+            o.AssSize = true;
+            o.AssDetails = true;
+            o.FashionStyle = true;
+            o.Clothing = true;
+            o.Legwear = true;
+            o.Posture = true;
+            o.Locations = true;
+            o.Backgrounds = false;
+        }, GachaMode.Sfw);
     }
 
-    private void OnPresetAllSfw(object sender, RoutedEventArgs e)
+    // 仅人设外貌：脸、眼、发、体型，不带服装、姿势与场景
+    private void OnPresetCharacterOnly(object sender, RoutedEventArgs e)
     {
-        SetAllSubChecks(true);
-        SetMode(GachaMode.Sfw);
+        ApplyPreset(o =>
+        {
+            o.HairColor = true;
+            o.HairLength = true;
+            o.HairStyles = true;
+            o.HairAccessories = true;
+            o.HairTraits = true;
+            o.EyeColor = true;
+            o.Eyes = true;
+            o.FaceAndExpression = true;
+            o.Ears = true;
+            o.BreastsSize = true;
+            o.BreastsDetails = true;
+            o.AssSize = true;
+            o.AssDetails = true;
+            o.Hands = true;
+            o.Feet = true;
+            o.Shoulders = true;
+            o.OtherBodyParts = true;
+        }, GachaMode.Sfw);
+    }
+
+    // 服装展示：风格、衣物、配饰、鞋袜
+    private void OnPresetOutfit(object sender, RoutedEventArgs e)
+    {
+        ApplyPreset(o =>
+        {
+            o.FashionStyle = true;
+            o.Clothing = true;
+            o.Headwear = true;
+            o.Neckwear = true;
+            o.Sleeves = true;
+            o.Handwear = true;
+            o.Legwear = true;
+            o.Footwear = true;
+            o.Accessories = true;
+            o.HairAccessories = true;
+            o.Posture = true;
+        }, GachaMode.Sfw);
     }
 
     private void OnPresetClear(object sender, RoutedEventArgs e)
@@ -196,16 +252,21 @@ public partial class GachaView : UserControl
     private void SetAllSubChecks(bool value)
     {
         ChkHairColor.IsChecked = value;
+        ChkHairLength.IsChecked = value;
         ChkHairStyles.IsChecked = value;
         ChkHairAccessories.IsChecked = value;
         ChkHairTraits.IsChecked = value;
+        ChkHairActions.IsChecked = value;
 
+        ChkEyeColor.IsChecked = value;
         ChkEyes.IsChecked = value;
         ChkFace.IsChecked = value;
         ChkEars.IsChecked = value;
 
-        ChkBreasts.IsChecked = value;
-        ChkAss.IsChecked = value;
+        ChkBreastsSize.IsChecked = value;
+        ChkBreastsDetails.IsChecked = value;
+        ChkAssSize.IsChecked = value;
+        ChkAssDetails.IsChecked = value;
         ChkHands.IsChecked = value;
         ChkFeet.IsChecked = value;
         ChkShoulders.IsChecked = value;
@@ -229,9 +290,6 @@ public partial class GachaView : UserControl
 
         ChkLocations.IsChecked = value;
         ChkBackgrounds.IsChecked = false;
-        ChkLighting.IsChecked = value;
-        ChkComposition.IsChecked = value;
-        ChkSceneObjects.IsChecked = value;
     }
 
     private void OnSceneBgToggleChanged(object sender, RoutedEventArgs e)

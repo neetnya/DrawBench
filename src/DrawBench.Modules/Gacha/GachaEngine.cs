@@ -26,18 +26,23 @@ public sealed class GachaOptions
 
     // 1. 头发 (hair)
     public bool HairColor { get; set; } = true;
+    public bool HairLength { get; set; } = true;
     public bool HairStyles { get; set; } = true;
     public bool HairAccessories { get; set; } = false;
-    public bool HairTraitsAndActions { get; set; } = false;
+    public bool HairTraits { get; set; } = false;
+    public bool HairActions { get; set; } = false;
 
     // 2. 面部与五官 (face_and_eyes)
+    public bool EyeColor { get; set; } = true;
     public bool Eyes { get; set; } = true;
     public bool FaceAndExpression { get; set; } = true;
     public bool Ears { get; set; } = false;
 
     // 3. 身体部位 (body_parts)
-    public bool Breasts { get; set; } = true;
-    public bool Ass { get; set; } = true;
+    public bool BreastsSize { get; set; } = true;
+    public bool BreastsDetails { get; set; } = true;
+    public bool AssSize { get; set; } = true;
+    public bool AssDetails { get; set; } = true;
     public bool Hands { get; set; } = false;
     public bool Feet { get; set; } = false;
     public bool Shoulders { get; set; } = false;
@@ -64,9 +69,6 @@ public sealed class GachaOptions
     // 6. 场景与构图 (scene_and_composition)
     public bool Locations { get; set; } = true;
     public bool Backgrounds { get; set; } = false;
-    public bool Lighting { get; set; } = true;
-    public bool ImageComposition { get; set; } = true;
-    public bool SceneObjects { get; set; } = false;
 
     public GachaOptions Clone() => (GachaOptions)MemberwiseClone();
 }
@@ -76,6 +78,12 @@ public sealed class RatingPool
 {
     public List<string>? Sfw { get; set; }
     public List<string>? Nsfw { get; set; }
+
+    /// <summary>每次抽几条，默认 1。</summary>
+    public int Pick { get; set; } = 1;
+
+    /// <summary>NSFW / ANY 模式下是否两池各抽一条（用于「尺寸在 sfw、细节在 nsfw」的组）。</summary>
+    public bool Both { get; set; }
 }
 
 public sealed class GachaDrawItem
@@ -141,18 +149,23 @@ public static class GachaEngine
     {
         // 1. 头发
         new("hair", "hair_color", "发色", o => o.HairColor),
+        new("hair", "hair_length", "发长", o => o.HairLength),
         new("hair", "hair_styles", "发型", o => o.HairStyles),
         new("hair", "hair_accessories", "发饰", o => o.HairAccessories),
-        new("hair", "hair_traits_and_actions", "发质/动态", o => o.HairTraitsAndActions),
+        new("hair", "hair_traits", "发质", o => o.HairTraits),
+        new("hair", "hair_actions", "头发动作", o => o.HairActions),
 
         // 2. 面部与五官
-        new("face_and_eyes", "eyes", "眼睛", o => o.Eyes),
+        new("face_and_eyes", "eye_color", "瞳色/瞳形", o => o.EyeColor),
+        new("face_and_eyes", "eyes", "眼睛/视线", o => o.Eyes),
         new("face_and_eyes", "face_and_expression", "表情/面部", o => o.FaceAndExpression),
         new("face_and_eyes", "ears", "耳朵/兽耳", o => o.Ears),
 
         // 3. 身体部位
-        new("body_parts", "breasts", "胸部", o => o.Breasts),
-        new("body_parts", "ass", "臀部", o => o.Ass),
+        new("body_parts", "breasts_size", "胸部尺寸", o => o.BreastsSize),
+        new("body_parts", "breasts_details", "胸部细节", o => o.BreastsDetails),
+        new("body_parts", "ass_size", "臀部尺寸", o => o.AssSize),
+        new("body_parts", "ass_details", "臀部细节", o => o.AssDetails),
         new("body_parts", "hands", "手部", o => o.Hands),
         new("body_parts", "feet", "脚部", o => o.Feet),
         new("body_parts", "shoulders", "肩部", o => o.Shoulders),
@@ -178,10 +191,7 @@ public static class GachaEngine
 
         // 6. 场景与构图
         new("scene_and_composition", "locations", "地点环境", o => o.Locations),
-        new("scene_and_composition", "backgrounds", "背景", o => o.Backgrounds),
-        new("scene_and_composition", "lighting", "光影", o => o.Lighting),
-        new("scene_and_composition", "image_composition", "构图/视角", o => o.ImageComposition),
-        new("scene_and_composition", "objects", "场景物件", o => o.SceneObjects),
+        new("scene_and_composition", "backgrounds", "纯色/抽象背景", o => o.Backgrounds),
     };
 
     public static GachaRunOutcome Roll(GachaOptions options, string engineDir)
@@ -201,7 +211,7 @@ public static class GachaEngine
         }
 
         // 提前按模式挑好每个槽位要用的池，避免连抽时反复合并
-        var activePools = new List<(SlotSpec Slot, List<string> Tags)>();
+        var activePools = new List<(SlotSpec Slot, List<List<string>> Pools, int Pick)>();
         foreach (var slot in Slots)
         {
             if (!slot.IsEnabled(options)) continue;
@@ -211,9 +221,9 @@ public static class GachaEngine
                 continue;
             }
 
-            var picked = SelectPool(pool, options.Mode);
-            if (picked is { Count: > 0 })
-                activePools.Add((slot, picked));
+            var picked = SelectPools(pool, options.Mode);
+            if (picked.Count > 0)
+                activePools.Add((slot, picked, Math.Clamp(pool.Pick, 1, 4)));
         }
 
         if (activePools.Count == 0 &&
@@ -240,21 +250,36 @@ public static class GachaEngine
             AddFixedTags(options.PrefixTags, item.Tags);
 
             bool pickLocation = !(options.Locations && options.Backgrounds) || rng.Next(2) == 0;
-            foreach (var (slot, tags) in activePools)
+            // 全身姿势与舞蹈互斥：同时勾选时每次只抽其中一个
+            bool pickPosture = !(options.Posture && options.Dances) || rng.Next(2) == 0;
+            foreach (var (slot, pools, pick) in activePools)
             {
                 if (options.Locations && options.Backgrounds)
                 {
                     if (slot.SubCategory == "locations" && !pickLocation) continue;
                     if (slot.SubCategory == "backgrounds" && pickLocation) continue;
                 }
+                if (options.Posture && options.Dances)
+                {
+                    if (slot.SubCategory == "posture" && !pickPosture) continue;
+                    if (slot.SubCategory == "dances" && pickPosture) continue;
+                }
 
-                string rawTag = tags[rng.Next(tags.Count)];
-                string formatted = options.ReplaceUnderscoreWithSpace
-                    ? rawTag.Replace('_', ' ')
-                    : rawTag;
+                var drawn = new List<string>(pick);
+                int totalDraws = pools.Count == 1 ? pick : Math.Max(pick, pools.Count);
+                for (int k = 0; k < totalDraws; k++)
+                {
+                    var pool = pools[k % pools.Count];
+                    string rawTag = DrawUnique(pool, drawn, rng);
+                    drawn.Add(rawTag);
 
-                item.Tags.Add(formatted);
-                item.LogLines.Add($"[{slot.Module}.{slot.SubCategory}] {slot.Label}：{formatted}");
+                    string formatted = options.ReplaceUnderscoreWithSpace
+                        ? rawTag.Replace('_', ' ')
+                        : rawTag;
+
+                    item.Tags.Add(formatted);
+                    item.LogLines.Add($"[{slot.Module}.{slot.SubCategory}] {slot.Label}：{formatted}");
+                }
             }
 
             AddFixedTags(options.SuffixTags, item.Tags);
@@ -265,9 +290,13 @@ public static class GachaEngine
         return outcome;
     }
 
-    /// <summary>按模式选池：SFW 只取安全池；NSFW 优先成人池，该组没有成人词时回退安全池；ANY 合并两池。</summary>
-    private static List<string>? SelectPool(RatingPool pool, GachaMode mode)
+    /// <summary>
+    /// 按模式挑池：SFW 只取安全池；NSFW 优先成人池（没有则回退安全池）；
+    /// 标了 both 的组在 NSFW / ANY 下额外带上安全池，让「尺寸/形状」和「细节」各抽一条。
+    /// </summary>
+    private static List<List<string>> SelectPools(RatingPool pool, GachaMode mode)
     {
+        var result = new List<List<string>>(2);
         var sfw = pool.Sfw;
         var nsfw = pool.Nsfw;
         bool hasSfw = sfw is { Count: > 0 };
@@ -276,19 +305,44 @@ public static class GachaEngine
         switch (mode)
         {
             case GachaMode.Sfw:
-                return hasSfw ? sfw : null;
+                if (hasSfw) result.Add(sfw!);
+                break;
+
             case GachaMode.Nsfw:
-                return hasNsfw ? nsfw : (hasSfw ? sfw : null);
+                if (hasNsfw) result.Add(nsfw!);
+                else if (hasSfw) result.Add(sfw!);
+                if (pool.Both && hasSfw && hasNsfw) result.Add(sfw!);
+                break;
+
             default:
-                if (hasSfw && hasNsfw)
+                if (pool.Both && hasSfw && hasNsfw)
+                {
+                    result.Add(sfw!);
+                    result.Add(nsfw!);
+                }
+                else if (hasSfw && hasNsfw)
                 {
                     var merged = new List<string>(sfw!.Count + nsfw!.Count);
                     merged.AddRange(sfw);
                     merged.AddRange(nsfw);
-                    return merged;
+                    result.Add(merged);
                 }
-                return hasSfw ? sfw : (hasNsfw ? nsfw : null);
+                else if (hasSfw) result.Add(sfw!);
+                else if (hasNsfw) result.Add(nsfw!);
+                break;
         }
+
+        return result;
+    }
+
+    /// <summary>从池里抽一条，尽量不与本次已抽的 tag 重复。</summary>
+    private static string DrawUnique(List<string> pool, List<string> drawn, Random rng)
+    {
+        if (pool.Count == 1) return pool[0];
+        string tag = pool[rng.Next(pool.Count)];
+        for (int i = 0; i < 5 && drawn.Contains(tag); i++)
+            tag = pool[rng.Next(pool.Count)];
+        return tag;
     }
 
     private static void AddFixedTags(string? raw, List<string> target)

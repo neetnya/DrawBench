@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DrawBench.Modules.Gacha.Views.GachaView"
+<UserControl x:Class="DrawBench.Modules.Gacha.Views.GachaView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         FontSize="13"
@@ -87,13 +87,16 @@
                             <WrapPanel Margin="0,8,0,2">
                                 <Button Content="常规全身" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
+                                        ToolTip="人物 + 穿搭 + 姿势 + 地点环境"
                                         Click="OnPresetStandard" />
-                                <Button Content="仅人设外貌" Style="{StaticResource SecondaryButton}"
+                                <Button Content="人设外貌" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
+                                        ToolTip="只抽脸、眼、发、体型，不带服装与场景"
                                         Click="OnPresetCharacterOnly" />
-                                <Button Content="全选（不含NSFW）" Style="{StaticResource SecondaryButton}"
+                                <Button Content="服装展示" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
-                                        Click="OnPresetAllSfw" />
+                                        ToolTip="风格、衣物、配饰、鞋袜，聚焦穿搭"
+                                        Click="OnPresetOutfit" />
                                 <Button Content="全部清空" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,0,4"
                                         Click="OnPresetClear" />
@@ -108,9 +111,11 @@
                             </Grid>
                             <WrapPanel>
                                 <CheckBox x:Name="ChkHairColor" Content="发色" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHairStyles" Content="发型/发长" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkHairLength" Content="发长" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkHairStyles" Content="发型" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHairAccessories" Content="发饰" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHairTraits" Content="发质/动态" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkHairTraits" Content="发质/特效" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkHairActions" Content="头发动作" Margin="0,0,14,3" />
                             </WrapPanel>
 
                             <!-- 2. 面部与五官 -->
@@ -121,7 +126,8 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkEyes" Content="眼睛/视线" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkEyeColor" Content="瞳色/瞳形" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkEyes" Content="眼型/视线" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkFace" Content="表情/面部" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkEars" Content="耳朵/兽耳" Margin="0,0,14,3" />
                             </WrapPanel>
@@ -134,8 +140,10 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkBreasts" Content="胸部" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkAss" Content="臀部" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkBreastsSize" Content="胸部尺寸" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkBreastsDetails" Content="胸部细节" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkAssSize" Content="臀部尺寸" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkAssDetails" Content="臀部细节" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHands" Content="手部" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkFeet" Content="脚部" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkShoulders" Content="肩部" Margin="0,0,14,3" />
@@ -186,9 +194,6 @@
                             <WrapPanel>
                                 <CheckBox x:Name="ChkLocations" Content="地点环境" IsChecked="True" Margin="0,0,14,3" Checked="OnSceneBgToggleChanged" ToolTip="与「纯色/抽象背景」互斥" />
                                 <CheckBox x:Name="ChkBackgrounds" Content="纯色/抽象背景" Margin="0,0,14,3" Checked="OnSceneBgToggleChanged" ToolTip="与「地点环境」互斥" />
-                                <CheckBox x:Name="ChkLighting" Content="光影" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkComposition" Content="构图/视角" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkSceneObjects" Content="场景物件" Margin="0,0,14,3" ToolTip="灯具、道具、背景铺陈物等" />
                             </WrapPanel>
 
                         </StackPanel>
