@@ -24,7 +24,6 @@ public partial class GachaView : UserControl
 
         var saved = SettingsStore.Shared.Get<GachaOptions>(ModuleIds.Gacha);
         if (saved != null) ApplyOptions(saved);
-        SyncNsfwPanelState();
 
         _engineDir = AppPaths.Current.EngineDir;
         string bankPath = Path.Combine(_engineDir, GachaEngine.BankFileName);
@@ -91,12 +90,21 @@ public partial class GachaView : UserControl
         ChkComposition.IsChecked = o.ImageComposition;
         ChkSceneObjects.IsChecked = o.SceneObjects;
 
-        ChkEnableNsfw.IsChecked = o.EnableNsfw;
-        ChkNsfwNudity.IsChecked = o.NsfwNudityAndCovering;
-        ChkNsfwAttire.IsChecked = o.NsfwSexualAttire;
-        ChkNsfwActs.IsChecked = o.NsfwSexActs;
-        ChkNsfwPositions.IsChecked = o.NsfwSexualPositions;
-        ChkNsfwObjects.IsChecked = o.NsfwSexObjects;
+        SetMode(o.Mode);
+    }
+
+    private void SetMode(GachaMode mode)
+    {
+        RdoSfw.IsChecked = mode == GachaMode.Sfw;
+        RdoNsfw.IsChecked = mode == GachaMode.Nsfw;
+        RdoAny.IsChecked = mode == GachaMode.Any;
+    }
+
+    private GachaMode GetMode()
+    {
+        if (RdoNsfw.IsChecked == true) return GachaMode.Nsfw;
+        if (RdoAny.IsChecked == true) return GachaMode.Any;
+        return GachaMode.Sfw;
     }
 
     private GachaOptions CollectOptions() => new()
@@ -144,12 +152,7 @@ public partial class GachaView : UserControl
         ImageComposition = ChkComposition.IsChecked == true,
         SceneObjects = ChkSceneObjects.IsChecked == true,
 
-        EnableNsfw = ChkEnableNsfw.IsChecked == true,
-        NsfwNudityAndCovering = ChkNsfwNudity.IsChecked == true,
-        NsfwSexualAttire = ChkNsfwAttire.IsChecked == true,
-        NsfwSexActs = ChkNsfwActs.IsChecked == true,
-        NsfwSexualPositions = ChkNsfwPositions.IsChecked == true,
-        NsfwSexObjects = ChkNsfwObjects.IsChecked == true,
+        Mode = GetMode(),
     };
 
     // ==================== 快捷方案 ====================
@@ -164,7 +167,6 @@ public partial class GachaView : UserControl
             SuffixTags = TxtSuffix.Text ?? "",
         };
         ApplyOptions(d);
-        SyncNsfwPanelState();
     }
 
     private void OnPresetCharacterOnly(object sender, RoutedEventArgs e)
@@ -178,26 +180,17 @@ public partial class GachaView : UserControl
         ChkFashionStyle.IsChecked = true;
         ChkClothing.IsChecked = true;
         ChkLegwear.IsChecked = true;
-        SyncNsfwPanelState();
     }
 
     private void OnPresetAllSfw(object sender, RoutedEventArgs e)
     {
         SetAllSubChecks(true);
-        ChkEnableNsfw.IsChecked = false;
-        ChkNsfwNudity.IsChecked = false;
-        ChkNsfwAttire.IsChecked = false;
-        ChkNsfwActs.IsChecked = false;
-        ChkNsfwPositions.IsChecked = false;
-        ChkNsfwObjects.IsChecked = false;
-        SyncNsfwPanelState();
+        SetMode(GachaMode.Sfw);
     }
 
     private void OnPresetClear(object sender, RoutedEventArgs e)
     {
         SetAllSubChecks(false);
-        ChkEnableNsfw.IsChecked = false;
-        SyncNsfwPanelState();
     }
 
     private void SetAllSubChecks(bool value)
@@ -248,14 +241,6 @@ public partial class GachaView : UserControl
             ChkBackgrounds.IsChecked = false;
         else if (ReferenceEquals(sender, ChkBackgrounds) && ChkBackgrounds.IsChecked == true)
             ChkLocations.IsChecked = false;
-    }
-
-    private void OnNsfwToggleChanged(object sender, RoutedEventArgs e) => SyncNsfwPanelState();
-
-    private void SyncNsfwPanelState()
-    {
-        if (PanelNsfwSubs != null && ChkEnableNsfw != null)
-            PanelNsfwSubs.IsEnabled = ChkEnableNsfw.IsChecked == true;
     }
 
     // ==================== 抽卡 ====================

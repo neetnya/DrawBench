@@ -1,4 +1,4 @@
-<UserControl x:Class="DrawBench.Modules.Gacha.Views.GachaView"
+﻿<UserControl x:Class="DrawBench.Modules.Gacha.Views.GachaView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         FontSize="13"
@@ -57,12 +57,30 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="前置" Style="{StaticResource FieldLabel}" />
-                                <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtPrefix" Text="1girl, solo"
+                                <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtPrefix" Text="1girl"
                                          ToolTip="固定拼接在每条结果最前面，逗号分隔" />
 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="后置" Style="{StaticResource FieldLabel}" Margin="0,4,0,0" />
                                 <TextBox Grid.Row="1" Grid.Column="1" x:Name="TxtSuffix" Text="" Margin="0,4,0,0"
                                          ToolTip="固定拼接在每条结果最后面，逗号分隔" />
+                            </Grid>
+
+                            <!-- 抽卡模式 -->
+                            <Grid Margin="0,4,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="模式" Style="{StaticResource FieldLabel}"
+                                           Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <RadioButton x:Name="RdoSfw" Content="SFW" GroupName="GachaMode" IsChecked="True"
+                                                 Margin="0,0,16,0" ToolTip="只抽安全 tag，不含成人内容" />
+                                    <RadioButton x:Name="RdoNsfw" Content="NSFW" GroupName="GachaMode"
+                                                 Margin="0,0,16,0" ToolTip="只抽成人 tag；该模块没有成人词时自动回退安全词" />
+                                    <RadioButton x:Name="RdoAny" Content="ANY" GroupName="GachaMode"
+                                                 Margin="0,0,16,0" ToolTip="安全与成人 tag 混合抽取" />
+                                </WrapPanel>
                             </Grid>
 
                             <!-- 快捷方案 -->
@@ -173,24 +191,6 @@
                                 <CheckBox x:Name="ChkSceneObjects" Content="场景物件" Margin="0,0,14,3" ToolTip="灯具、道具、背景铺陈物等" />
                             </WrapPanel>
 
-                            <!-- 7. 成人向 (NSFW) -->
-                            <Grid Margin="0,8,0,4">
-                                <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                                <Border Background="{StaticResource Card}" Padding="0,0,8,0" HorizontalAlignment="Left">
-                                    <TextBlock Text="成人向（nsfw）" FontSize="11.5" Foreground="{StaticResource Muted}" />
-                                </Border>
-                            </Grid>
-                            <StackPanel>
-                                <CheckBox x:Name="ChkEnableNsfw" Content="启用 NSFW 模块" Margin="0,0,0,4"
-                                          Checked="OnNsfwToggleChanged" Unchecked="OnNsfwToggleChanged" />
-                                <WrapPanel x:Name="PanelNsfwSubs" IsEnabled="False" Margin="16,0,0,0">
-                                    <CheckBox x:Name="ChkNsfwNudity" Content="裸露/遮挡" Margin="0,0,14,3" />
-                                    <CheckBox x:Name="ChkNsfwAttire" Content="情趣服饰" Margin="0,0,14,3" />
-                                    <CheckBox x:Name="ChkNsfwActs" Content="性行为" Margin="0,0,14,3" />
-                                    <CheckBox x:Name="ChkNsfwPositions" Content="体位" Margin="0,0,14,3" />
-                                    <CheckBox x:Name="ChkNsfwObjects" Content="器具/道具" Margin="0,0,14,3" />
-                                </WrapPanel>
-                            </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
                 </GroupBox>

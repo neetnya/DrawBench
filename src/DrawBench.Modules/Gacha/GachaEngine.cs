@@ -6,14 +6,23 @@ using System.Text.Json;
 
 namespace DrawBench.Modules.Gacha;
 
+/// <summary>抽卡模式：SFW 只用安全池，NSFW 只用成人池，ANY 两池混合。</summary>
+public enum GachaMode
+{
+    Sfw,
+    Nsfw,
+    Any,
+}
+
 /// <summary>模块化抽卡配置（只针对模块与子维度开关，不涉及具体 tag）。</summary>
 public sealed class GachaOptions
 {
     // 通用
     public int Repeat { get; set; } = 1;
     public bool ReplaceUnderscoreWithSpace { get; set; } = true;
-    public string PrefixTags { get; set; } = "1girl, solo";
+    public string PrefixTags { get; set; } = "1girl";
     public string SuffixTags { get; set; } = "";
+    public GachaMode Mode { get; set; } = GachaMode.Sfw;
 
     // 1. 头发 (hair)
     public bool HairColor { get; set; } = true;
@@ -59,15 +68,14 @@ public sealed class GachaOptions
     public bool ImageComposition { get; set; } = true;
     public bool SceneObjects { get; set; } = false;
 
-    // 7. 成人向 (nsfw)
-    public bool EnableNsfw { get; set; } = false;
-    public bool NsfwNudityAndCovering { get; set; } = false;
-    public bool NsfwSexualAttire { get; set; } = false;
-    public bool NsfwSexActs { get; set; } = false;
-    public bool NsfwSexualPositions { get; set; } = false;
-    public bool NsfwSexObjects { get; set; } = false;
-
     public GachaOptions Clone() => (GachaOptions)MemberwiseClone();
+}
+
+/// <summary>子组内的两档词池（JSON 中缺省的池视为空）。</summary>
+public sealed class RatingPool
+{
+    public List<string>? Sfw { get; set; }
+    public List<string>? Nsfw { get; set; }
 }
 
 public sealed class GachaDrawItem
@@ -116,6 +124,7 @@ public sealed class GachaRunOutcome
 
 /// <summary>
 /// 原生模块化抽卡引擎：直接读取 engine\tagGroup_modular.json，按选中的模块与子维度随机抽取 tag。
+/// 词库为三级结构 {模块: {子组: {sfw: [...], nsfw: [...]}}}，抽卡模式决定从哪个池取词。
 /// </summary>
 public static class GachaEngine
 {
@@ -124,7 +133,7 @@ public static class GachaEngine
     private static readonly object CacheLock = new();
     private static string _cachedPath = "";
     private static DateTime _cachedMtime;
-    private static Dictionary<string, Dictionary<string, List<string>>>? _cachedBank;
+    private static Dictionary<string, Dictionary<string, RatingPool>>? _cachedBank;
 
     private readonly record struct SlotSpec(string Module, string SubCategory, string Label, Func<GachaOptions, bool> IsEnabled);
 
@@ -173,13 +182,6 @@ public static class GachaEngine
         new("scene_and_composition", "lighting", "光影", o => o.Lighting),
         new("scene_and_composition", "image_composition", "构图/视角", o => o.ImageComposition),
         new("scene_and_composition", "objects", "场景物件", o => o.SceneObjects),
-
-        // 7. 成人向 (NSFW)
-        new("nsfw", "nudity_and_covering", "裸露/遮挡", o => o.EnableNsfw && o.NsfwNudityAndCovering),
-        new("nsfw", "sexual_attire", "情趣服饰", o => o.EnableNsfw && o.NsfwSexualAttire),
-        new("nsfw", "sex_acts", "性行为", o => o.EnableNsfw && o.NsfwSexActs),
-        new("nsfw", "sexual_positions", "体位", o => o.EnableNsfw && o.NsfwSexualPositions),
-        new("nsfw", "sex_objects", "器具/道具", o => o.EnableNsfw && o.NsfwSexObjects),
     };
 
     public static GachaRunOutcome Roll(GachaOptions options, string engineDir)
@@ -187,7 +189,7 @@ public static class GachaEngine
         var outcome = new GachaRunOutcome();
         string bankPath = Path.Combine(engineDir, BankFileName);
 
-        Dictionary<string, Dictionary<string, List<string>>> bank;
+        Dictionary<string, Dictionary<string, RatingPool>> bank;
         try
         {
             bank = LoadBank(bankPath);
@@ -198,18 +200,33 @@ public static class GachaEngine
             return outcome;
         }
 
-        var activeSlots = new List<SlotSpec>();
+        // 提前按模式挑好每个槽位要用的池，避免连抽时反复合并
+        var activePools = new List<(SlotSpec Slot, List<string> Tags)>();
         foreach (var slot in Slots)
         {
-            if (slot.IsEnabled(options))
-                activeSlots.Add(slot);
+            if (!slot.IsEnabled(options)) continue;
+            if (!bank.TryGetValue(slot.Module, out var subMap) ||
+                !subMap.TryGetValue(slot.SubCategory, out var pool))
+            {
+                continue;
+            }
+
+            var picked = SelectPool(pool, options.Mode);
+            if (picked is { Count: > 0 })
+                activePools.Add((slot, picked));
         }
 
-        if (activeSlots.Count == 0 &&
+        if (activePools.Count == 0 &&
             string.IsNullOrWhiteSpace(options.PrefixTags) &&
             string.IsNullOrWhiteSpace(options.SuffixTags))
         {
             outcome.Failure = "请至少勾选一个要抽取的模块，或填写前置/后置提示词。";
+            return outcome;
+        }
+
+        if (activePools.Count == 0 && options.Mode == GachaMode.Nsfw)
+        {
+            outcome.Failure = "NSFW 模式下选中的模块没有可用的成人 tag，请多勾几个模块或改用 ANY。";
             return outcome;
         }
 
@@ -223,21 +240,15 @@ public static class GachaEngine
             AddFixedTags(options.PrefixTags, item.Tags);
 
             bool pickLocation = !(options.Locations && options.Backgrounds) || rng.Next(2) == 0;
-            foreach (var slot in activeSlots)
+            foreach (var (slot, tags) in activePools)
             {
                 if (options.Locations && options.Backgrounds)
                 {
                     if (slot.SubCategory == "locations" && !pickLocation) continue;
                     if (slot.SubCategory == "backgrounds" && pickLocation) continue;
                 }
-                if (!bank.TryGetValue(slot.Module, out var subMap) ||
-                    !subMap.TryGetValue(slot.SubCategory, out var pool) ||
-                    pool.Count == 0)
-                {
-                    continue;
-                }
 
-                string rawTag = pool[rng.Next(pool.Count)];
+                string rawTag = tags[rng.Next(tags.Count)];
                 string formatted = options.ReplaceUnderscoreWithSpace
                     ? rawTag.Replace('_', ' ')
                     : rawTag;
@@ -254,6 +265,32 @@ public static class GachaEngine
         return outcome;
     }
 
+    /// <summary>按模式选池：SFW 只取安全池；NSFW 优先成人池，该组没有成人词时回退安全池；ANY 合并两池。</summary>
+    private static List<string>? SelectPool(RatingPool pool, GachaMode mode)
+    {
+        var sfw = pool.Sfw;
+        var nsfw = pool.Nsfw;
+        bool hasSfw = sfw is { Count: > 0 };
+        bool hasNsfw = nsfw is { Count: > 0 };
+
+        switch (mode)
+        {
+            case GachaMode.Sfw:
+                return hasSfw ? sfw : null;
+            case GachaMode.Nsfw:
+                return hasNsfw ? nsfw : (hasSfw ? sfw : null);
+            default:
+                if (hasSfw && hasNsfw)
+                {
+                    var merged = new List<string>(sfw!.Count + nsfw!.Count);
+                    merged.AddRange(sfw);
+                    merged.AddRange(nsfw);
+                    return merged;
+                }
+                return hasSfw ? sfw : (hasNsfw ? nsfw : null);
+        }
+    }
+
     private static void AddFixedTags(string? raw, List<string> target)
     {
         if (string.IsNullOrWhiteSpace(raw)) return;
@@ -264,7 +301,7 @@ public static class GachaEngine
         }
     }
 
-    private static Dictionary<string, Dictionary<string, List<string>>> LoadBank(string path)
+    private static Dictionary<string, Dictionary<string, RatingPool>> LoadBank(string path)
     {
         if (!File.Exists(path))
             throw new FileNotFoundException("找不到模块化词库文件。", path);
@@ -280,7 +317,8 @@ public static class GachaEngine
             }
 
             string json = File.ReadAllText(path, Encoding.UTF8);
-            var parsed = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, List<string>>>>(json)
+            var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var parsed = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, RatingPool>>>(json, jsonOptions)
                 ?? throw new InvalidDataException("词库 JSON 内容为空。");
 
             _cachedPath = path;
