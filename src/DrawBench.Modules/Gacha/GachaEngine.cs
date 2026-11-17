@@ -191,7 +191,7 @@ public static class GachaEngine
 
         // 6. 场景与构图
         new("scene_and_composition", "locations", "地点环境", o => o.Locations),
-        new("scene_and_composition", "backgrounds", "纯色/抽象背景", o => o.Backgrounds),
+        new("scene_and_composition", "backgrounds", "纯白背景", o => o.Backgrounds),
     };
 
     public static GachaRunOutcome Roll(GachaOptions options, string engineDir)
