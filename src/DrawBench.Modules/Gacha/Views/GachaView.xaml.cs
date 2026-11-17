@@ -72,7 +72,6 @@ public partial class GachaView : UserControl
         ChkFashionStyle.IsChecked = o.FashionStyle;
         ChkClothing.IsChecked = o.Clothing;
         ChkHeadwear.IsChecked = o.Headwear;
-        ChkEyewear.IsChecked = o.Eyewear;
         ChkNeckwear.IsChecked = o.Neckwear;
         ChkSleeves.IsChecked = o.Sleeves;
         ChkHandwear.IsChecked = o.Handwear;
@@ -124,7 +123,6 @@ public partial class GachaView : UserControl
         FashionStyle = ChkFashionStyle.IsChecked == true,
         Clothing = ChkClothing.IsChecked == true,
         Headwear = ChkHeadwear.IsChecked == true,
-        Eyewear = ChkEyewear.IsChecked == true,
         Neckwear = ChkNeckwear.IsChecked == true,
         Sleeves = ChkSleeves.IsChecked == true,
         Handwear = ChkHandwear.IsChecked == true,
@@ -219,7 +217,6 @@ public partial class GachaView : UserControl
         ChkFashionStyle.IsChecked = value;
         ChkClothing.IsChecked = value;
         ChkHeadwear.IsChecked = value;
-        ChkEyewear.IsChecked = value;
         ChkNeckwear.IsChecked = value;
         ChkSleeves.IsChecked = value;
         ChkHandwear.IsChecked = value;

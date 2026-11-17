@@ -38,7 +38,6 @@ public sealed class GachaOptions
     public bool FashionStyle { get; set; } = true;
     public bool Clothing { get; set; } = true;
     public bool Headwear { get; set; } = false;
-    public bool Eyewear { get; set; } = false;
     public bool Neckwear { get; set; } = false;
     public bool Sleeves { get; set; } = false;
     public bool Handwear { get; set; } = false;
@@ -152,7 +151,6 @@ public static class GachaEngine
         new("attire_and_accessories", "fashion_style", "穿搭风格", o => o.FashionStyle),
         new("attire_and_accessories", "clothing", "主服装", o => o.Clothing),
         new("attire_and_accessories", "headwear", "头饰/帽子", o => o.Headwear),
-        new("attire_and_accessories", "eyewear", "眼镜/眼饰", o => o.Eyewear),
         new("attire_and_accessories", "neckwear", "颈饰/领饰", o => o.Neckwear),
         new("attire_and_accessories", "sleeves", "袖型", o => o.Sleeves),
         new("attire_and_accessories", "handwear", "手套/手饰", o => o.Handwear),
