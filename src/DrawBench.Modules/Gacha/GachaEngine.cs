@@ -50,8 +50,7 @@ public sealed class GachaOptions
 
     // 4. 服装与配饰 (attire_and_accessories)
     public bool Clothing { get; set; } = true;
-    public bool Headwear { get; set; } = false;
-    public bool Neckwear { get; set; } = false;
+    public bool HeadwearAndNeckwear { get; set; } = false;
     public bool Sleeves { get; set; } = false;
     public bool Handwear { get; set; } = false;
     public bool Legwear { get; set; } = true;
@@ -178,8 +177,7 @@ public static class GachaEngine
 
         // 4. 服装与配饰
         new("attire_and_accessories", "clothing", "主服装", o => o.Clothing),
-        new("attire_and_accessories", "headwear", "头饰/帽子", o => o.Headwear),
-        new("attire_and_accessories", "neckwear", "颈饰/领饰", o => o.Neckwear),
+        new("attire_and_accessories", "headwear_and_neckwear", "头饰/颈饰", o => o.HeadwearAndNeckwear),
         new("attire_and_accessories", "sleeves", "袖型", o => o.Sleeves),
         new("attire_and_accessories", "handwear", "手套/手饰", o => o.Handwear),
         new("attire_and_accessories", "legwear", "袜类/腿饰", o => o.Legwear),
@@ -253,22 +251,8 @@ public static class GachaEngine
 
             AddFixedTags(options.PrefixTags, item.Tags);
 
-            bool pickLocation = !(options.Locations && options.Backgrounds) || rng.Next(2) == 0;
-            // 全身姿势与舞蹈互斥：同时勾选时每次只抽其中一个
-            bool pickPosture = !(options.Posture && options.Dances) || rng.Next(2) == 0;
             foreach (var (slot, pools, pick, weights) in activePools)
             {
-                if (options.Locations && options.Backgrounds)
-                {
-                    if (slot.SubCategory == "locations" && !pickLocation) continue;
-                    if (slot.SubCategory == "backgrounds" && pickLocation) continue;
-                }
-                if (options.Posture && options.Dances)
-                {
-                    if (slot.SubCategory == "posture" && !pickPosture) continue;
-                    if (slot.SubCategory == "dances" && pickPosture) continue;
-                }
-
                 var drawn = new List<string>(pick);
                 int totalDraws = pools.Count == 1 ? pick : Math.Max(pick, pools.Count);
                 for (int k = 0; k < totalDraws; k++)

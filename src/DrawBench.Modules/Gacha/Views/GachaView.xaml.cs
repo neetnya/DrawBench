@@ -74,8 +74,7 @@ public partial class GachaView : UserControl
         ChkBodyOther.IsChecked = o.OtherBodyParts;
 
         ChkClothing.IsChecked = o.Clothing;
-        ChkHeadwear.IsChecked = o.Headwear;
-        ChkNeckwear.IsChecked = o.Neckwear;
+        ChkHeadwearNeckwear.IsChecked = o.HeadwearAndNeckwear;
         ChkSleeves.IsChecked = o.Sleeves;
         ChkHandwear.IsChecked = o.Handwear;
         ChkLegwear.IsChecked = o.Legwear;
@@ -137,8 +136,7 @@ public partial class GachaView : UserControl
         OtherBodyParts = ChkBodyOther.IsChecked == true,
 
         Clothing = ChkClothing.IsChecked == true,
-        Headwear = ChkHeadwear.IsChecked == true,
-        Neckwear = ChkNeckwear.IsChecked == true,
+        HeadwearAndNeckwear = ChkHeadwearNeckwear.IsChecked == true,
         Sleeves = ChkSleeves.IsChecked == true,
         Handwear = ChkHandwear.IsChecked == true,
         Legwear = ChkLegwear.IsChecked == true,
@@ -189,9 +187,9 @@ public partial class GachaView : UserControl
             o.Eyes = true;
             o.FaceAndExpression = true;
             o.BreastsSize = true;
-            o.BreastsDetails = true;
+            o.BreastsDetails = false;
             o.AssSize = true;
-            o.AssDetails = true;
+            o.AssDetails = false;
             o.Clothing = true;
             o.Legwear = true;
             o.Posture = true;
@@ -231,8 +229,7 @@ public partial class GachaView : UserControl
         ApplyPreset(o =>
         {
             o.Clothing = true;
-            o.Headwear = true;
-            o.Neckwear = true;
+            o.HeadwearAndNeckwear = true;
             o.Sleeves = true;
             o.Handwear = true;
             o.Legwear = true;
@@ -272,8 +269,7 @@ public partial class GachaView : UserControl
         ChkBodyOther.IsChecked = value;
 
         ChkClothing.IsChecked = value;
-        ChkHeadwear.IsChecked = value;
-        ChkNeckwear.IsChecked = value;
+        ChkHeadwearNeckwear.IsChecked = value;
         ChkSleeves.IsChecked = value;
         ChkHandwear.IsChecked = value;
         ChkLegwear.IsChecked = value;
@@ -297,6 +293,16 @@ public partial class GachaView : UserControl
             ChkBackgrounds.IsChecked = false;
         else if (ReferenceEquals(sender, ChkBackgrounds) && ChkBackgrounds.IsChecked == true)
             ChkLocations.IsChecked = false;
+    }
+
+    /// <summary>全身姿势与舞蹈只能二选一，和「地点/背景」同样的交互。</summary>
+    private void OnPostureDanceToggleChanged(object sender, RoutedEventArgs e)
+    {
+        if (ChkPosture == null || ChkDances == null) return;
+        if (ReferenceEquals(sender, ChkPosture) && ChkPosture.IsChecked == true)
+            ChkDances.IsChecked = false;
+        else if (ReferenceEquals(sender, ChkDances) && ChkDances.IsChecked == true)
+            ChkPosture.IsChecked = false;
     }
 
     // ==================== 抽卡 ====================

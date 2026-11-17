@@ -153,8 +153,7 @@
                             </Grid>
                             <WrapPanel>
                                 <CheckBox x:Name="ChkClothing" Content="主服装" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHeadwear" Content="帽子/头饰" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkNeckwear" Content="颈饰/领饰" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkHeadwearNeckwear" Content="头饰/颈饰" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkSleeves" Content="袖型" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHandwear" Content="手套/手饰" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkLegwear" Content="袜类/腿饰" IsChecked="True" Margin="0,0,14,3" />
@@ -170,9 +169,9 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkPosture" Content="全身姿势" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkPosture" Content="全身姿势" IsChecked="True" Margin="0,0,14,3" Checked="OnPostureDanceToggleChanged" ToolTip="与「舞蹈」互斥" />
                                 <CheckBox x:Name="ChkGestures" Content="手势" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkDances" Content="舞蹈" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkDances" Content="舞蹈" Margin="0,0,14,3" Checked="OnPostureDanceToggleChanged" ToolTip="与「全身姿势」互斥" />
                                 <CheckBox x:Name="ChkHolding" Content="手持物" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkVerbs" Content="一般动作" Margin="0,0,14,3" />
                             </WrapPanel>
@@ -238,10 +237,10 @@
                             <TextBox x:Name="TxtResult" IsReadOnly="True" AcceptsReturn="True"
                                      Style="{StaticResource ConsoleBox}"
                                      TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                                     VerticalContentAlignment="Top" Padding="8,6" FontSize="13"
-                                     Foreground="{StaticResource Ink}" />
+                                     VerticalContentAlignment="Top" Padding="10,8" FontSize="16"
+                                     FontWeight="Normal" Foreground="{StaticResource Ink}" />
                             <TextBlock IsHitTestVisible="False" Margin="16,15,16,0" VerticalAlignment="Top"
-                                       TextWrapping="Wrap" FontSize="12.5" Foreground="{StaticResource Muted}"
+                                       TextWrapping="Wrap" FontSize="14" Foreground="{StaticResource Muted}"
                                        Text="在左侧勾选需要的模块，点击下方「抽卡」即可生成提示词">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
@@ -263,7 +262,7 @@
                              TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Top"
                              Foreground="{StaticResource InkSoft}" Background="{StaticResource InputSoftBrush}"
-                             FontSize="12" />
+                             FontSize="15" FontWeight="Normal" />
                 </TabItem>
             </TabControl>
         </Grid>
