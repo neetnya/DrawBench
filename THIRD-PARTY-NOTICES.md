@@ -5,13 +5,6 @@ DrawBench 自己写的代码与下列第三方组件一起工作。第三方部�
 
 ## MIT
 
-### Comfyui-Anima-Wardrobe
-
-- 用途：抽卡模块的抽取引擎（`engine\anima_cli.py`、`engine\wardrobe_rules.py`）与角色/服装词库（`engine\presets\`）
-- 来源：https://github.com/lingdongbudong/Comfyui-Anima-Wardrobe
-- 版权：Copyright (c) 2026 lingdongbudong
-- 许可全文：`third-party\LICENSE-anima-wardrobe.txt`
-
 ### ComfyUI-WD14-Tagger
 
 - 用途：反推模块的推理流程与标签处理（还原自 ComfyUI 的 WD14 Tagger 节点实现）
@@ -36,4 +29,4 @@ DrawBench 自己写的代码与下列第三方组件一起工作。第三方部�
 ## 运行期依赖
 
 - .NET 9（发布包已自包含）
-- Python 3.8+：抽卡与对比图两个功能需要；对比图还需要 Pillow（`python -m pip install --upgrade Pillow`）
+- Python 3.8+：对比图功能需要，且需要安装 Pillow（`python -m pip install --upgrade Pillow`）

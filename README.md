@@ -13,7 +13,7 @@
 | 模块 | 做什么 | 需要 |
 | --- | --- | --- |
 | 批量提交 | 把提示词队列写进 ComfyUI 工作流并批量排队 | ComfyUI 在跑 |
-| 抽卡 | 抽角色特征 + 服装/姿势/表情/场景，拼成提示词 | Python 3.8+ |
+| 抽卡 | 按模块化 Danbooru 词库自由勾选维度并生成提示词 | — |
 | 参数读取 | 读图片里嵌的提示词与生成参数（ComfyUI / WebUI / NovelAI） | — |
 | 反推标签 | WD14 本地 ONNX 反推标签 | 自备 onnx + csv 模型 |
 | 对比图 | 多模型同名出图横向拼成对比图 | Python 3.8+ 与 Pillow |
@@ -33,7 +33,7 @@
 ```
 DrawBench.exe
 api\         ComfyUI 工作流 JSON（批量提交从这里读）
-engine\      抽卡引擎（anima_cli.py + presets）
+engine\      抽卡词库（tagGroup_modular.json）
 scripts\     拼图脚本（gen_sheets_cli.py）
 models\      反推模型（xxx.onnx + 同名 xxx.csv）
 data\        全部配置与结果
@@ -97,7 +97,6 @@ src/
 
 ## 第三方许可
 
-- 抽卡模块的引擎与角色档案来自 [Comfyui-Anima-Wardrobe](https://github.com/lingdongbudong/Comfyui-Anima-Wardrobe)（MIT）
 - 反推模块由 [ComfyUI-WD14-Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger) 改造（MIT）
 
 详见 `THIRD-PARTY-NOTICES.md`。

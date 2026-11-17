@@ -1,86 +1,85 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using DrawBench.Core;
-using DrawBench.Core.Python;
 
 namespace DrawBench.Modules.Gacha;
 
-/// <summary>一次抽卡的全部参数，和 anima_cli.py 的命令行一一对应。</summary>
-public sealed class AnimaOptions
+/// <summary>模块化抽卡配置（只针对模块与子维度开关，不涉及具体 tag）。</summary>
+public sealed class GachaOptions
 {
-    // girl
-    public string Pool { get; set; } = "热门 TOP200";
-    public int Count { get; set; } = 1;
-    public string Relation { get; set; } = "auto";
-    public bool HugeBreasts { get; set; }
-    public bool NoAvoidRepeat { get; set; }
-
-    // roll
-    public bool NoOutfit { get; set; }
-    public bool NoPose { get; set; }
-    public bool NoExpression { get; set; }
-    public bool NoScene { get; set; }
-    public bool AllowPublic { get; set; }
-
     // 通用
-    public string Level { get; set; } = "any";
     public int Repeat { get; set; } = 1;
+    public bool ReplaceUnderscoreWithSpace { get; set; } = true;
+    public string PrefixTags { get; set; } = "1girl, solo";
+    public string SuffixTags { get; set; } = "";
 
-    public AnimaOptions Clone() => (AnimaOptions)MemberwiseClone();
+    // 1. 头发 (hair)
+    public bool HairColor { get; set; } = true;
+    public bool HairStyles { get; set; } = true;
+    public bool HairAccessories { get; set; } = false;
+    public bool HairTraitsAndActions { get; set; } = false;
 
-    /// <summary>拼出子命令之后的参数列表（不含 python / 脚本路径）。</summary>
-    public List<string> ToArgs(string cmd, string? claimIn, string? claimOut)
-    {
-        var a = new List<string> { cmd };
-        a.Add("--level=" + (string.IsNullOrWhiteSpace(Level) ? "suggestive" : Level));
-        a.Add("--json");
-        a.Add("--repeat=" + Math.Max(1, Repeat));
+    // 2. 面部与五官 (face_and_eyes)
+    public bool Eyes { get; set; } = true;
+    public bool FaceAndExpression { get; set; } = true;
+    public bool Ears { get; set; } = false;
 
-        if (cmd == "girl")
-        {
-            a.Add("--pool=" + (string.IsNullOrWhiteSpace(Pool) ? "热门 TOP200" : Pool));
-            a.Add("--count=" + (Count < 1 ? 1 : (Count > 3 ? 3 : Count)));
-            a.Add("--relation=" + (string.IsNullOrWhiteSpace(Relation) ? "auto" : Relation));
-            if (HugeBreasts) a.Add("--huge-breasts");
-            if (NoAvoidRepeat) a.Add("--no-avoid-repeat");
-        }
-        else
-        {
-            if (NoOutfit) a.Add("--no-outfit");
-            if (NoPose) a.Add("--no-pose");
-            if (NoExpression) a.Add("--no-expression");
-            if (NoScene) a.Add("--no-scene");
-            if (AllowPublic) a.Add("--allow-public");
-        }
+    // 3. 身体部位 (body_parts)
+    public bool Breasts { get; set; } = false;
+    public bool Ass { get; set; } = false;
+    public bool Hands { get; set; } = false;
+    public bool Feet { get; set; } = false;
+    public bool Shoulders { get; set; } = false;
+    public bool OtherBodyParts { get; set; } = false;
 
-        if (!string.IsNullOrEmpty(claimIn)) a.Add("--claim-in=" + claimIn);
-        if (!string.IsNullOrEmpty(claimOut)) a.Add("--claim-out=" + claimOut);
-        return a;
-    }
+    // 4. 服装与配饰 (attire_and_accessories)
+    public bool FashionStyle { get; set; } = true;
+    public bool Clothing { get; set; } = true;
+    public bool Headwear { get; set; } = false;
+    public bool Eyewear { get; set; } = false;
+    public bool Neckwear { get; set; } = false;
+    public bool Sleeves { get; set; } = false;
+    public bool Handwear { get; set; } = false;
+    public bool Legwear { get; set; } = true;
+    public bool Accessories { get; set; } = false;
+
+    // 5. 姿势与动作 (pose_and_action)
+    public bool Posture { get; set; } = true;
+    public bool Gestures { get; set; } = false;
+    public bool Dances { get; set; } = false;
+    public bool Holding { get; set; } = false;
+    public bool VerbsAndActions { get; set; } = false;
+
+    // 6. 场景与构图 (scene_and_composition)
+    public bool Locations { get; set; } = true;
+    public bool Backgrounds { get; set; } = false;
+    public bool Lighting { get; set; } = true;
+    public bool ImageComposition { get; set; } = true;
+
+    // 7. 成人向 (nsfw)
+    public bool EnableNsfw { get; set; } = false;
+    public bool NsfwNudityAndCovering { get; set; } = false;
+    public bool NsfwSexualAttire { get; set; } = false;
+    public bool NsfwSexActs { get; set; } = false;
+    public bool NsfwSexualPositions { get; set; } = false;
+    public bool NsfwSexObjects { get; set; } = false;
+
+    public GachaOptions Clone() => (GachaOptions)MemberwiseClone();
 }
 
-public sealed class ResultItem
+public sealed class GachaDrawItem
 {
-    public bool Ok;
-    public string Text = "";
-    public string Report = "";
-    public string ClaimJson = "";
+    public List<string> Tags { get; } = new();
+    public List<string> LogLines { get; } = new();
+    public string PromptText { get; set; } = "";
 }
 
-public sealed class RunOutcome
+public sealed class GachaRunOutcome
 {
-    public int ExitCode;
-    public string StdErr = "";
-    public string StdOut = "";
-    public List<ResultItem> Items = new List<ResultItem>();
-    public string? Failure;          // 非空 = 这次调用彻底失败（找不到 python / 解析不出 JSON 等）
+    public string? Failure { get; set; }
+    public List<GachaDrawItem> Items { get; } = new();
     public bool Ok => Failure == null && Items.Count > 0;
 
     public string AllText
@@ -88,10 +87,10 @@ public sealed class RunOutcome
         get
         {
             var sb = new StringBuilder();
-            foreach (var it in Items)
+            foreach (var item in Items)
             {
-                if (sb.Length > 0) sb.AppendLine();   // 多条之间只换行，不留空行
-                sb.Append(it.Text);
+                if (sb.Length > 0) sb.AppendLine();
+                sb.Append(item.PromptText);
             }
             return sb.ToString();
         }
@@ -102,212 +101,184 @@ public sealed class RunOutcome
         get
         {
             var sb = new StringBuilder();
-            int idx = 0;
-            foreach (var it in Items)
+            for (int i = 0; i < Items.Count; i++)
             {
-                idx++;
-                if (sb.Length > 0) sb.AppendLine();
-                if (Items.Count > 1) sb.AppendLine("—— 第 " + idx + " 条 ——");
-                sb.AppendLine(LogText.Tidy(LogText.Clean(it.Report)));
+                if (i > 0) sb.AppendLine();
+                if (Items.Count > 1) sb.AppendLine($"—— 第 {i + 1} 条 ——");
+                foreach (var line in Items[i].LogLines)
+                    sb.AppendLine(line);
             }
-            if (!string.IsNullOrEmpty(StdErr)) sb.AppendLine().AppendLine(StdErr.TrimEnd());
             return sb.ToString().TrimEnd();
         }
     }
 }
 
-/// <summary>整理引擎日志：去掉 seed=NNN（界面不暴露种子）和 emoji（文本框里显示成豆腐块）。</summary>
-internal static class LogText
-{
-    private static readonly Regex SeedRe = new(@"[ \t]*seed=\d+[ \t]*", RegexOptions.Compiled);
-    private static readonly Regex EmojiRe = new(@"[\uD83C-\uDBFF][\uDC00-\uDFFF]", RegexOptions.Compiled);
-    private static readonly Regex SpacesRe = new(@" {2,}", RegexOptions.Compiled);
-    private static readonly Regex TagCountRe = new(@"（\d+ 个标签）", RegexOptions.Compiled);
-    private static readonly Regex LabelColonRe =
-        new(@"^([^\s:：]{1,10}(?:[ ][^\s:：]{1,10})?)\s*[:：]\s*", RegexOptions.Compiled);
-
-    public static string Clean(string log)
-    {
-        if (string.IsNullOrEmpty(log)) return log;
-
-        var lines = log.Replace("\r\n", "\n").Split('\n');
-        for (int i = 0; i < lines.Length; i++)
-        {
-            string s = lines[i];
-            if (s.IndexOf("seed=", StringComparison.Ordinal) >= 0)
-            {
-                s = SeedRe.Replace(s, " ");
-                s = SpacesRe.Replace(s, " ");
-            }
-            string noEmoji = EmojiRe.Replace(s, "");
-            if (noEmoji.Length != s.Length && noEmoji.StartsWith(" ")) noEmoji = noEmoji.TrimStart();
-            lines[i] = noEmoji.TrimEnd();
-        }
-        return string.Join("\n", lines);
-    }
-
-    /// <summary>
-    /// 精简引擎日志：只留「一眼有用」的结论。
-    /// 注意：这里的中文关键字与 Python 侧日志文案耦合，引擎改文案时要同步。
-    /// </summary>
-    public static string Tidy(string log)
-    {
-        if (string.IsNullOrEmpty(log)) return log;
-
-        // roll 命令产生的日志整段抛弃，不输出任何日志
-        if (log.Contains("服装形态") || log.Contains("场所") || log.Contains("目标等级="))
-            return "";
-
-        var kept = new List<string>();
-        foreach (string raw in log.Replace("\r\n", "\n").Split('\n'))
-        {
-            string s = raw.TrimEnd();
-            string t = s.Trim();
-            if (t.Length == 0) { kept.Add(""); continue; }
-
-            // 分隔线
-            if (t.Length >= 4 && (t.Trim('=', '-', '—', '─', '·').Length == 0)) continue;
-
-            // 角色来源 / 热度明细
-            int si = t.IndexOf("来源", StringComparison.Ordinal);
-            int hi = t.IndexOf("热度", StringComparison.Ordinal);
-            if (si >= 0 && hi > si)
-            {
-                string who = t.Substring(si + 2, hi - si - 2).Trim(' ', '·', ':', '：');
-                if (who.Length == 0) continue;
-                if (who.Length > 88) who = who.Substring(0, 87).TrimEnd() + "…";
-                kept.Add("来源：" + who);
-                continue;
-            }
-
-            if (t.StartsWith("NSFW 等级", StringComparison.Ordinal)) continue;
-            if (t.StartsWith("特征 :", StringComparison.Ordinal)) continue;
-            if (t.StartsWith("随机女性特征", StringComparison.Ordinal)) continue;
-            if (t.StartsWith("裸露判据", StringComparison.Ordinal)) continue;
-            if (t.StartsWith("双女性识别", StringComparison.Ordinal)) continue;
-            if (t.StartsWith("违规", StringComparison.Ordinal) && t.Contains("[]")) continue;
-            if (t.Contains("目标等级=") && t.Contains("实得=")) continue;
-
-            s = s.Replace("（角色资料本身中性，不含裸体标签）", "");
-            s = s.Replace("🎲", "").Trim();
-
-            int pi = s.IndexOf("池=", StringComparison.Ordinal);
-            int ci = s.IndexOf("候选=", StringComparison.Ordinal);
-            if (pi >= 0 && ci > pi) s = s.Remove(pi, ci - pi).Trim();
-
-            s = TagCountRe.Replace(s, "").Trim();
-
-            if (s.StartsWith("✓", StringComparison.Ordinal) && s.Contains("三项校验"))
-                s = "✓ 三项校验通过";
-
-            s = LabelColonRe.Replace(s, "$1：");
-
-            if (s.Length > 92) s = s.Substring(0, 91).TrimEnd() + "…";
-            kept.Add(s);
-        }
-
-        var sb = new StringBuilder();
-        bool prevBlank = false;
-        foreach (string line in kept)
-        {
-            bool blank = line.Trim().Length == 0;
-            if (blank && prevBlank) continue;
-            if (sb.Length > 0) sb.Append('\n');
-            sb.Append(line);
-            prevBlank = blank;
-        }
-        return sb.ToString().Trim('\n');
-    }
-}
-
 /// <summary>
-/// 调 anima_cli.py 的薄封装：起进程、收输出、解 JSON。
-/// 进程启动与取消走 Core 的 <see cref="PythonRunner"/>，这里只负责参数与结果解析。
+/// 原生模块化抽卡引擎：直接读取 engine\tagGroup_modular.json，按选中的模块与子维度随机抽取 tag。
 /// </summary>
 public static class GachaEngine
 {
-    public static async Task<RunOutcome> RunAsync(
-        PythonInterpreter python, string engineDir,
-        IList<string> args, CancellationToken ct)
+    public const string BankFileName = "tagGroup_modular.json";
+
+    private static readonly object CacheLock = new();
+    private static string _cachedPath = "";
+    private static DateTime _cachedMtime;
+    private static Dictionary<string, Dictionary<string, List<string>>>? _cachedBank;
+
+    private readonly record struct SlotSpec(string Module, string SubCategory, string Label, Func<GachaOptions, bool> IsEnabled);
+
+    private static readonly SlotSpec[] Slots =
     {
-        var outcome = new RunOutcome();
-        string script = Path.Combine(engineDir, "anima_cli.py");
-        if (!File.Exists(script))
+        // 1. 头发
+        new("hair", "hair_color", "发色", o => o.HairColor),
+        new("hair", "hair_styles", "发型", o => o.HairStyles),
+        new("hair", "hair_accessories", "发饰", o => o.HairAccessories),
+        new("hair", "hair_traits_and_actions", "发质/动态", o => o.HairTraitsAndActions),
+
+        // 2. 面部与五官
+        new("face_and_eyes", "eyes", "眼睛", o => o.Eyes),
+        new("face_and_eyes", "face_and_expression", "表情/面部", o => o.FaceAndExpression),
+        new("face_and_eyes", "ears", "耳朵/兽耳", o => o.Ears),
+
+        // 3. 身体部位
+        new("body_parts", "breasts", "胸部", o => o.Breasts),
+        new("body_parts", "ass", "臀部", o => o.Ass),
+        new("body_parts", "hands", "手部", o => o.Hands),
+        new("body_parts", "feet", "脚部", o => o.Feet),
+        new("body_parts", "shoulders", "肩部", o => o.Shoulders),
+        new("body_parts", "other_body_parts", "其他部位", o => o.OtherBodyParts),
+
+        // 4. 服装与配饰
+        new("attire_and_accessories", "fashion_style", "穿搭风格", o => o.FashionStyle),
+        new("attire_and_accessories", "clothing", "主服装", o => o.Clothing),
+        new("attire_and_accessories", "headwear", "头饰/帽子", o => o.Headwear),
+        new("attire_and_accessories", "eyewear", "眼镜/眼饰", o => o.Eyewear),
+        new("attire_and_accessories", "neckwear", "颈饰/领饰", o => o.Neckwear),
+        new("attire_and_accessories", "sleeves", "袖型", o => o.Sleeves),
+        new("attire_and_accessories", "handwear", "手套/手饰", o => o.Handwear),
+        new("attire_and_accessories", "legwear", "袜类/腿饰", o => o.Legwear),
+        new("attire_and_accessories", "accessories", "其他配饰", o => o.Accessories),
+
+        // 5. 姿势与动作
+        new("pose_and_action", "posture", "全身姿势", o => o.Posture),
+        new("pose_and_action", "gestures", "手势", o => o.Gestures),
+        new("pose_and_action", "dances", "舞蹈", o => o.Dances),
+        new("pose_and_action", "holding", "手持物", o => o.Holding),
+        new("pose_and_action", "verbs_and_actions", "一般动作", o => o.VerbsAndActions),
+
+        // 6. 场景与构图
+        new("scene_and_composition", "locations", "地点环境", o => o.Locations),
+        new("scene_and_composition", "backgrounds", "背景", o => o.Backgrounds),
+        new("scene_and_composition", "lighting", "光影", o => o.Lighting),
+        new("scene_and_composition", "image_composition", "构图/视角", o => o.ImageComposition),
+
+        // 7. 成人向 (NSFW)
+        new("nsfw", "nudity_and_covering", "裸露/遮挡", o => o.EnableNsfw && o.NsfwNudityAndCovering),
+        new("nsfw", "sexual_attire", "情趣服饰", o => o.EnableNsfw && o.NsfwSexualAttire),
+        new("nsfw", "sex_acts", "性行为", o => o.EnableNsfw && o.NsfwSexActs),
+        new("nsfw", "sexual_positions", "体位", o => o.EnableNsfw && o.NsfwSexualPositions),
+        new("nsfw", "sex_objects", "器具/道具", o => o.EnableNsfw && o.NsfwSexObjects),
+    };
+
+    public static GachaRunOutcome Roll(GachaOptions options, string engineDir)
+    {
+        var outcome = new GachaRunOutcome();
+        string bankPath = Path.Combine(engineDir, BankFileName);
+
+        Dictionary<string, Dictionary<string, List<string>>> bank;
+        try
         {
-            outcome.Failure = "找不到引擎脚本：" + script;
+            bank = LoadBank(bankPath);
+        }
+        catch (Exception ex)
+        {
+            outcome.Failure = $"读取词库失败（{bankPath}）：{ex.Message}";
             return outcome;
         }
 
-        var result = await PythonRunner.RunAsync(python, script, args.ToList(), workingDirectory: engineDir, ct: ct);
-
-        if (result.Failure != null)
+        var activeSlots = new List<SlotSpec>();
+        foreach (var slot in Slots)
         {
-            outcome.Failure = result.Failure;
+            if (slot.IsEnabled(options))
+                activeSlots.Add(slot);
+        }
+
+        if (activeSlots.Count == 0 &&
+            string.IsNullOrWhiteSpace(options.PrefixTags) &&
+            string.IsNullOrWhiteSpace(options.SuffixTags))
+        {
+            outcome.Failure = "请至少勾选一个要抽取的模块，或填写前置/后置提示词。";
             return outcome;
         }
 
-        outcome.ExitCode = result.ExitCode;
-        outcome.StdOut = result.StdOut;
-        outcome.StdErr = result.StdErr;
+        int repeat = Math.Clamp(options.Repeat, 1, 99);
+        var rng = Random.Shared;
 
-        var items = Parse(outcome.StdOut, out string? parseError);
-        outcome.Items = items;
-
-        if (items.Count == 0)
+        for (int i = 0; i < repeat; i++)
         {
-            string tail = outcome.StdErr.Trim();
-            outcome.Failure = string.IsNullOrEmpty(tail)
-                ? "没有拿到结果（退出码 " + outcome.ExitCode + "）" +
-                  (string.IsNullOrEmpty(parseError) ? "" : "\n" + parseError)
-                : tail;
+            var item = new GachaDrawItem();
+
+            AddFixedTags(options.PrefixTags, item.Tags);
+
+            foreach (var slot in activeSlots)
+            {
+                if (!bank.TryGetValue(slot.Module, out var subMap) ||
+                    !subMap.TryGetValue(slot.SubCategory, out var pool) ||
+                    pool.Count == 0)
+                {
+                    continue;
+                }
+
+                string rawTag = pool[rng.Next(pool.Count)];
+                string formatted = options.ReplaceUnderscoreWithSpace
+                    ? rawTag.Replace('_', ' ')
+                    : rawTag;
+
+                item.Tags.Add(formatted);
+                item.LogLines.Add($"[{slot.Module}.{slot.SubCategory}] {slot.Label}：{formatted}");
+            }
+
+            AddFixedTags(options.SuffixTags, item.Tags);
+            item.PromptText = string.Join(", ", item.Tags);
+            outcome.Items.Add(item);
         }
 
         return outcome;
     }
 
-    /// <summary>--json 单个结果是对象，-r>1 时是数组。</summary>
-    public static List<ResultItem> Parse(string json, out string? error)
+    private static void AddFixedTags(string? raw, List<string> target)
     {
-        error = null;
-        var list = new List<ResultItem>();
-        if (string.IsNullOrWhiteSpace(json)) return list;
-
-        try
+        if (string.IsNullOrWhiteSpace(raw)) return;
+        foreach (string part in raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
-            using var doc = JsonDocument.Parse(json);
-            if (doc.RootElement.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var el in doc.RootElement.EnumerateArray())
-                    list.Add(ReadItem(el));
-            }
-            else if (doc.RootElement.ValueKind == JsonValueKind.Object)
-            {
-                list.Add(ReadItem(doc.RootElement));
-            }
-            else
-            {
-                error = "JSON 根节点不是对象/数组";
-            }
+            if (!string.IsNullOrWhiteSpace(part))
+                target.Add(part);
         }
-        catch (JsonException ex)
-        {
-            error = "JSON 解析失败：" + ex.Message;
-            list.Clear();
-        }
-
-        return list;
     }
 
-    private static ResultItem ReadItem(JsonElement el)
+    private static Dictionary<string, Dictionary<string, List<string>>> LoadBank(string path)
     {
-        var it = new ResultItem();
-        if (el.TryGetProperty("ok", out var ok)) it.Ok = ok.ValueKind == JsonValueKind.True;
-        if (el.TryGetProperty("text", out var text) && text.ValueKind == JsonValueKind.String)
-            it.Text = text.GetString() ?? "";
-        if (el.TryGetProperty("report", out var rep) && rep.ValueKind == JsonValueKind.String)
-            it.Report = rep.GetString() ?? "";
-        if (el.TryGetProperty("claim", out var claim))
-            it.ClaimJson = claim.GetRawText();
-        return it;
+        if (!File.Exists(path))
+            throw new FileNotFoundException("找不到模块化词库文件。", path);
+
+        DateTime mtime = File.GetLastWriteTimeUtc(path);
+        lock (CacheLock)
+        {
+            if (_cachedBank != null &&
+                string.Equals(_cachedPath, path, StringComparison.OrdinalIgnoreCase) &&
+                _cachedMtime == mtime)
+            {
+                return _cachedBank;
+            }
+
+            string json = File.ReadAllText(path, Encoding.UTF8);
+            var parsed = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, List<string>>>>(json)
+                ?? throw new InvalidDataException("词库 JSON 内容为空。");
+
+            _cachedPath = path;
+            _cachedMtime = mtime;
+            _cachedBank = parsed;
+            return parsed;
+        }
     }
 }

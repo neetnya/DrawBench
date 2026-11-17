@@ -1,40 +1,36 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using DrawBench.Core;
 using DrawBench.Core.Logging;
-using DrawBench.Core.Python;
 using DrawBench.Core.Ui;
 
 namespace DrawBench.Modules.Gacha.Views;
 
 /// <summary>
-/// 抽卡模块：调 engine\anima_cli.py 抽角色特征与装扮。
-/// 与旧版的区别：Python 探测走统一 PythonLocator、引擎目录走 AppPaths.EngineDir、
-/// 结果支持「发送到」与「追加到」批量提交队列。
+/// 模块化抽卡界面：读取 engine\tagGroup_modular.json，按模块开关抽取提示词，
+/// 并通过 AiBridge / SharedContext 与「批量提交」模块互通。
 /// </summary>
 public partial class GachaView : UserControl
 {
-    private CancellationTokenSource? _cts;
-    private string _engineDir = "";
+    private readonly string _engineDir;
 
     public GachaView()
     {
         InitializeComponent();
 
-        var saved = SettingsStore.Shared.Get<AnimaOptions>(ModuleIds.Gacha);
+        var saved = SettingsStore.Shared.Get<GachaOptions>(ModuleIds.Gacha);
         if (saved != null) ApplyOptions(saved);
+        SyncNsfwPanelState();
 
         _engineDir = AppPaths.Current.EngineDir;
-        if (!File.Exists(Path.Combine(_engineDir, "anima_cli.py")))
+        string bankPath = Path.Combine(_engineDir, GachaEngine.BankFileName);
+        if (!File.Exists(bankPath))
         {
-            AppendLog("找不到引擎：未在程序目录的 engine\\ 下发现 anima_cli.py（" + _engineDir + "）");
+            TxtLog.Text = $"找不到词库：未在 engine\\ 下发现 {GachaEngine.BankFileName}（{bankPath}）";
         }
     }
 
@@ -50,239 +46,253 @@ public partial class GachaView : UserControl
         }
     }
 
-    private void ApplyOptions(AnimaOptions o)
+    private void ApplyOptions(GachaOptions o)
     {
-        SelectComboItem(CmbLevel, o.Level);
         TxtRepeat.Text = Math.Clamp(o.Repeat, 1, 99).ToString();
-        SelectComboItem(CmbPool, o.Pool);
-        SelectComboItem(CmbRelation, o.Relation);
-        SelectComboItem(CmbCount, Math.Clamp(o.Count, 1, 3).ToString());
-        ChkHuge.IsChecked = o.HugeBreasts;
-        ChkNoAvoid.IsChecked = o.NoAvoidRepeat;
-        ChkNoOutfit.IsChecked = o.NoOutfit;
-        ChkNoPose.IsChecked = o.NoPose;
-        ChkNoExpr.IsChecked = o.NoExpression;
-        ChkNoScene.IsChecked = o.NoScene;
-        ChkAllowPublic.IsChecked = o.AllowPublic;
+        ChkSpace.IsChecked = o.ReplaceUnderscoreWithSpace;
+        TxtPrefix.Text = o.PrefixTags ?? "";
+        TxtSuffix.Text = o.SuffixTags ?? "";
+
+        ChkHairColor.IsChecked = o.HairColor;
+        ChkHairStyles.IsChecked = o.HairStyles;
+        ChkHairAccessories.IsChecked = o.HairAccessories;
+        ChkHairTraits.IsChecked = o.HairTraitsAndActions;
+
+        ChkEyes.IsChecked = o.Eyes;
+        ChkFace.IsChecked = o.FaceAndExpression;
+        ChkEars.IsChecked = o.Ears;
+
+        ChkBreasts.IsChecked = o.Breasts;
+        ChkAss.IsChecked = o.Ass;
+        ChkHands.IsChecked = o.Hands;
+        ChkFeet.IsChecked = o.Feet;
+        ChkShoulders.IsChecked = o.Shoulders;
+        ChkBodyOther.IsChecked = o.OtherBodyParts;
+
+        ChkFashionStyle.IsChecked = o.FashionStyle;
+        ChkClothing.IsChecked = o.Clothing;
+        ChkHeadwear.IsChecked = o.Headwear;
+        ChkEyewear.IsChecked = o.Eyewear;
+        ChkNeckwear.IsChecked = o.Neckwear;
+        ChkSleeves.IsChecked = o.Sleeves;
+        ChkHandwear.IsChecked = o.Handwear;
+        ChkLegwear.IsChecked = o.Legwear;
+        ChkAccessories.IsChecked = o.Accessories;
+
+        ChkPosture.IsChecked = o.Posture;
+        ChkGestures.IsChecked = o.Gestures;
+        ChkDances.IsChecked = o.Dances;
+        ChkHolding.IsChecked = o.Holding;
+        ChkVerbs.IsChecked = o.VerbsAndActions;
+
+        ChkLocations.IsChecked = o.Locations;
+        ChkBackgrounds.IsChecked = o.Backgrounds;
+        ChkLighting.IsChecked = o.Lighting;
+        ChkComposition.IsChecked = o.ImageComposition;
+
+        ChkEnableNsfw.IsChecked = o.EnableNsfw;
+        ChkNsfwNudity.IsChecked = o.NsfwNudityAndCovering;
+        ChkNsfwAttire.IsChecked = o.NsfwSexualAttire;
+        ChkNsfwActs.IsChecked = o.NsfwSexActs;
+        ChkNsfwPositions.IsChecked = o.NsfwSexualPositions;
+        ChkNsfwObjects.IsChecked = o.NsfwSexObjects;
     }
 
-    private static void SelectComboItem(ComboBox cmb, string? value)
+    private GachaOptions CollectOptions() => new()
     {
-        if (string.IsNullOrWhiteSpace(value)) return;
-        for (int i = 0; i < cmb.Items.Count; i++)
+        Repeat = IntOf(TxtRepeat, 1, 1, 99),
+        ReplaceUnderscoreWithSpace = ChkSpace.IsChecked == true,
+        PrefixTags = TxtPrefix.Text ?? "",
+        SuffixTags = TxtSuffix.Text ?? "",
+
+        HairColor = ChkHairColor.IsChecked == true,
+        HairStyles = ChkHairStyles.IsChecked == true,
+        HairAccessories = ChkHairAccessories.IsChecked == true,
+        HairTraitsAndActions = ChkHairTraits.IsChecked == true,
+
+        Eyes = ChkEyes.IsChecked == true,
+        FaceAndExpression = ChkFace.IsChecked == true,
+        Ears = ChkEars.IsChecked == true,
+
+        Breasts = ChkBreasts.IsChecked == true,
+        Ass = ChkAss.IsChecked == true,
+        Hands = ChkHands.IsChecked == true,
+        Feet = ChkFeet.IsChecked == true,
+        Shoulders = ChkShoulders.IsChecked == true,
+        OtherBodyParts = ChkBodyOther.IsChecked == true,
+
+        FashionStyle = ChkFashionStyle.IsChecked == true,
+        Clothing = ChkClothing.IsChecked == true,
+        Headwear = ChkHeadwear.IsChecked == true,
+        Eyewear = ChkEyewear.IsChecked == true,
+        Neckwear = ChkNeckwear.IsChecked == true,
+        Sleeves = ChkSleeves.IsChecked == true,
+        Handwear = ChkHandwear.IsChecked == true,
+        Legwear = ChkLegwear.IsChecked == true,
+        Accessories = ChkAccessories.IsChecked == true,
+
+        Posture = ChkPosture.IsChecked == true,
+        Gestures = ChkGestures.IsChecked == true,
+        Dances = ChkDances.IsChecked == true,
+        Holding = ChkHolding.IsChecked == true,
+        VerbsAndActions = ChkVerbs.IsChecked == true,
+
+        Locations = ChkLocations.IsChecked == true,
+        Backgrounds = ChkBackgrounds.IsChecked == true,
+        Lighting = ChkLighting.IsChecked == true,
+        ImageComposition = ChkComposition.IsChecked == true,
+
+        EnableNsfw = ChkEnableNsfw.IsChecked == true,
+        NsfwNudityAndCovering = ChkNsfwNudity.IsChecked == true,
+        NsfwSexualAttire = ChkNsfwAttire.IsChecked == true,
+        NsfwSexActs = ChkNsfwActs.IsChecked == true,
+        NsfwSexualPositions = ChkNsfwPositions.IsChecked == true,
+        NsfwSexObjects = ChkNsfwObjects.IsChecked == true,
+    };
+
+    // ==================== 快捷方案 ====================
+
+    private void OnPresetStandard(object sender, RoutedEventArgs e)
+    {
+        var d = new GachaOptions
         {
-            if (cmb.Items[i] is ComboBoxItem item)
-            {
-                string? tag = item.Tag as string;
-                string? content = Convert.ToString(item.Content);
-                if (string.Equals(tag, value, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(content, value, StringComparison.OrdinalIgnoreCase))
-                {
-                    cmb.SelectedIndex = i;
-                    return;
-                }
-            }
-        }
+            Repeat = IntOf(TxtRepeat, 1, 1, 99),
+            ReplaceUnderscoreWithSpace = ChkSpace.IsChecked == true,
+            PrefixTags = TxtPrefix.Text ?? "",
+            SuffixTags = TxtSuffix.Text ?? "",
+        };
+        ApplyOptions(d);
+        SyncNsfwPanelState();
     }
 
-    private PythonInterpreter CurrentPython()
+    private void OnPresetCharacterOnly(object sender, RoutedEventArgs e)
     {
-        var app = SettingsStore.Shared.Get<AppSection>("app");
-        return PythonLocator.Resolve(app?.PythonPath);
+        SetAllSubChecks(false);
+        ChkHairColor.IsChecked = true;
+        ChkHairStyles.IsChecked = true;
+        ChkHairAccessories.IsChecked = true;
+        ChkEyes.IsChecked = true;
+        ChkFace.IsChecked = true;
+        ChkFashionStyle.IsChecked = true;
+        ChkClothing.IsChecked = true;
+        ChkLegwear.IsChecked = true;
+        SyncNsfwPanelState();
+    }
+
+    private void OnPresetAllSfw(object sender, RoutedEventArgs e)
+    {
+        SetAllSubChecks(true);
+        ChkEnableNsfw.IsChecked = false;
+        ChkNsfwNudity.IsChecked = false;
+        ChkNsfwAttire.IsChecked = false;
+        ChkNsfwActs.IsChecked = false;
+        ChkNsfwPositions.IsChecked = false;
+        ChkNsfwObjects.IsChecked = false;
+        SyncNsfwPanelState();
+    }
+
+    private void OnPresetClear(object sender, RoutedEventArgs e)
+    {
+        SetAllSubChecks(false);
+        ChkEnableNsfw.IsChecked = false;
+        SyncNsfwPanelState();
+    }
+
+    private void SetAllSubChecks(bool value)
+    {
+        ChkHairColor.IsChecked = value;
+        ChkHairStyles.IsChecked = value;
+        ChkHairAccessories.IsChecked = value;
+        ChkHairTraits.IsChecked = value;
+
+        ChkEyes.IsChecked = value;
+        ChkFace.IsChecked = value;
+        ChkEars.IsChecked = value;
+
+        ChkBreasts.IsChecked = value;
+        ChkAss.IsChecked = value;
+        ChkHands.IsChecked = value;
+        ChkFeet.IsChecked = value;
+        ChkShoulders.IsChecked = value;
+        ChkBodyOther.IsChecked = value;
+
+        ChkFashionStyle.IsChecked = value;
+        ChkClothing.IsChecked = value;
+        ChkHeadwear.IsChecked = value;
+        ChkEyewear.IsChecked = value;
+        ChkNeckwear.IsChecked = value;
+        ChkSleeves.IsChecked = value;
+        ChkHandwear.IsChecked = value;
+        ChkLegwear.IsChecked = value;
+        ChkAccessories.IsChecked = value;
+
+        ChkPosture.IsChecked = value;
+        ChkGestures.IsChecked = value;
+        ChkDances.IsChecked = value;
+        ChkHolding.IsChecked = value;
+        ChkVerbs.IsChecked = value;
+
+        ChkLocations.IsChecked = value;
+        ChkBackgrounds.IsChecked = value;
+        ChkLighting.IsChecked = value;
+        ChkComposition.IsChecked = value;
+    }
+
+    private void OnNsfwToggleChanged(object sender, RoutedEventArgs e) => SyncNsfwPanelState();
+
+    private void SyncNsfwPanelState()
+    {
+        if (PanelNsfwSubs != null && ChkEnableNsfw != null)
+            PanelNsfwSubs.IsEnabled = ChkEnableNsfw.IsChecked == true;
     }
 
     // ==================== 抽卡 ====================
 
-    private AnimaOptions CollectOptions() => new()
-    {
-        Level = CmbText(CmbLevel),
-        Repeat = IntOf(TxtRepeat, 1, 1, 99),
-        Pool = CmbText(CmbPool),
-        Count = IntOf(CmbText(CmbCount), 1, 1, 3),
-        Relation = CmbText(CmbRelation),
-        HugeBreasts = ChkHuge.IsChecked == true,
-        NoAvoidRepeat = ChkNoAvoid.IsChecked == true,
-        NoOutfit = ChkNoOutfit.IsChecked == true,
-        NoPose = ChkNoPose.IsChecked == true,
-        NoExpression = ChkNoExpr.IsChecked == true,
-        NoScene = ChkNoScene.IsChecked == true,
-        AllowPublic = ChkAllowPublic.IsChecked == true,
-    };
-
-    private async void OnGirl(object sender, RoutedEventArgs e)
-    {
-        var o = CollectOptions();
-        await DrawAsync(ct => ExecAsync("girl", o, null, ct));
-    }
-
-    private async void OnRoll(object sender, RoutedEventArgs e)
-    {
-        var o = CollectOptions();
-        await DrawAsync(ct => ExecAsync("roll", o, null, ct));
-    }
-
-    /// <summary>
-    /// girl + roll：抽到几组角色就配几套装扮，一组一块日志、一条提示词。
-    /// 逐条往下走 —— 先出「抽到谁」，紧接着出这组的服装/姿势/表情/场所。
-    /// </summary>
-    private async void OnGirlRoll(object sender, RoutedEventArgs e)
-    {
-        var o = CollectOptions();
-        var rollOnce = o.Clone();      // 每组角色只配一条 roll
-        rollOnce.Repeat = 1;
-
-        await DrawAsync(async ct =>
-        {
-            var g = await ExecAsync("girl", o, null, ct, false);
-            if (g.Failure != null || g.Items.Count == 0) return g;   // 失败原样返回
-
-            var merged = new RunOutcome();
-            int total = g.Items.Count;
-
-            for (int i = 0; i < total; i++)
-            {
-                if (ct.IsCancellationRequested) break;
-
-                var gi = g.Items[i];
-                WriteLog(StepTitle(i, total), LogText.Tidy(LogText.Clean(gi.Report)));
-
-                if (!gi.Ok || string.IsNullOrEmpty(gi.ClaimJson))
-                {
-                    AppendLines("girl 没有产出可接力的状态，已停止。");
-                    break;
-                }
-
-                var r = await ExecAsync("roll", rollOnce, gi.ClaimJson, ct, false);
-                if (r.Failure != null)
-                {
-                    AppendLines(r.Failure);
-                    if (merged.Items.Count == 0) return r;
-                    break;
-                }
-
-                // 接在同一块里 —— 上面是抽到谁，下面是这组穿什么
-                AppendLines(r.AllReport);
-                merged.Items.AddRange(r.Items);
-            }
-
-            if (merged.Items.Count == 0) return merged;   // 交给 DrawAsync 统一报「没有拿到结果」
-            return merged;
-        });
-    }
-
-    private static string? StepTitle(int index, int total)
-        => total > 1 ? "—— 第 " + (index + 1) + " 条 ——" : null;
-
-    /// <summary>清空日志 → 跑一次抽卡流程 → 把结果摊到界面上。</summary>
-    private async Task DrawAsync(Func<CancellationToken, Task<RunOutcome>> body)
+    private void OnRoll(object sender, RoutedEventArgs e)
     {
         SaveSettings();
-        if (!File.Exists(Path.Combine(_engineDir, "anima_cli.py")))
-        {
-            UiHost.Warn("软件目录下没有 anima_cli.py，引擎不完整。\n期望位置：" +
-                        Path.Combine(_engineDir, "anima_cli.py"), "抽卡");
-            return;
-        }
-
-        var python = CurrentPython();
-        if (!python.Found)
-        {
-            UiHost.Warn("找不到 Python。\n抽卡需要本机 Python 3.8 以上版本，请安装并加入 PATH，" +
-                        "或在「设置」里手动指定解释器。", "找不到 Python");
-            return;
-        }
-
-        TxtLog.Text = "";
-
-        var cts = new CancellationTokenSource();
-        _cts = cts;
-        SetBusy(true);
+        var opts = CollectOptions();
         var sw = Stopwatch.StartNew();
 
-        RunOutcome outcome;
+        GachaRunOutcome outcome;
         try
         {
-            outcome = await body(cts.Token);
+            outcome = GachaEngine.Roll(opts, _engineDir);
         }
         catch (Exception ex)
         {
-            outcome = new RunOutcome { Failure = ex.Message };
+            outcome = new GachaRunOutcome { Failure = ex.Message };
             AppLog.Error("抽卡出错", ex);
         }
         finally
         {
             sw.Stop();
-            SetBusy(false);
-            _cts = null;
-            cts.Dispose();
         }
 
-        if (outcome.Failure != null)
+        if (!outcome.Ok)
         {
-            AppendLog(outcome.Failure);
+            TxtLog.Text = outcome.Failure ?? "抽卡未产生结果";
             TxtResult.Text = "";
             TxtMeta.Text = "";
             TxtStatus.Text = "失败：" + FirstLine(outcome.Failure);
             return;
         }
 
-        if (outcome.Items.Count == 0)
-        {
-            TxtResult.Text = "";
-            TxtMeta.Text = "";
-            TxtStatus.Text = "没有拿到结果";
-            return;
-        }
-
-        var last = outcome.Items[^1];
-        if (!last.Ok)
-        {
-            TxtResult.Text = "";
-            TxtMeta.Text = "";
-            TxtStatus.Text = "抽取失败：" + FirstLine(last.Report);
-            return;
-        }
-
         TxtResult.Text = outcome.AllText;
+        TxtLog.Text = outcome.AllReport;
         TxtMeta.Text = outcome.Items.Count + " 条";
-        TxtStatus.Text = "完成 · " + sw.ElapsedMilliseconds + " ms";
+        TxtStatus.Text = $"完成 · {sw.ElapsedMilliseconds} ms";
     }
 
-    /// <summary>调一次引擎。writeLog=false 时由调用方自己组织日志（girl+roll 逐条配对用）。</summary>
-    private async Task<RunOutcome> ExecAsync(string cmd, AnimaOptions o,
-                                             string? claimInJson, CancellationToken ct,
-                                             bool writeLog = true)
+    private void OnClear(object sender, RoutedEventArgs e)
     {
-        string runDir = Path.Combine(Path.GetTempPath(), "DrawBench");
-        Directory.CreateDirectory(runDir);
-        string claimOut = Path.Combine(runDir, "claim_" + cmd + ".json");
-        string claimIn = Path.Combine(runDir, "claim_in_" + cmd + ".json");
-
-        if (File.Exists(claimOut)) File.Delete(claimOut);
-        if (File.Exists(claimIn)) File.Delete(claimIn);
-
-        string? claimInPath = null;
-        if (!string.IsNullOrEmpty(claimInJson))
-        {
-            File.WriteAllText(claimIn, claimInJson, new UTF8Encoding(false));
-            claimInPath = claimIn;
-        }
-
-        var args = o.ToArgs(cmd, claimInPath, claimOut);
-
-        var outcome = await GachaEngine.RunAsync(CurrentPython(), _engineDir, args, ct);
-        if (writeLog) WriteLog(null, outcome.Failure ?? outcome.AllReport);
-        return outcome;
+        TxtResult.Text = "";
+        TxtLog.Text = "";
+        TxtMeta.Text = "";
+        TxtStatus.Text = "已清空";
     }
 
-    private void OnCancel(object sender, RoutedEventArgs e)
-    {
-        if (_cts == null) return;
-        try { _cts.Cancel(); } catch { }
-        AppendLog("（已请求取消）");
-    }
-
-    // ==================== 输出区 ====================
+    // ==================== 输出区与模块间通讯 ====================
 
     private void OnCopy(object sender, RoutedEventArgs e)
     {
@@ -308,7 +318,7 @@ public partial class GachaView : UserControl
         {
             Title = "保存提示词",
             Filter = "文本文件|*.txt|所有文件|*.*",
-            FileName = "anima_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt",
+            FileName = "gacha_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt",
         };
 
         if (dlg.ShowDialog(Window.GetWindow(this)) == true)
@@ -362,71 +372,9 @@ public partial class GachaView : UserControl
             UiHost.Warn("批量提交模块没有接收这段文本。");
     }
 
-    /// <summary>起一个新日志块：可选标题（—— 第 N 条 ——）+ 若干行正文，块之间空一行。</summary>
-    private void WriteLog(string? title, params string?[] lines)
-    {
-        var sb = new StringBuilder();
-        if (TxtLog.Text.Length > 0) sb.AppendLine();
-        if (!string.IsNullOrEmpty(title)) sb.AppendLine(title);
-        foreach (string? l in lines)
-            if (!string.IsNullOrEmpty(l)) sb.AppendLine(l);
-        if (sb.Length == 0) return;
-        TxtLog.AppendText(sb.ToString());
-        TxtLog.ScrollToEnd();
-    }
-
-    /// <summary>往当前这块日志下面接着写，不加空行、不加标题。</summary>
-    private void AppendLines(params string?[] lines)
-    {
-        var sb = new StringBuilder();
-        foreach (string? l in lines)
-            if (!string.IsNullOrEmpty(l)) sb.AppendLine(l);
-        if (sb.Length == 0) return;
-        if (TxtLog.Text.Length > 0 && !TxtLog.Text.EndsWith("\n", StringComparison.Ordinal))
-            sb.Insert(0, Environment.NewLine);
-        TxtLog.AppendText(sb.ToString());
-        TxtLog.ScrollToEnd();
-    }
-
-    private void AppendLog(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return;
-        AppendLines(text);
-    }
-
-    private void SetBusy(bool busy)
-    {
-        BtnGirl.IsEnabled = !busy;
-        BtnGirlRoll.IsEnabled = !busy;
-        BtnRoll.IsEnabled = !busy;
-        BtnCancel.IsEnabled = busy;
-        TxtStatus.Text = busy ? "抽卡中…" : TxtStatus.Text;
-    }
-
-    // ==================== 小工具 ====================
-
-    private static string CmbText(ComboBox cmb)
-    {
-        if (cmb.SelectedItem is ComboBoxItem item)
-        {
-            string? tag = item.Tag as string;      // 显示名和取值不同时用 Tag
-            if (!string.IsNullOrEmpty(tag)) return tag;
-            return Convert.ToString(item.Content) ?? "";
-        }
-        return Convert.ToString(cmb.SelectedItem) ?? "";
-    }
-
     private static int IntOf(TextBox box, int fallback, int min, int max)
     {
         if (!int.TryParse((box.Text ?? "").Trim(), out int v)) return fallback;
-        if (v < min) v = min;
-        if (v > max) v = max;
-        return v;
-    }
-
-    private static int IntOf(string? text, int fallback, int min, int max)
-    {
-        if (!int.TryParse((text ?? "").Trim(), out int v)) return fallback;
         if (v < min) v = min;
         if (v > max) v = max;
         return v;
