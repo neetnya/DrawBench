@@ -238,7 +238,7 @@ public partial class GachaView : UserControl
         ApplyOptions(d);
     }
 
-    // 常规全身
+    // 常规全身（按图 1）
     private void OnPresetStandard(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
@@ -261,7 +261,7 @@ public partial class GachaView : UserControl
         });
     }
 
-    // 人设外貌
+    // 人设外貌（按图 2）
     private void OnPresetCharacterOnly(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
@@ -285,7 +285,7 @@ public partial class GachaView : UserControl
         });
     }
 
-    // 服装展示
+    // 服装展示（按图 3）
     private void OnPresetOutfit(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
