@@ -21,11 +21,11 @@
                 <ColumnDefinition Width="*" MinWidth="320" />
             </Grid.ColumnDefinitions>
 
-            <!-- ============ 左：模块选项 ============ -->
-            <GroupBox Grid.Column="0" Header="抽卡模块设置" Padding="10,8,10,8" Margin="0">
+            <!-- ============ 左：抽卡设置（重新排版：基础设置 → 核心下拉 → 维度勾选） ============ -->
+            <GroupBox Grid.Column="0" Header="抽卡设置" Padding="10,8,10,8" Margin="0">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Margin="0,0,6,0">
-                            <!-- 通用设置 -->
+                            <!-- 1. 通用控制 -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -68,116 +68,91 @@
                             </Grid>
 
                             <!-- 快捷方案 -->
-                            <WrapPanel Margin="0,8,0,2">
+                            <WrapPanel Margin="0,8,0,4">
                                 <Button Content="常规全身" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
                                         ToolTip="人物 + 穿搭 + 姿势 + 地点环境"
                                         Click="OnPresetStandard" />
                                 <Button Content="人设外貌" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
-                                        ToolTip="脸、眼、发、兽耳、胸部尺寸 + 纯白背景，适合人设立绘"
+                                        ToolTip="脸、眼、发、兽耳 + 纯白背景，适合人设立绘"
                                         Click="OnPresetCharacterOnly" />
                                 <Button Content="服装展示" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
-                                        ToolTip="主服装、鞋袜、配饰、姿势 + 纯白背景，避免过载堆砌"
+                                        ToolTip="服装、鞋袜、配饰、姿势 + 纯白背景"
                                         Click="OnPresetOutfit" />
                                 <Button Content="全部清空" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,0,4"
                                         Click="OnPresetClear" />
                             </WrapPanel>
 
-                            <!-- 1. 头发 -->
-                            <Grid Margin="0,8,0,4">
-                                <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                                <Border Background="{StaticResource Card}" Padding="0,0,8,0" HorizontalAlignment="Left">
-                                    <TextBlock Text="头发（hair）" FontSize="11.5" Foreground="{StaticResource Muted}" />
-                                </Border>
-                            </Grid>
-                            <WrapPanel>
-                                <CheckBox x:Name="ChkHairColor" Content="发色" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHairStyles" Content="发型" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHairAccessories" Content="发饰" Margin="0,0,14,3" />
-                            </WrapPanel>
-                            <WrapPanel Margin="0,4,0,0">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,14,3">
-                                    <TextBlock Text="发长" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                    <ComboBox x:Name="CmbHairLength" MinWidth="160" Height="26" VerticalContentAlignment="Center"
+                            <!-- 2. 核心下拉选择（2x2 规整对齐） -->
+                            <Border Background="{StaticResource InputSoftBrush}" BorderBrush="{StaticResource LineSoft}"
+                                    BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,4,0,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="12" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="8" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="8" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="发长" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                    <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbHairLength" Height="26" VerticalContentAlignment="Center"
                                               DisplayMemberPath="Label" SelectedValuePath="Value" />
-                                </StackPanel>
-                            </WrapPanel>
 
-                            <!-- 2. 面部与五官 -->
-                            <Grid Margin="0,8,0,4">
-                                <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                                <Border Background="{StaticResource Card}" Padding="0,0,8,0" HorizontalAlignment="Left">
-                                    <TextBlock Text="面部与五官（face_and_eyes）" FontSize="11.5" Foreground="{StaticResource Muted}" />
-                                </Border>
-                            </Grid>
-                            <WrapPanel>
-                                <CheckBox x:Name="ChkEyeColor" Content="瞳色/瞳形" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkEyes" Content="眼型/视线" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkFace" Content="表情/面部" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkEars" Content="耳朵/兽耳" Margin="0,0,14,3" />
-                            </WrapPanel>
-
-                            <!-- 3. 身体部位 -->
-                            <Grid Margin="0,8,0,4">
-                                <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                                <Border Background="{StaticResource Card}" Padding="0,0,8,0" HorizontalAlignment="Left">
-                                    <TextBlock Text="身体部位（body_parts）" FontSize="11.5" Foreground="{StaticResource Muted}" />
-                                </Border>
-                            </Grid>
-                            <WrapPanel>
-                                <CheckBox x:Name="ChkBreastsDetails" Content="胸部细节" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkFeet" Content="脚部" Margin="0,0,14,3" />
-                            </WrapPanel>
-                            <WrapPanel Margin="0,4,0,0">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,3">
-                                    <TextBlock Text="胸部尺寸" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                    <ComboBox x:Name="CmbBreastsSize" MinWidth="135" Height="26" VerticalContentAlignment="Center"
+                                    <TextBlock Grid.Row="0" Grid.Column="3" Text="胸部尺寸" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                    <ComboBox Grid.Row="0" Grid.Column="4" x:Name="CmbBreastsSize" Height="26" VerticalContentAlignment="Center"
                                               DisplayMemberPath="Label" SelectedValuePath="Value" />
-                                </StackPanel>
-                            </WrapPanel>
 
-                            <!-- 4. 服装与配饰 -->
-                            <Grid Margin="0,8,0,4">
-                                <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                                <Border Background="{StaticResource Card}" Padding="0,0,8,0" HorizontalAlignment="Left">
-                                    <TextBlock Text="服装与配饰（attire_and_accessories）" FontSize="11.5" Foreground="{StaticResource Muted}" />
-                                </Border>
-                            </Grid>
-                            <WrapPanel>
-                                <CheckBox x:Name="ChkClothing" Content="主服装" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHeadwearNeckwear" Content="头饰/颈饰" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkLegwear" Content="袜类/腿饰" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkFootwear" Content="鞋类" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkAccessories" Content="其他配饰" Margin="0,0,14,3" />
-                            </WrapPanel>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="服装" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                    <ComboBox Grid.Row="2" Grid.Column="1" x:Name="CmbAttireMode" Height="26" VerticalContentAlignment="Center"
+                                              DisplayMemberPath="Label" SelectedValuePath="Value" />
 
-                            <!-- 5. 姿势与动作 -->
-                            <Grid Margin="0,8,0,4">
-                                <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                                <Border Background="{StaticResource Card}" Padding="0,0,8,0" HorizontalAlignment="Left">
-                                    <TextBlock Text="姿势与动作（pose_and_action）" FontSize="11.5" Foreground="{StaticResource Muted}" />
-                                </Border>
-                            </Grid>
-                            <WrapPanel>
-                                <CheckBox x:Name="ChkPosture" Content="全身姿势" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkGestures" Content="手势/手持" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkVerbs" Content="一般动作" Margin="0,0,14,3" />
-                            </WrapPanel>
+                                    <TextBlock Grid.Row="2" Grid.Column="3" Text="动作" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                    <ComboBox Grid.Row="2" Grid.Column="4" x:Name="CmbActionMode" Height="26" VerticalContentAlignment="Center"
+                                              DisplayMemberPath="Label" SelectedValuePath="Value" />
 
-                            <!-- 6. 场景与构图 -->
-                            <Grid Margin="0,8,0,4">
-                                <Border Height="1" Background="{StaticResource LineSoft}" VerticalAlignment="Center" />
-                                <Border Background="{StaticResource Card}" Padding="0,0,8,0" HorizontalAlignment="Left">
-                                    <TextBlock Text="场景与构图（scene_and_composition）" FontSize="11.5" Foreground="{StaticResource Muted}" />
-                                </Border>
-                            </Grid>
-                            <WrapPanel>
-                                <CheckBox x:Name="ChkLocations" Content="地点环境" IsChecked="True" Margin="0,0,14,3" Checked="OnSceneBgToggleChanged" ToolTip="与「纯白背景」互斥" />
-                                <CheckBox x:Name="ChkBackgrounds" Content="纯白背景" Margin="0,0,14,3" Checked="OnSceneBgToggleChanged" ToolTip="与「地点环境」互斥" />
-                            </WrapPanel>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="场景" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                    <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbSceneMode" Height="26" VerticalContentAlignment="Center"
+                                              DisplayMemberPath="Label" SelectedValuePath="Value" />
+                                </Grid>
+                            </Border>
+
+                            <!-- 3. 人物外貌 -->
+                            <TextBlock Text="人物外貌" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource Muted}" Margin="0,2,0,5" />
+                            <UniformGrid Columns="3" Margin="0,0,0,8">
+                                <CheckBox x:Name="ChkHairColor" Content="发色" IsChecked="True" Margin="0,0,6,5" />
+                                <CheckBox x:Name="ChkHairStyles" Content="发型" IsChecked="True" Margin="0,0,6,5" />
+                                <CheckBox x:Name="ChkHairAccessories" Content="发饰" Margin="0,0,6,5" />
+                                <CheckBox x:Name="ChkEyeColor" Content="瞳色(30%)" IsChecked="True" Margin="0,0,6,5" ToolTip="勾选后仅 30% 概率触发抽取" />
+                                <CheckBox x:Name="ChkEyes" Content="眼型/瞳型(30%)" IsChecked="True" Margin="0,0,6,5" ToolTip="勾选后仅 30% 概率触发抽取" />
+                                <CheckBox x:Name="ChkFace" Content="表情" IsChecked="True" Margin="0,0,6,5" />
+                                <CheckBox x:Name="ChkEarsRare" Content="兽耳(15%)" Margin="0,0,6,5" Checked="OnEarsToggleChanged"
+                                          ToolTip="勾选后仅 15% 概率触发抽取；与「兽耳」互斥" />
+                                <CheckBox x:Name="ChkEars" Content="兽耳(100%)" Margin="0,0,6,5" Checked="OnEarsToggleChanged"
+                                          ToolTip="勾选后 100% 抽取；与「兽耳(15%)」互斥" />
+                                <CheckBox x:Name="ChkBodyDetails" Content="细节" IsChecked="False" Margin="0,0,6,5"
+                                          ToolTip="包含胸部细节、脚部及体型尾巴等细节，启用时每次抽取 2~3 个" />
+                            </UniformGrid>
+
+                            <!-- 4. 穿搭与配饰 -->
+                            <TextBlock Text="穿搭与配饰" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource Muted}" Margin="0,2,0,5" />
+                            <UniformGrid Columns="3" Margin="0,0,0,8">
+                                <CheckBox x:Name="ChkAccessories" Content="头饰/配饰" Margin="0,0,6,5" />
+                                <CheckBox x:Name="ChkLegwear" Content="袜类/腿饰" IsChecked="True" Margin="0,0,6,5" />
+                                <CheckBox x:Name="ChkFootwear" Content="鞋类" IsChecked="True" Margin="0,0,6,5" />
+                            </UniformGrid>
+
+
 
                         </StackPanel>
                     </ScrollViewer>
@@ -232,7 +207,7 @@
                                      FontWeight="Normal" Foreground="{StaticResource Ink}" />
                             <TextBlock IsHitTestVisible="False" Margin="16,15,16,0" VerticalAlignment="Top"
                                        TextWrapping="Wrap" FontSize="14" Foreground="{StaticResource Muted}"
-                                       Text="在左侧勾选需要的模块，点击下方「抽卡」即可生成提示词">
+                                       Text="在左侧选择需要的参数，点击下方「抽卡」即可生成提示词">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Collapsed" />
@@ -270,7 +245,7 @@
                 <Button Grid.Column="0" x:Name="BtnRoll" Content="抽卡" Padding="24,7"
                         MinWidth="112" Click="OnRoll"
                         Style="{StaticResource PrimaryButton}"
-                        ToolTip="按当前勾选的模块抽取提示词" />
+                        ToolTip="按当前设置抽取提示词" />
                 <Button Grid.Column="1" x:Name="BtnClear" Content="清空" Padding="16,7"
                         MinWidth="76" Margin="8,0,0,0" Click="OnClear" />
 

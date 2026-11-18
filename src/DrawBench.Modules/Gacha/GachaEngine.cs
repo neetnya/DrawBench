@@ -6,11 +6,17 @@ using System.Text.Json;
 
 namespace DrawBench.Modules.Gacha;
 
-/// <summary>模块化抽卡配置（只针对模块与子维度开关，不涉及具体 tag）。</summary>
+/// <summary>模块化抽卡配置。</summary>
 public sealed class GachaOptions
 {
     public const string NoneChoice = "";
     public const string RandomChoice = "__random__";
+    public const string OutfitsChoice = "outfits";
+    public const string TopsBottomsChoice = "tops_bottoms";
+    public const string LocationsChoice = "locations";
+    public const string BackgroundsChoice = "backgrounds";
+    public const string PostureChoice = "posture";
+    public const string GesturesChoice = "gestures";
 
     // 通用
     public int Repeat { get; set; } = 1;
@@ -20,38 +26,30 @@ public sealed class GachaOptions
     public string PrefixTags { get; set; } = "1girl";
     public string SuffixTags { get; set; } = "";
 
-    // 1. 头发 (hair)
+    // 外貌
     public bool HairColor { get; set; } = true;
     public string SelectedHairLength { get; set; } = RandomChoice;
     public bool HairStyles { get; set; } = true;
     public bool HairAccessories { get; set; } = false;
-
-    // 2. 面部与五官 (face_and_eyes)
     public bool EyeColor { get; set; } = true;
     public bool Eyes { get; set; } = true;
     public bool FaceAndExpression { get; set; } = true;
+    public bool EarsRare { get; set; } = true;
     public bool Ears { get; set; } = false;
+    public string SelectedBreastsSize { get; set; } = NoneChoice;
+    public bool BodyDetails { get; set; } = false;
 
-    // 3. 身体部位 (body_parts)
-    public string SelectedBreastsSize { get; set; } = RandomChoice;
-    public bool BreastsDetails { get; set; } = true;
-    public bool Feet { get; set; } = false;
-
-    // 4. 服装与配饰 (attire_and_accessories)
-    public bool Clothing { get; set; } = true;
-    public bool HeadwearAndNeckwear { get; set; } = false;
+    // 穿搭
+    public string AttireMode { get; set; } = RandomChoice;
     public bool Legwear { get; set; } = true;
-    public bool Footwear { get; set; } = false;
+    public bool Footwear { get; set; } = true;
     public bool Accessories { get; set; } = false;
 
-    // 5. 姿势与动作 (pose_and_action)
-    public bool Posture { get; set; } = true;
-    public bool Gestures { get; set; } = false;
-    public bool VerbsAndActions { get; set; } = false;
+    // 动作
+    public string ActionMode { get; set; } = RandomChoice;
 
-    // 6. 场景与构图 (scene_and_composition)
-    public bool Locations { get; set; } = true;
-    public bool Backgrounds { get; set; } = false;
+    // 场景
+    public string SceneMode { get; set; } = LocationsChoice;
 
     public GachaOptions Clone() => (GachaOptions)MemberwiseClone();
 }
@@ -125,14 +123,26 @@ public static class GachaEngine
     private static DateTime _cachedMtime;
     private static Dictionary<string, Dictionary<string, RatingPool>>? _cachedBank;
 
+    /// <summary>兽耳(15%)启用时的内置触发概率。</summary>
+    private const double EarsTriggerProbability = 0.15;
+
+    /// <summary>瞳色与眼型/瞳型启用时的内置触发概率（30%）。</summary>
+    private const double EyeTriggerProbability = 0.30;
+
+    /// <summary>呆毛系发型：抽中时额外再抽一条发型。</summary>
+    private static readonly HashSet<string> AhogeTags = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ahoge", "heart_ahoge", "huge_ahoge", "antenna_hair", "heart_antenna_hair"
+    };
+
     /// <summary>需要多人互动才能成立的 tag 集合（关闭「多人」开关时过滤；开启时若抽到则自动屏蔽前置 1girl）。</summary>
     private static readonly HashSet<string> MultiPersonTags = new(StringComparer.OrdinalIgnoreCase)
     {
-        // hair.hair_actions
+        // hair.hair_actions (merged into verbs_and_actions)
         "hairdressing", "braiding_hair", "cutting_hair", "brushing_hair",
         "kissing_hair", "smelling_hair", "washing_hair",
 
-        // body_parts.breasts_details
+        // body_parts.details & breasts_details
         "breast_contest", "breast_envy", "carried_breast_rest",
         "biting_nipple", "licking_nipple", "mutual_breast_sucking",
         "nipple-to-nipple", "penis_to_breast", "reverse_paizuri",
@@ -211,31 +221,20 @@ public static class GachaEngine
         new("hair", "hair_accessories", "发饰", o => BoolChoice(o.HairAccessories)),
 
         // 2. 面部与五官
-        new("face_and_eyes", "eye_color", "瞳色/瞳形", o => BoolChoice(o.EyeColor)),
-        new("face_and_eyes", "eyes", "眼睛/视线", o => BoolChoice(o.Eyes)),
-        new("face_and_eyes", "face_and_expression", "表情/面部", o => BoolChoice(o.FaceAndExpression)),
-        new("face_and_eyes", "ears", "耳朵/兽耳", o => BoolChoice(o.Ears)),
+        new("face_and_eyes", "eye_color", "瞳色", o => BoolChoice(o.EyeColor)),
+        new("face_and_eyes", "eyes", "眼型/瞳型", o => BoolChoice(o.Eyes)),
+        new("face_and_eyes", "face_and_expression", "表情", o => BoolChoice(o.FaceAndExpression)),
+        new("face_and_eyes", "ears", "兽耳", o => BoolChoice(o.Ears || o.EarsRare)),
 
         // 3. 身体部位
         new("body_parts", "breasts_size", "胸部尺寸", o => o.SelectedBreastsSize ?? GachaOptions.NoneChoice),
-        new("body_parts", "breasts_details", "胸部细节", o => BoolChoice(o.BreastsDetails)),
-        new("body_parts", "feet", "脚部", o => BoolChoice(o.Feet)),
+        new("body_parts", "details", "细节", o => BoolChoice(o.BodyDetails)),
 
-        // 4. 服装与配饰
-        new("attire_and_accessories", "clothing", "主服装", o => BoolChoice(o.Clothing)),
-        new("attire_and_accessories", "headwear_and_neckwear", "头饰/颈饰", o => BoolChoice(o.HeadwearAndNeckwear)),
+        // 4. 服装与配饰（outfits/tops/bottoms 由 AttireMode 控制，在 Roll 中动态展开）
+        new("attire_and_accessories", "accessories", "头饰/配饰", o => BoolChoice(o.Accessories)),
         new("attire_and_accessories", "legwear", "袜类/腿饰", o => BoolChoice(o.Legwear)),
         new("attire_and_accessories", "footwear", "鞋类", o => BoolChoice(o.Footwear)),
-        new("attire_and_accessories", "accessories", "其他配饰", o => BoolChoice(o.Accessories)),
 
-        // 5. 姿势与动作
-        new("pose_and_action", "posture", "全身姿势", o => BoolChoice(o.Posture)),
-        new("pose_and_action", "gestures", "手势/手持", o => BoolChoice(o.Gestures)),
-        new("pose_and_action", "verbs_and_actions", "一般动作", o => BoolChoice(o.VerbsAndActions)),
-
-        // 6. 场景与构图
-        new("scene_and_composition", "locations", "地点环境", o => BoolChoice(o.Locations)),
-        new("scene_and_composition", "backgrounds", "纯白背景", o => BoolChoice(o.Backgrounds)),
     };
 
     /// <summary>读取指定子组的 SFW tag 列表，用于下拉框选项填充。</summary>
@@ -275,7 +274,7 @@ public static class GachaEngine
             return outcome;
         }
 
-        // 提前按模式挑好每个槽位要用的池（或固定指定的 tag），避免连抽时反复合并
+        // 普通槽位
         var activeSlots = new List<(SlotSpec Slot, string? FixedTag, List<List<string>>? Pools, int Pick)>();
         foreach (var slot in Slots)
         {
@@ -299,7 +298,23 @@ public static class GachaEngine
                 activeSlots.Add((slot, null, picked, Math.Clamp(pool.Pick, 1, 4)));
         }
 
-        if (activeSlots.Count == 0 &&
+        // 服装下拉与场景下拉的可用池
+        var outfitsPools = GetPools(bank, "attire_and_accessories", "outfits", options);
+        var topsPools = GetPools(bank, "attire_and_accessories", "tops", options);
+        var bottomsPools = GetPools(bank, "attire_and_accessories", "bottoms", options);
+        var posturePools = GetPools(bank, "pose_and_action", "posture", options);
+        var gesturesPools = GetPools(bank, "pose_and_action", "gestures", options);
+        var locationsPools = GetPools(bank, "scene_and_composition", "locations", options);
+        var backgroundsPools = GetPools(bank, "scene_and_composition", "backgrounds", options);
+
+        bool hasAttire = !string.IsNullOrEmpty(options.AttireMode) &&
+                         (outfitsPools.Count > 0 || topsPools.Count > 0 || bottomsPools.Count > 0);
+        bool hasAction = !string.IsNullOrEmpty(options.ActionMode) &&
+                         (posturePools.Count > 0 || gesturesPools.Count > 0);
+        bool hasScene = !string.IsNullOrEmpty(options.SceneMode) &&
+                        (locationsPools.Count > 0 || backgroundsPools.Count > 0);
+
+        if (activeSlots.Count == 0 && !hasAttire && !hasAction && !hasScene &&
             string.IsNullOrWhiteSpace(options.PrefixTags) &&
             string.IsNullOrWhiteSpace(options.SuffixTags))
         {
@@ -316,36 +331,115 @@ public static class GachaEngine
             var drawnTags = new List<string>();
             bool hasMultiPersonTag = false;
 
+            void RecordTag(string module, string subCategory, string label, string rawTag)
+            {
+                if (MultiPersonTags.Contains(rawTag))
+                    hasMultiPersonTag = true;
+
+                string formatted = options.ReplaceUnderscoreWithSpace
+                    ? rawTag.Replace('_', ' ')
+                    : rawTag;
+
+                drawnTags.Add(formatted);
+                item.LogLines.Add($"[{module}.{subCategory}] {label}：{formatted}");
+            }
+
             foreach (var (slot, fixedTag, pools, pick) in activeSlots)
             {
                 if (fixedTag != null)
                 {
-                    if (MultiPersonTags.Contains(fixedTag))
-                        hasMultiPersonTag = true;
-
-                    string formatted = options.ReplaceUnderscoreWithSpace
-                        ? fixedTag.Replace('_', ' ')
-                        : fixedTag;
-
-                    drawnTags.Add(formatted);
-                    item.LogLines.Add($"[{slot.Module}.{slot.SubCategory}] {slot.Label}（指定）：{formatted}");
+                    RecordTag(slot.Module, slot.SubCategory, $"{slot.Label}（指定）", fixedTag);
                     continue;
                 }
 
-                int totalDraws = pools!.Count == 1 ? pick : Math.Max(pick, pools.Count);
+                // 「兽耳(15%)」开启时仅按内置 15% 概率触发抽取
+                if (slot.SubCategory == "ears" && options.EarsRare && !options.Ears && rng.NextDouble() >= EarsTriggerProbability)
+                    continue;
+
+                // 「瞳色(30%)」与「眼型/瞳型(30%)」开启时按内置 30% 概率触发抽取
+                if ((slot.SubCategory == "eye_color" || slot.SubCategory == "eyes") && rng.NextDouble() >= EyeTriggerProbability)
+                    continue;
+
+                // 「细节」分组每次随机抽取 2~3 个
+                int effectivePick = slot.SubCategory == "details" ? rng.Next(2, 4) : pick;
+                int totalDraws = pools!.Count == 1 ? effectivePick : Math.Max(effectivePick, pools.Count);
                 for (int k = 0; k < totalDraws; k++)
                 {
                     var pool = pools[k % pools.Count];
                     string rawTag = DrawRandom(pool, rng);
-                    if (MultiPersonTags.Contains(rawTag))
-                        hasMultiPersonTag = true;
+                    RecordTag(slot.Module, slot.SubCategory, slot.Label, rawTag);
 
-                    string formatted = options.ReplaceUnderscoreWithSpace
-                        ? rawTag.Replace('_', ' ')
-                        : rawTag;
+                    // 发型抽到呆毛系时，额外再抽一次发型
+                    if (slot.SubCategory == "hair_styles" && AhogeTags.Contains(rawTag))
+                    {
+                        string extraTag = DrawRandom(pool, rng);
+                        RecordTag(slot.Module, slot.SubCategory, $"{slot.Label}（呆毛额外）", extraTag);
+                    }
+                }
+            }
 
-                    drawnTags.Add(formatted);
-                    item.LogLines.Add($"[{slot.Module}.{slot.SubCategory}] {slot.Label}：{formatted}");
+            // 服装下拉：不指定 / 随机 / 套装 / 上下装
+            if (hasAttire)
+            {
+                string mode = options.AttireMode;
+                if (mode == GachaOptions.RandomChoice)
+                    mode = rng.Next(2) == 0 ? GachaOptions.OutfitsChoice : GachaOptions.TopsBottomsChoice;
+
+                if (mode == GachaOptions.OutfitsChoice && outfitsPools.Count > 0)
+                {
+                    var pool = outfitsPools[rng.Next(outfitsPools.Count)];
+                    RecordTag("attire_and_accessories", "outfits", "套装", DrawRandom(pool, rng));
+                }
+                else if (mode == GachaOptions.TopsBottomsChoice)
+                {
+                    if (topsPools.Count > 0)
+                    {
+                        var pool = topsPools[rng.Next(topsPools.Count)];
+                        RecordTag("attire_and_accessories", "tops", "上衣", DrawRandom(pool, rng));
+                    }
+                    if (bottomsPools.Count > 0)
+                    {
+                        var pool = bottomsPools[rng.Next(bottomsPools.Count)];
+                        RecordTag("attire_and_accessories", "bottoms", "下装", DrawRandom(pool, rng));
+                    }
+                }
+            }
+
+            // 动作下拉：不指定 / 随机 / 全身姿势 / 手势
+            if (hasAction)
+            {
+                string mode = options.ActionMode;
+                if (mode == GachaOptions.RandomChoice)
+                    mode = rng.Next(2) == 0 ? GachaOptions.PostureChoice : GachaOptions.GesturesChoice;
+
+                if (mode == GachaOptions.PostureChoice && posturePools.Count > 0)
+                {
+                    var pool = posturePools[rng.Next(posturePools.Count)];
+                    RecordTag("pose_and_action", "posture", "全身姿势", DrawRandom(pool, rng));
+                }
+                else if (mode == GachaOptions.GesturesChoice && gesturesPools.Count > 0)
+                {
+                    var pool = gesturesPools[rng.Next(gesturesPools.Count)];
+                    RecordTag("pose_and_action", "gestures", "手势", DrawRandom(pool, rng));
+                }
+            }
+
+            // 场景下拉：不指定 / 随机 / 地点环境 / 纯白背景
+            if (hasScene)
+            {
+                string mode = options.SceneMode;
+                if (mode == GachaOptions.RandomChoice)
+                    mode = rng.Next(2) == 0 ? GachaOptions.LocationsChoice : GachaOptions.BackgroundsChoice;
+
+                if (mode == GachaOptions.LocationsChoice && locationsPools.Count > 0)
+                {
+                    var pool = locationsPools[rng.Next(locationsPools.Count)];
+                    RecordTag("scene_and_composition", "locations", "地点环境", DrawRandom(pool, rng));
+                }
+                else if (mode == GachaOptions.BackgroundsChoice && backgroundsPools.Count > 0)
+                {
+                    var pool = backgroundsPools[rng.Next(backgroundsPools.Count)];
+                    RecordTag("scene_and_composition", "backgrounds", "纯白背景", DrawRandom(pool, rng));
                 }
             }
 
@@ -362,11 +456,18 @@ public static class GachaEngine
         return outcome;
     }
 
-    /// <summary>
-    /// 按 NSFW 开关与多人开关挑池：
-    /// IncludeNsfw=false 只取 SFW 池；IncludeNsfw=true 等同原 ANY（SFW+NSFW 混合）；
-    /// AllowMultiPerson=false 时过滤掉需要多人的 tag。
-    /// </summary>
+    private static List<List<string>> GetPools(
+        Dictionary<string, Dictionary<string, RatingPool>> bank,
+        string module, string subCategory, GachaOptions options)
+    {
+        if (bank.TryGetValue(module, out var subMap) &&
+            subMap.TryGetValue(subCategory, out var pool))
+        {
+            return SelectPools(pool, options.IncludeNsfw, options.AllowMultiPerson);
+        }
+        return new List<List<string>>();
+    }
+
     private static List<List<string>> SelectPools(RatingPool pool, bool includeNsfw, bool allowMultiPerson)
     {
         var result = new List<List<string>>(2);

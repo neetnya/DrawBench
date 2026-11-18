@@ -23,7 +23,7 @@ public partial class GachaView : UserControl
         { "short_hair", "medium_hair", "long_hair", "very_long_hair", "absurdly_long_hair" };
 
     private static readonly string[] FallbackBreastsSizes =
-        { "small_breasts", "medium_breasts", "large_breasts", "huge_breasts", "gigantic_breasts" };
+        { "small_breasts", "breasts", "medium_breasts", "large_breasts", "huge_breasts", "gigantic_breasts" };
 
     private static readonly Dictionary<string, string> TagChineseLabels = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -32,8 +32,8 @@ public partial class GachaView : UserControl
         ["long_hair"] = "长发",
         ["very_long_hair"] = "超长发",
         ["absurdly_long_hair"] = "极长发",
-        ["flat_chest"] = "平胸",
         ["small_breasts"] = "贫乳",
+        ["breasts"] = "常规",
         ["medium_breasts"] = "中等胸部",
         ["large_breasts"] = "巨乳",
         ["huge_breasts"] = "爆乳",
@@ -66,6 +66,33 @@ public partial class GachaView : UserControl
     {
         FillCombo(CmbHairLength, "hair", "hair_length", FallbackHairLengths);
         FillCombo(CmbBreastsSize, "body_parts", "breasts_size", FallbackBreastsSizes);
+
+        CmbAttireMode.ItemsSource = new List<ComboOption>
+        {
+            new(GachaOptions.NoneChoice, "不指定"),
+            new(GachaOptions.RandomChoice, "随机"),
+            new(GachaOptions.OutfitsChoice, "套装"),
+            new(GachaOptions.TopsBottomsChoice, "上下装"),
+        };
+        CmbAttireMode.SelectedValue = GachaOptions.RandomChoice;
+
+        CmbActionMode.ItemsSource = new List<ComboOption>
+        {
+            new(GachaOptions.NoneChoice, "不指定"),
+            new(GachaOptions.RandomChoice, "随机"),
+            new(GachaOptions.PostureChoice, "全身姿势"),
+            new(GachaOptions.GesturesChoice, "手势"),
+        };
+        CmbActionMode.SelectedValue = GachaOptions.PostureChoice;
+
+        CmbSceneMode.ItemsSource = new List<ComboOption>
+        {
+            new(GachaOptions.NoneChoice, "不指定"),
+            new(GachaOptions.RandomChoice, "随机"),
+            new(GachaOptions.LocationsChoice, "地点环境"),
+            new(GachaOptions.BackgroundsChoice, "纯白背景"),
+        };
+        CmbSceneMode.SelectedValue = GachaOptions.LocationsChoice;
     }
 
     private void FillCombo(ComboBox combo, string module, string subCategory, string[] fallback)
@@ -128,24 +155,20 @@ public partial class GachaView : UserControl
         ChkEyeColor.IsChecked = o.EyeColor;
         ChkEyes.IsChecked = o.Eyes;
         ChkFace.IsChecked = o.FaceAndExpression;
+        ChkEarsRare.IsChecked = o.EarsRare && !o.Ears;
         ChkEars.IsChecked = o.Ears;
 
         SetComboValue(CmbBreastsSize, o.SelectedBreastsSize);
-        ChkBreastsDetails.IsChecked = o.BreastsDetails;
-        ChkFeet.IsChecked = o.Feet;
+        ChkBodyDetails.IsChecked = o.BodyDetails;
 
-        ChkClothing.IsChecked = o.Clothing;
-        ChkHeadwearNeckwear.IsChecked = o.HeadwearAndNeckwear;
+        SetComboValue(CmbAttireMode, o.AttireMode);
         ChkLegwear.IsChecked = o.Legwear;
         ChkFootwear.IsChecked = o.Footwear;
         ChkAccessories.IsChecked = o.Accessories;
 
-        ChkPosture.IsChecked = o.Posture;
-        ChkGestures.IsChecked = o.Gestures;
-        ChkVerbs.IsChecked = o.VerbsAndActions;
+        SetComboValue(CmbActionMode, o.ActionMode);
 
-        ChkLocations.IsChecked = o.Locations;
-        ChkBackgrounds.IsChecked = o.Backgrounds;
+        SetComboValue(CmbSceneMode, o.SceneMode);
     }
 
     private GachaOptions CollectOptions() => new()
@@ -165,31 +188,24 @@ public partial class GachaView : UserControl
         EyeColor = ChkEyeColor.IsChecked == true,
         Eyes = ChkEyes.IsChecked == true,
         FaceAndExpression = ChkFace.IsChecked == true,
+        EarsRare = ChkEarsRare.IsChecked == true,
         Ears = ChkEars.IsChecked == true,
 
         SelectedBreastsSize = GetComboValue(CmbBreastsSize),
-        BreastsDetails = ChkBreastsDetails.IsChecked == true,
-        Feet = ChkFeet.IsChecked == true,
+        BodyDetails = ChkBodyDetails.IsChecked == true,
 
-        Clothing = ChkClothing.IsChecked == true,
-        HeadwearAndNeckwear = ChkHeadwearNeckwear.IsChecked == true,
+        AttireMode = GetComboValue(CmbAttireMode),
         Legwear = ChkLegwear.IsChecked == true,
         Footwear = ChkFootwear.IsChecked == true,
         Accessories = ChkAccessories.IsChecked == true,
 
-        Posture = ChkPosture.IsChecked == true,
-        Gestures = ChkGestures.IsChecked == true,
-        VerbsAndActions = ChkVerbs.IsChecked == true,
+        ActionMode = GetComboValue(CmbActionMode),
 
-        Locations = ChkLocations.IsChecked == true,
-        Backgrounds = ChkBackgrounds.IsChecked == true,
+        SceneMode = GetComboValue(CmbSceneMode),
     };
 
     // ==================== 快捷方案 ====================
 
-    /// <summary>
-    /// 以当前前置/后置/重复数/NSFW/多人开关为基准套用一套子组开关。
-    /// </summary>
     private void ApplyPreset(Action<GachaOptions> configure)
     {
         var d = new GachaOptions
@@ -203,68 +219,90 @@ public partial class GachaView : UserControl
             HairColor = false,
             SelectedHairLength = GachaOptions.NoneChoice,
             HairStyles = false,
+            HairAccessories = false,
             EyeColor = false,
             Eyes = false,
             FaceAndExpression = false,
+            EarsRare = false,
+            Ears = false,
             SelectedBreastsSize = GachaOptions.NoneChoice,
-            BreastsDetails = false,
-            Clothing = false,
+            BodyDetails = false,
+            AttireMode = GachaOptions.NoneChoice,
+            Accessories = false,
             Legwear = false,
-            Posture = false,
-            Locations = false,
-            Backgrounds = false,
+            Footwear = false,
+            ActionMode = GachaOptions.NoneChoice,
+            SceneMode = GachaOptions.NoneChoice,
         };
         configure(d);
         ApplyOptions(d);
     }
 
-    // 常规全身：人物外貌 + 基础穿搭（含鞋袜）+ 全身姿势 + 地点环境
+    // 常规全身
     private void OnPresetStandard(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
         {
-            o.HairColor = true;
             o.SelectedHairLength = GachaOptions.RandomChoice;
+            o.SelectedBreastsSize = GachaOptions.NoneChoice;
+            o.AttireMode = GachaOptions.RandomChoice;
+            o.ActionMode = GachaOptions.RandomChoice;
+            o.SceneMode = GachaOptions.LocationsChoice;
+
+            o.HairColor = true;
             o.HairStyles = true;
             o.EyeColor = true;
             o.Eyes = true;
             o.FaceAndExpression = true;
-            o.Clothing = true;
+            o.EarsRare = true;
+
             o.Legwear = true;
             o.Footwear = true;
-            o.Posture = true;
-            o.Locations = true;
         });
     }
 
-    // 人设外貌：脸、眼、发、兽耳/耳机、胸部尺寸 + 纯白背景，去掉易破坏立绘的胸部细节与脚部特写
+    // 人设外貌
     private void OnPresetCharacterOnly(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
         {
-            o.HairColor = true;
             o.SelectedHairLength = GachaOptions.RandomChoice;
+            o.SelectedBreastsSize = GachaOptions.RandomChoice;
+            o.AttireMode = GachaOptions.TopsBottomsChoice;
+            o.ActionMode = GachaOptions.GesturesChoice;
+            o.SceneMode = GachaOptions.BackgroundsChoice;
+
+            o.HairColor = true;
             o.HairStyles = true;
             o.HairAccessories = true;
             o.EyeColor = true;
             o.Eyes = true;
             o.FaceAndExpression = true;
-            o.Ears = true;
-            o.Backgrounds = true;
+            o.EarsRare = true;
+
+            o.Legwear = true;
+            o.Footwear = true;
         });
     }
 
-    // 服装展示：主服装 + 袖型 + 鞋袜 + 轻量配饰 + 姿势 + 纯白背景，避免头饰/手套/发饰全开导致词条过载冲突
+    // 服装展示
     private void OnPresetOutfit(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
         {
-            o.Clothing = true;
+            o.SelectedHairLength = GachaOptions.NoneChoice;
+            o.SelectedBreastsSize = GachaOptions.NoneChoice;
+            o.AttireMode = GachaOptions.RandomChoice;
+            o.ActionMode = GachaOptions.PostureChoice;
+            o.SceneMode = GachaOptions.RandomChoice;
+
+            o.HairColor = true;
+            o.HairStyles = true;
+            o.EarsRare = true;
+
+            o.Accessories = true;
             o.Legwear = true;
             o.Footwear = true;
-            o.Accessories = true;
-            o.Posture = true;
-            o.Backgrounds = true;
         });
     }
 
@@ -285,33 +323,29 @@ public partial class GachaView : UserControl
         ChkEyeColor.IsChecked = value;
         ChkEyes.IsChecked = value;
         ChkFace.IsChecked = value;
+        ChkEarsRare.IsChecked = false;
         ChkEars.IsChecked = value;
 
         SetComboValue(CmbBreastsSize, comboChoice);
-        ChkBreastsDetails.IsChecked = value;
-        ChkFeet.IsChecked = value;
+        ChkBodyDetails.IsChecked = value;
 
-        ChkClothing.IsChecked = value;
-        ChkHeadwearNeckwear.IsChecked = value;
+        SetComboValue(CmbAttireMode, comboChoice);
         ChkLegwear.IsChecked = value;
         ChkFootwear.IsChecked = value;
         ChkAccessories.IsChecked = value;
 
-        ChkPosture.IsChecked = value;
-        ChkGestures.IsChecked = value;
-        ChkVerbs.IsChecked = value;
+        SetComboValue(CmbActionMode, comboChoice);
 
-        ChkLocations.IsChecked = value;
-        ChkBackgrounds.IsChecked = false;
+        SetComboValue(CmbSceneMode, comboChoice);
     }
 
-    private void OnSceneBgToggleChanged(object sender, RoutedEventArgs e)
+    private void OnEarsToggleChanged(object sender, RoutedEventArgs e)
     {
-        if (ChkLocations == null || ChkBackgrounds == null) return;
-        if (ReferenceEquals(sender, ChkLocations) && ChkLocations.IsChecked == true)
-            ChkBackgrounds.IsChecked = false;
-        else if (ReferenceEquals(sender, ChkBackgrounds) && ChkBackgrounds.IsChecked == true)
-            ChkLocations.IsChecked = false;
+        if (ChkEars == null || ChkEarsRare == null) return;
+        if (ReferenceEquals(sender, ChkEars) && ChkEars.IsChecked == true)
+            ChkEarsRare.IsChecked = false;
+        else if (ReferenceEquals(sender, ChkEarsRare) && ChkEarsRare.IsChecked == true)
+            ChkEars.IsChecked = false;
     }
 
     // ==================== 抽卡 ====================
