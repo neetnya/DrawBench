@@ -329,10 +329,13 @@ public static class GachaEngine
         {
             var item = new GachaDrawItem();
             var drawnTags = new List<string>();
+            var usedRawTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             bool hasMultiPersonTag = false;
 
             void RecordTag(string module, string subCategory, string label, string rawTag)
             {
+                if (string.IsNullOrEmpty(rawTag)) return;
+                usedRawTags.Add(rawTag);
                 if (MultiPersonTags.Contains(rawTag))
                     hasMultiPersonTag = true;
 
@@ -366,13 +369,13 @@ public static class GachaEngine
                 for (int k = 0; k < totalDraws; k++)
                 {
                     var pool = pools[k % pools.Count];
-                    string rawTag = DrawRandom(pool, rng);
+                    string rawTag = DrawUniqueInItem(pool, usedRawTags, rng);
                     RecordTag(slot.Module, slot.SubCategory, slot.Label, rawTag);
 
                     // 发型抽到呆毛系时，额外再抽一次发型
                     if (slot.SubCategory == "hair_styles" && AhogeTags.Contains(rawTag))
                     {
-                        string extraTag = DrawRandom(pool, rng);
+                        string extraTag = DrawUniqueInItem(pool, usedRawTags, rng, excludeAhoge: true);
                         RecordTag(slot.Module, slot.SubCategory, $"{slot.Label}（呆毛额外）", extraTag);
                     }
                 }
@@ -512,6 +515,24 @@ public static class GachaEngine
                 filtered.Add(tag);
         }
         return filtered;
+    }
+
+    /// <summary>单条结果内等概率随机抽取不重复 tag。</summary>
+    private static string DrawUniqueInItem(List<string> pool, HashSet<string> usedRawTags, Random rng, bool excludeAhoge = false)
+    {
+        if (pool.Count == 0) return string.Empty;
+
+        var candidates = new List<string>(pool.Count);
+        foreach (string tag in pool)
+        {
+            if (usedRawTags.Contains(tag)) continue;
+            if (excludeAhoge && AhogeTags.Contains(tag)) continue;
+            candidates.Add(tag);
+        }
+
+        return candidates.Count > 0
+            ? candidates[rng.Next(candidates.Count)]
+            : pool[rng.Next(pool.Count)];
     }
 
     /// <summary>等概率随机抽取一条 tag。</summary>
