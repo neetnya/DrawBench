@@ -23,7 +23,7 @@ public partial class GachaView : UserControl
         { "short_hair", "medium_hair", "long_hair", "very_long_hair", "absurdly_long_hair" };
 
     private static readonly string[] FallbackBreastsSizes =
-        { "small_breasts", "breasts", "medium_breasts", "large_breasts", "huge_breasts", "gigantic_breasts" };
+        { "small_breasts", "breasts", "medium_breasts", "large_breasts", "huge_breasts" };
 
     private static readonly Dictionary<string, string> TagChineseLabels = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -37,7 +37,6 @@ public partial class GachaView : UserControl
         ["medium_breasts"] = "中等胸部",
         ["large_breasts"] = "巨乳",
         ["huge_breasts"] = "爆乳",
-        ["gigantic_breasts"] = "超巨乳",
     };
 
     private readonly string _engineDir;

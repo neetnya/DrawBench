@@ -23,7 +23,7 @@ public sealed class GachaOptions
     public bool ReplaceUnderscoreWithSpace { get; set; } = true;
     public bool IncludeNsfw { get; set; } = false;
     public bool AllowMultiPerson { get; set; } = false;
-    public string PrefixTags { get; set; } = "1girl";
+    public string PrefixTags { get; set; } = "1girl, solo";
     public string SuffixTags { get; set; } = "";
 
     // 外貌
@@ -339,9 +339,7 @@ public static class GachaEngine
                 if (MultiPersonTags.Contains(rawTag))
                     hasMultiPersonTag = true;
 
-                string formatted = options.ReplaceUnderscoreWithSpace
-                    ? rawTag.Replace('_', ' ')
-                    : rawTag;
+                string formatted = FormatTag(rawTag, options.ReplaceUnderscoreWithSpace);
 
                 drawnTags.Add(formatted);
                 item.LogLines.Add($"[{module}.{subCategory}] {label}：{formatted}");
@@ -539,13 +537,32 @@ public static class GachaEngine
     private static string DrawRandom(List<string> pool, Random rng) =>
         pool.Count > 0 ? pool[rng.Next(pool.Count)] : string.Empty;
 
+    private static string FormatTag(string rawTag, bool replaceUnderscore)
+    {
+        if (!replaceUnderscore || string.IsNullOrEmpty(rawTag)) return rawTag;
+        // 颜文字/符号表情保留下划线（如 ^_^, @_@, o_o, >_<, double_\m/）
+        if (IsKaomojiOrSymbol(rawTag)) return rawTag;
+        return rawTag.Replace('_', ' ');
+    }
+
+    private static bool IsKaomojiOrSymbol(string tag)
+    {
+        if (tag is "3_3" or "0_0" or "o_o" or "x_x" or "t_t") return true;
+        foreach (char c in tag)
+        {
+            if (c is '^' or '@' or '=' or '+' or '.' or '>' or '<' or ';' or ':' or '\\' or '/')
+                return true;
+        }
+        return false;
+    }
+
     private static void AddFixedTags(string? raw, List<string> target, bool suppressOneGirl)
     {
         if (string.IsNullOrWhiteSpace(raw)) return;
         foreach (string part in raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             if (string.IsNullOrWhiteSpace(part)) continue;
-            if (suppressOneGirl && string.Equals(part, "1girl", StringComparison.OrdinalIgnoreCase))
+            if (suppressOneGirl && (string.Equals(part, "1girl", StringComparison.OrdinalIgnoreCase) || string.Equals(part, "solo", StringComparison.OrdinalIgnoreCase)))
                 continue;
             target.Add(part);
         }

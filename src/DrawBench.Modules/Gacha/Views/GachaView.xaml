@@ -44,7 +44,7 @@
                                               ToolTip="关闭时只抽 SFW 安全词；开启时混合抽取 SFW 与 NSFW 词" />
                                     <CheckBox x:Name="ChkMultiPerson" Content="多人"
                                               IsChecked="False" VerticalAlignment="Center"
-                                              ToolTip="关闭时不抽需要多人的 tag；开启时若抽到多人 tag 则自动屏蔽前置 1girl，未抽到则保留" />
+                                              ToolTip="关闭时不抽需要多人的 tag；开启时若抽到多人 tag 则自动屏蔽前置 1girl, solo，未抽到则保留" />
                                 </WrapPanel>
                             </Grid>
 
@@ -59,7 +59,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="前置" Style="{StaticResource FieldLabel}" />
-                                <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtPrefix" Text="1girl"
+                                <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtPrefix" Text="1girl, solo"
                                          ToolTip="固定拼接在每条结果最前面，逗号分隔" />
 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="后置" Style="{StaticResource FieldLabel}" Margin="0,4,0,0" />
