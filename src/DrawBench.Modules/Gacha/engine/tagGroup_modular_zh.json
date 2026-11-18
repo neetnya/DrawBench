@@ -71,10 +71,6 @@
           "cn": "花纹发色"
         },
         {
-          "tag": "rainbow_hair",
-          "cn": "彩虹发"
-        },
-        {
           "tag": "roots_(hair)",
           "cn": "发根布丁头"
         },
@@ -89,10 +85,6 @@
         {
           "tag": "streaked_hair",
           "cn": "挑染"
-        },
-        {
-          "tag": "striped_hair",
-          "cn": "条纹头发"
         },
         {
           "tag": "two-tone_hair",
@@ -125,10 +117,6 @@
         {
           "tag": "absurdly_long_hair",
           "cn": "超长发"
-        },
-        {
-          "tag": "big_hair",
-          "cn": "蓬松发"
         }
       ],
       "nsfw": []
@@ -444,10 +432,6 @@
           "cn": "环状卷发"
         },
         {
-          "tag": "spiked_hair",
-          "cn": "刺猬头"
-        },
-        {
           "tag": "straight_hair",
           "cn": "直发"
         },
@@ -604,10 +588,6 @@
           "cn": "后梳发型"
         },
         {
-          "tag": "hair_slicked_back",
-          "cn": "大背头"
-        },
-        {
           "tag": "parted_hair",
           "cn": "头发分缝"
         },
@@ -648,12 +628,7 @@
           "cn": "齐发尾"
         }
       ],
-      "nsfw": [
-        {
-          "tag": "hair_scarf",
-          "cn": "发丝围巾"
-        }
-      ]
+      "nsfw": []
     },
     "hair_accessories": {
       "sfw": [
@@ -740,251 +715,8 @@
         {
           "tag": "hairpods",
           "cn": "金属发饰"
-        },
-        {
-          "tag": "wig",
-          "cn": "假发"
-        },
-        {
-          "tag": "hair_extensions",
-          "cn": "接发"
         }
       ]
-    },
-    "hair_traits": {
-      "sfw": [
-        {
-          "tag": "hair_weapon",
-          "cn": "发丝武器"
-        },
-        {
-          "tag": "cloud_hair",
-          "cn": "云状发"
-        },
-        {
-          "tag": "crystal_hair",
-          "cn": "水晶质感发"
-        },
-        {
-          "tag": "feather_hair",
-          "cn": "羽毛发"
-        },
-        {
-          "tag": "fiery_hair",
-          "cn": "火焰发"
-        },
-        {
-          "tag": "food-themed_hair",
-          "cn": "食物主题发型"
-        },
-        {
-          "tag": "glowing_hair",
-          "cn": "发光头发"
-        },
-        {
-          "tag": "liquid_hair",
-          "cn": "液体状头发"
-        },
-        {
-          "tag": "plant_hair",
-          "cn": "植物发"
-        },
-        {
-          "tag": "prehensile_hair",
-          "cn": "可动发丝"
-        },
-        {
-          "tag": "helicopter_hair",
-          "cn": "直升机发型"
-        },
-        {
-          "tag": "tentacle_hair",
-          "cn": "触手发"
-        },
-        {
-          "tag": "living_hair",
-          "cn": "活体头发"
-        },
-        {
-          "tag": "snake_hair",
-          "cn": "蛇发"
-        },
-        {
-          "tag": "ribbon_hair",
-          "cn": "丝带发"
-        },
-        {
-          "tag": "slime_hair",
-          "cn": "史莱姆发质"
-        },
-        {
-          "tag": "starry_hair",
-          "cn": "星空发"
-        },
-        {
-          "tag": "bound_hair",
-          "cn": "束发"
-        },
-        {
-          "tag": "expressive_hair",
-          "cn": "表情发"
-        },
-        {
-          "tag": "floating_hair",
-          "cn": "飘浮发丝"
-        },
-        {
-          "tag": "hair_around_ear",
-          "cn": "挂耳发"
-        },
-        {
-          "tag": "hair_around_horn",
-          "cn": "绕角发型"
-        },
-        {
-          "tag": "hair_on_horn",
-          "cn": "发丝缠角"
-        },
-        {
-          "tag": "hair_spread_out",
-          "cn": "头发散开"
-        },
-        {
-          "tag": "hair_hanging_down",
-          "cn": "垂发"
-        },
-        {
-          "tag": "heart-shaped_hair",
-          "cn": "心形发型"
-        },
-        {
-          "tag": "loose_hair_strand",
-          "cn": "散乱发丝"
-        },
-        {
-          "tag": "naturally_detached_hair",
-          "cn": "浮空发束"
-        },
-        {
-          "tag": "wet_hair",
-          "cn": "湿发"
-        }
-      ],
-      "nsfw": [
-        {
-          "tag": "hair_over_breasts",
-          "cn": "发遮胸"
-        },
-        {
-          "tag": "hair_over_one_breast",
-          "cn": "头发遮单乳"
-        },
-        {
-          "tag": "hair_over_crotch",
-          "cn": "发丝遮挡裆部"
-        },
-        {
-          "tag": "hair_bondage",
-          "cn": "发束拘束"
-        }
-      ]
-    },
-    "hair_actions": {
-      "sfw": [
-        {
-          "tag": "biting_hair",
-          "cn": "咬发"
-        },
-        {
-          "tag": "eating_hair",
-          "cn": "吃头发"
-        },
-        {
-          "tag": "hairdressing",
-          "cn": "美发"
-        },
-        {
-          "tag": "braiding_hair",
-          "cn": "编发"
-        },
-        {
-          "tag": "cutting_hair",
-          "cn": "剪发"
-        },
-        {
-          "tag": "cutting_own_hair",
-          "cn": "剪自己的头发"
-        },
-        {
-          "tag": "brushing_hair",
-          "cn": "梳头"
-        },
-        {
-          "tag": "brushing_own_hair",
-          "cn": "梳理头发"
-        },
-        {
-          "tag": "tying_hair",
-          "cn": "扎头发"
-        },
-        {
-          "tag": "untying_hair",
-          "cn": "解开头发"
-        },
-        {
-          "tag": "ruffling_hair",
-          "cn": "揉乱头发"
-        },
-        {
-          "tag": "hand_in_own_hair",
-          "cn": "手插头发"
-        },
-        {
-          "tag": "hands_in_own_hair",
-          "cn": "双手插入自己头发中"
-        },
-        {
-          "tag": "grabbing_own_hair",
-          "cn": "揪住自己的头发"
-        },
-        {
-          "tag": "playing_with_own_hair",
-          "cn": "玩弄自己头发"
-        },
-        {
-          "tag": "adjusting_hair",
-          "cn": "整理头发"
-        },
-        {
-          "tag": "bunching_hair",
-          "cn": "手拢发束"
-        },
-        {
-          "tag": "hair_flip",
-          "cn": "拨开头发"
-        },
-        {
-          "tag": "hair_lift",
-          "cn": "撩起头发"
-        },
-        {
-          "tag": "tucking_hair",
-          "cn": "撩发"
-        },
-        {
-          "tag": "kissing_hair",
-          "cn": "亲吻头发"
-        },
-        {
-          "tag": "smelling_hair",
-          "cn": "闻头发"
-        },
-        {
-          "tag": "washing_hair",
-          "cn": "洗头"
-        }
-      ],
-      "nsfw": []
     }
   },
   "face_and_eyes": {
@@ -1216,44 +948,12 @@
     "eyes": {
       "sfw": [
         {
-          "tag": "electric_eyes",
-          "cn": "电眼"
-        },
-        {
-          "tag": "flaming_eyes",
-          "cn": "燃烧之瞳"
-        },
-        {
-          "tag": "crazy_eyes",
-          "cn": "狂乱眼神"
-        },
-        {
           "tag": "heart-shaped_eyes",
           "cn": "爱心眼"
         },
         {
-          "tag": "jitome",
-          "cn": "死鱼眼"
-        },
-        {
-          "tag": "nonowa",
-          "cn": "ののワ（偶像大师）"
-        },
-        {
-          "tag": "sanpaku",
-          "cn": "三白眼"
-        },
-        {
-          "tag": "solid_oval_eyes",
-          "cn": "实心椭圆眼"
-        },
-        {
           "tag": "sparkling_eyes",
           "cn": "星星眼"
-        },
-        {
-          "tag": "spiral-only_eyes",
-          "cn": "螺旋眼"
         },
         {
           "tag": "tareme",
@@ -1268,10 +968,6 @@
           "cn": "瞳孔倒影"
         },
         {
-          "tag": "one-eyed",
-          "cn": "独眼"
-        },
-        {
           "tag": "blinking",
           "cn": "眨眼"
         },
@@ -1284,20 +980,8 @@
           "cn": "单眼闭合"
         },
         {
-          "tag": "bandage_over_one_eye",
-          "cn": "单眼绷带"
-        },
-        {
           "tag": "eyepatch",
           "cn": "眼罩"
-        },
-        {
-          "tag": "eyelashes",
-          "cn": "睫毛"
-        },
-        {
-          "tag": "colored_eyelashes",
-          "cn": "彩色睫毛"
         },
         {
           "tag": "eyes_visible_through_hair",
@@ -1316,20 +1000,12 @@
           "cn": "眼影"
         },
         {
-          "tag": "mascara",
-          "cn": "睫毛膏"
-        },
-        {
           "tag": "looking_afar",
           "cn": "远眺"
         },
         {
           "tag": "looking_around",
           "cn": "环顾四周"
-        },
-        {
-          "tag": "looking_at_creature",
-          "cn": "注视生物"
         },
         {
           "tag": "looking_at_hand",
@@ -1340,20 +1016,12 @@
           "cn": "看着手"
         },
         {
-          "tag": "looking_at_mirror",
-          "cn": "照镜子"
-        },
-        {
           "tag": "looking_at_object",
           "cn": "注视物体"
         },
         {
           "tag": "looking_at_phone",
           "cn": "看手机"
-        },
-        {
-          "tag": "looking_at_self",
-          "cn": "注视自身"
         },
         {
           "tag": "looking_at_viewer",
@@ -1372,10 +1040,6 @@
           "cn": "向外看"
         },
         {
-          "tag": "looking_through_own_legs",
-          "cn": "胯下窥视"
-        },
-        {
           "tag": "looking_to_the_side",
           "cn": "看向侧边"
         },
@@ -1384,44 +1048,8 @@
           "cn": "抬头"
         },
         {
-          "tag": "akanbe",
-          "cn": "吐舌翻眼"
-        },
-        {
-          "tag": "asymmetrical_eyes",
-          "cn": "斜视"
-        },
-        {
           "tag": "averting_eyes",
           "cn": "移开视线"
-        },
-        {
-          "tag": "blind",
-          "cn": "失明"
-        },
-        {
-          "tag": "partially_blind",
-          "cn": "单眼失明"
-        },
-        {
-          "tag": "drawn_eyes",
-          "cn": "手绘眼"
-        },
-        {
-          "tag": "eye_beam",
-          "cn": "眼部光束"
-        },
-        {
-          "tag": "eye_focus",
-          "cn": "眼部特写"
-        },
-        {
-          "tag": "eye_poke",
-          "cn": "戳眼"
-        },
-        {
-          "tag": "eye_trail",
-          "cn": "眼神光痕"
         },
         {
           "tag": "half-closed_eyes",
@@ -1436,14 +1064,6 @@
           "cn": "恳求的眼神"
         },
         {
-          "tag": "rolling_eyes",
-          "cn": "翻白眼"
-        },
-        {
-          "tag": "shading_eyes",
-          "cn": "遮阳手势"
-        },
-        {
           "tag": "sideways_glance",
           "cn": "侧目"
         },
@@ -1454,14 +1074,6 @@
         {
           "tag": "staring",
           "cn": "凝视"
-        },
-        {
-          "tag": "uneven_eyes",
-          "cn": "大小眼"
-        },
-        {
-          "tag": "unusually_open_eyes",
-          "cn": "睁开常闭之眼"
         },
         {
           "tag": "upturned_eyes",
@@ -1494,24 +1106,12 @@
     "face_and_expression": {
       "sfw": [
         {
-          "tag": "multiple_expressions",
-          "cn": "多表情"
-        },
-        {
           "tag": "angry",
           "cn": "愤怒"
         },
         {
           "tag": "annoyed",
           "cn": "恼火"
-        },
-        {
-          "tag": "clenched_teeth",
-          "cn": "咬紧牙关"
-        },
-        {
-          "tag": "furious",
-          "cn": "狂怒"
         },
         {
           "tag": "glaring",
@@ -1562,10 +1162,6 @@
           "cn": "疯狂"
         },
         {
-          "tag": "despair",
-          "cn": "绝望"
-        },
-        {
           "tag": "determined",
           "cn": "坚毅"
         },
@@ -1574,16 +1170,8 @@
           "cn": "失望"
         },
         {
-          "tag": "disdain",
-          "cn": "轻蔑"
-        },
-        {
           "tag": "disgust",
           "cn": "厌恶"
-        },
-        {
-          "tag": "distress",
-          "cn": "苦恼"
         },
         {
           "tag": "drunk",
@@ -1594,16 +1182,8 @@
           "cn": "狂喜"
         },
         {
-          "tag": "envy",
-          "cn": "嫉妒"
-        },
-        {
           "tag": "excited",
           "cn": "兴奋"
-        },
-        {
-          "tag": "exhausted",
-          "cn": "精疲力竭"
         },
         {
           "tag": "expressionless",
@@ -1618,20 +1198,12 @@
           "cn": "慌乱"
         },
         {
-          "tag": "frustrated",
-          "cn": "沮丧"
-        },
-        {
           "tag": "furrowed_brow",
           "cn": "眉头紧皱"
         },
         {
           "tag": "happy",
           "cn": "开心"
-        },
-        {
-          "tag": "lonely",
-          "cn": "孤独"
         },
         {
           "tag": "nervous",
@@ -1644,10 +1216,6 @@
         {
           "tag": "parted_lips",
           "cn": "微张嘴"
-        },
-        {
-          "tag": "pain",
-          "cn": "疼痛"
         },
         {
           "tag": "pout",
@@ -1674,24 +1242,12 @@
           "cn": "悲伤"
         },
         {
-          "tag": "depressed",
-          "cn": "抑郁"
-        },
-        {
           "tag": "frown",
           "cn": "皱眉"
         },
         {
-          "tag": "gloom_(expression)",
-          "cn": "沮丧"
-        },
-        {
           "tag": "tears",
           "cn": "眼泪"
-        },
-        {
-          "tag": "scared",
-          "cn": "恐惧"
         },
         {
           "tag": "panicking",
@@ -1750,10 +1306,6 @@
           "cn": "V型眉"
         },
         {
-          "tag": "struggling",
-          "cn": "挣扎"
-        },
-        {
           "tag": "smile",
           "cn": "微笑"
         },
@@ -1802,32 +1354,12 @@
           "cn": "得意笑"
         },
         {
-          "tag": "color_drain",
-          "cn": "色彩褪去"
-        },
-        {
-          "tag": "horrified",
-          "cn": "惊恐"
-        },
-        {
           "tag": "sobbing",
           "cn": "抽泣"
         },
         {
-          "tag": "traumatized",
-          "cn": "精神创伤"
-        },
-        {
-          "tag": "turn_pale",
-          "cn": "脸色苍白"
-        },
-        {
           "tag": "wavy_mouth",
           "cn": "波浪形嘴"
-        },
-        {
-          "tag": "eyebrows",
-          "cn": "眉毛"
         },
         {
           "tag": "eyebrows_hidden_by_hair",
@@ -1838,34 +1370,6 @@
           "cn": "异色眉毛"
         },
         {
-          "tag": "nose",
-          "cn": "鼻子"
-        },
-        {
-          "tag": "dot_nose",
-          "cn": "点状鼻"
-        },
-        {
-          "tag": "chestnut_mouth",
-          "cn": "栗子嘴"
-        },
-        {
-          "tag": "diamond_mouth",
-          "cn": "菱形嘴"
-        },
-        {
-          "tag": "dot_mouth",
-          "cn": "点状嘴"
-        },
-        {
-          "tag": "glowing_mouth",
-          "cn": "发光口部"
-        },
-        {
-          "tag": "heart_in_mouth",
-          "cn": "口中爱心"
-        },
-        {
           "tag": "heart-shaped_mouth",
           "cn": "心形嘴"
         },
@@ -1874,54 +1378,22 @@
           "cn": "口水痕"
         },
         {
-          "tag": "peanut_mouth",
-          "cn": "花生嘴"
-        },
-        {
-          "tag": "rectangular_mouth",
-          "cn": "矩形嘴"
-        },
-        {
-          "tag": "sideways_mouth",
-          "cn": "侧嘴"
-        },
-        {
-          "tag": "triangle_mouth",
-          "cn": "三角嘴"
-        },
-        {
-          "tag": "faceless",
-          "cn": "无脸"
-        },
-        {
-          "tag": "hole_in_face",
-          "cn": "面部空洞"
-        },
-        {
-          "tag": "void_face",
-          "cn": "虚无脸"
-        },
-        {
           "tag": "fang",
           "cn": "虎牙"
         },
         {
-          "tag": "foodgasm",
-          "cn": "食色高潮"
+          "tag": "naughty_face",
+          "cn": "调皮表情"
         },
         {
-          "tag": "breast_awe",
-          "cn": "对胸部的惊叹"
+          "tag": "seductive_smile",
+          "cn": "诱惑微笑"
         }
       ],
       "nsfw": [
         {
           "tag": "afterglow",
           "cn": "余韵"
-        },
-        {
-          "tag": "fucked_silly",
-          "cn": "玩坏"
         },
         {
           "tag": "ahegao",
@@ -1932,16 +1404,8 @@
           "cn": "失神脸"
         },
         {
-          "tag": "naughty_face",
-          "cn": "调皮表情"
-        },
-        {
           "tag": "sexually_suggestive",
           "cn": "性暗示"
-        },
-        {
-          "tag": "rape_face",
-          "cn": "凌辱脸"
         },
         {
           "tag": "aroused",
@@ -1950,18 +1414,6 @@
         {
           "tag": "moaning",
           "cn": "呻吟"
-        },
-        {
-          "tag": "seductive_smile",
-          "cn": "诱惑微笑"
-        },
-        {
-          "tag": "yurie_mouth",
-          "cn": "由梨绘嘴"
-        },
-        {
-          "tag": "penis_awe",
-          "cn": "阴茎敬畏"
         }
       ]
     },
@@ -2036,10 +1488,6 @@
           "cn": "熊猫耳"
         },
         {
-          "tag": "pig_ears",
-          "cn": "猪耳"
-        },
-        {
           "tag": "raccoon_ears",
           "cn": "浣熊耳"
         },
@@ -2076,84 +1524,8 @@
           "cn": "兔耳耳机"
         },
         {
-          "tag": "floppy_ears",
-          "cn": "垂耳"
-        },
-        {
-          "tag": "hair_ears",
-          "cn": "发耳"
-        },
-        {
-          "tag": "pointy_ears",
-          "cn": "尖耳"
-        },
-        {
-          "tag": "long_pointy_ears",
-          "cn": "长尖耳"
-        },
-        {
-          "tag": "robot_ears",
-          "cn": "机器人耳"
-        },
-        {
-          "tag": "ear_piercing",
-          "cn": "耳部穿孔"
-        },
-        {
-          "tag": "ear_protection",
-          "cn": "防音耳罩"
-        },
-        {
-          "tag": "earrings",
-          "cn": "耳环"
-        },
-        {
-          "tag": "single_earring",
-          "cn": "单侧耳环"
-        },
-        {
           "tag": "headphones",
           "cn": "头戴式耳机"
-        },
-        {
-          "tag": "object_behind_ear",
-          "cn": "耳后物品"
-        },
-        {
-          "tag": "biting_ear",
-          "cn": "咬耳朵"
-        },
-        {
-          "tag": "licking_ear",
-          "cn": "舔耳朵"
-        },
-        {
-          "tag": "holding_ears",
-          "cn": "捂耳"
-        },
-        {
-          "tag": "hand_on_own_ear",
-          "cn": "手摸自己的耳朵"
-        },
-        {
-          "tag": "ear_wiggle",
-          "cn": "抖耳"
-        },
-        {
-          "tag": "ears_down",
-          "cn": "耳朵下垂"
-        },
-        {
-          "tag": "one_ear_down",
-          "cn": "折耳"
-        },
-        {
-          "tag": "ears_through_headwear",
-          "cn": "耳穿头饰"
-        },
-        {
-          "tag": "ears_under_headwear",
-          "cn": "头饰下的耳朵"
         }
       ]
     }
@@ -2162,12 +1534,8 @@
     "breasts_size": {
       "sfw": [
         {
-          "tag": "flat_chest",
-          "cn": "平胸"
-        },
-        {
           "tag": "small_breasts",
-          "cn": "小胸"
+          "cn": "贫乳"
         },
         {
           "tag": "medium_breasts",
@@ -2186,37 +1554,13 @@
           "cn": "超巨乳"
         }
       ],
-      "nsfw": [],
-      "weights": {
-        "flat_chest": 2,
-        "small_breasts": 5,
-        "medium_breasts": 8,
-        "large_breasts": 4,
-        "huge_breasts": 1,
-        "gigantic_breasts": 1
-      }
+      "nsfw": []
     },
     "breasts_details": {
       "sfw": [
         {
-          "tag": "breast_conscious",
-          "cn": "在意胸部"
-        },
-        {
-          "tag": "breast_contest",
-          "cn": "胸部相扑"
-        },
-        {
-          "tag": "breast_envy",
-          "cn": "胸部嫉妒"
-        },
-        {
           "tag": "breast_padding",
           "cn": "胸垫"
-        },
-        {
-          "tag": "bust_measuring",
-          "cn": "测量胸围"
         },
         {
           "tag": "flying_button",
@@ -2231,16 +1575,8 @@
           "cn": "碍事的胸部"
         },
         {
-          "tag": "slapping_breasts",
-          "cn": "拍打乳房"
-        },
-        {
           "tag": "bursting_breasts",
           "cn": "撑破衣物的胸部"
-        },
-        {
-          "tag": "bouncing_breasts",
-          "cn": "乳摇"
         },
         {
           "tag": "breasts_apart",
@@ -2261,10 +1597,6 @@
         {
           "tag": "framed_breasts",
           "cn": "胸部勾勒"
-        },
-        {
-          "tag": "carried_breast_rest",
-          "cn": "托胸"
         }
       ],
       "nsfw": [
@@ -2281,40 +1613,12 @@
           "cn": "乳头"
         },
         {
-          "tag": "covering_nipples",
-          "cn": "遮乳"
-        },
-        {
           "tag": "areolae",
           "cn": "乳晕"
         },
         {
-          "tag": "asymmetrical_docking",
-          "cn": "不对称胸部对撞"
-        },
-        {
-          "tag": "biting_nipple",
-          "cn": "咬乳头"
-        },
-        {
-          "tag": "breast-to-pectoral_docking",
-          "cn": "胸贴胸对接"
-        },
-        {
-          "tag": "breast_lift",
-          "cn": "托举胸部"
-        },
-        {
           "tag": "breast_milk_in_container",
           "cn": "容器装母乳"
-        },
-        {
-          "tag": "breast_press",
-          "cn": "胸部挤压"
-        },
-        {
-          "tag": "breast_suppress",
-          "cn": "压胸"
         },
         {
           "tag": "colored_nipples",
@@ -2325,28 +1629,12 @@
           "cn": "隔衣凸显乳头"
         },
         {
-          "tag": "forced_lactation",
-          "cn": "强制泌乳"
-        },
-        {
           "tag": "huge_nipples",
           "cn": "巨乳头"
         },
         {
-          "tag": "lactating_into_container",
-          "cn": "泌乳入容器"
-        },
-        {
-          "tag": "licking_nipple",
-          "cn": "舔乳头"
-        },
-        {
           "tag": "light_areolae",
           "cn": "浅色乳晕"
-        },
-        {
-          "tag": "mutual_breast_sucking",
-          "cn": "互相吸乳"
         },
         {
           "tag": "nipple-to-nipple",
@@ -2361,18 +1649,6 @@
           "cn": "乳头铃铛"
         },
         {
-          "tag": "nipple_flick",
-          "cn": "弹乳头"
-        },
-        {
-          "tag": "nipple_injection",
-          "cn": "乳头注射"
-        },
-        {
-          "tag": "nipple_press",
-          "cn": "乳头按压"
-        },
-        {
           "tag": "nipple_ribbon",
           "cn": "乳头丝带"
         },
@@ -2381,24 +1657,8 @@
           "cn": "乳环"
         },
         {
-          "tag": "nipple_rub",
-          "cn": "揉乳头"
-        },
-        {
           "tag": "nipple_tag",
           "cn": "乳头名牌"
-        },
-        {
-          "tag": "penis_to_breast",
-          "cn": "阴茎贴胸"
-        },
-        {
-          "tag": "projectile_lactation",
-          "cn": "喷乳"
-        },
-        {
-          "tag": "reverse_paizuri",
-          "cn": "反向乳交"
         },
         {
           "tag": "small_nipples",
@@ -2409,292 +1669,8 @@
           "cn": "乳晕斑点"
         },
         {
-          "tag": "symmetrical_docking",
-          "cn": "对称胸部对撞"
-        },
-        {
           "tag": "tied_nipples",
           "cn": "乳头系缚"
-        }
-      ]
-    },
-    "ass_size": {
-      "sfw": [
-        {
-          "tag": "ass",
-          "cn": "臀部"
-        },
-        {
-          "tag": "ass_expansion",
-          "cn": "臀部膨胀"
-        },
-        {
-          "tag": "flat_ass",
-          "cn": "平臀"
-        },
-        {
-          "tag": "huge_ass",
-          "cn": "巨臀"
-        },
-        {
-          "tag": "gigantic_ass",
-          "cn": "超巨臀"
-        }
-      ],
-      "nsfw": [],
-      "weights": {
-        "ass": 8,
-        "flat_ass": 2,
-        "huge_ass": 1,
-        "gigantic_ass": 1,
-        "ass_expansion": 1
-      }
-    },
-    "ass_details": {
-      "sfw": [
-        {
-          "tag": "butt_crack",
-          "cn": "股沟"
-        },
-        {
-          "tag": "wedgie",
-          "cn": "内裤勒裆"
-        },
-        {
-          "tag": "ass_focus",
-          "cn": "臀部特写"
-        },
-        {
-          "tag": "ass_ripple",
-          "cn": "臀浪"
-        },
-        {
-          "tag": "ass_shake",
-          "cn": "摇臀"
-        }
-      ],
-      "nsfw": [
-        {
-          "tag": "covering_anus",
-          "cn": "遮住肛门"
-        },
-        {
-          "tag": "anus",
-          "cn": "肛门"
-        },
-        {
-          "tag": "puckered_anus",
-          "cn": "皱缩的肛门"
-        },
-        {
-          "tag": "spread_anus",
-          "cn": "肛门扩张"
-        },
-        {
-          "tag": "x_anus",
-          "cn": "X形肛门"
-        },
-        {
-          "tag": "spread_ass",
-          "cn": "掰开臀部"
-        },
-        {
-          "tag": "underbutt",
-          "cn": "露臀下缘"
-        },
-        {
-          "tag": "ass_visible_through_thighs",
-          "cn": "大腿间可见臀部"
-        },
-        {
-          "tag": "bouncing_ass",
-          "cn": "晃动的屁股"
-        }
-      ]
-    },
-    "hands": {
-      "sfw": [
-        {
-          "tag": "colored_extremities",
-          "cn": "异色肢端"
-        },
-        {
-          "tag": "hand_on_own_head",
-          "cn": "手扶头部"
-        },
-        {
-          "tag": "hands_on_own_head",
-          "cn": "手放自己头顶"
-        },
-        {
-          "tag": "hand_on_own_face",
-          "cn": "手扶脸"
-        },
-        {
-          "tag": "hands_on_own_face",
-          "cn": "双手捧脸"
-        },
-        {
-          "tag": "hand_on_own_forehead",
-          "cn": "手扶额头"
-        },
-        {
-          "tag": "hand_on_own_cheek",
-          "cn": "手托脸颊"
-        },
-        {
-          "tag": "hands_on_own_cheeks",
-          "cn": "双手捧脸"
-        },
-        {
-          "tag": "hand_on_own_chin",
-          "cn": "手托下巴"
-        },
-        {
-          "tag": "hands_on_own_chin",
-          "cn": "双手托腮"
-        },
-        {
-          "tag": "head_rest",
-          "cn": "托腮倚头"
-        },
-        {
-          "tag": "head_on_hand",
-          "cn": "托腮"
-        },
-        {
-          "tag": "hand_on_own_chest",
-          "cn": "手按胸口"
-        },
-        {
-          "tag": "hands_on_own_chest",
-          "cn": "双手抚胸"
-        },
-        {
-          "tag": "hand_on_own_shoulder",
-          "cn": "手搭自己肩上"
-        },
-        {
-          "tag": "hands_on_own_shoulders",
-          "cn": "双手搭在自己肩上"
-        },
-        {
-          "tag": "hand_on_own_stomach",
-          "cn": "手抚腹部"
-        },
-        {
-          "tag": "hands_on_own_stomach",
-          "cn": "双手按腹"
-        },
-        {
-          "tag": "hand_on_own_arm",
-          "cn": "手抚手臂"
-        },
-        {
-          "tag": "hands_on_own_arms",
-          "cn": "双手扶臂"
-        },
-        {
-          "tag": "hand_on_own_elbow",
-          "cn": "手扶手肘"
-        },
-        {
-          "tag": "hand_on_own_hip",
-          "cn": "单手叉腰"
-        },
-        {
-          "tag": "hands_on_own_hips",
-          "cn": "叉腰"
-        },
-        {
-          "tag": "hand_on_own_leg",
-          "cn": "手放于腿上"
-        },
-        {
-          "tag": "hands_on_own_legs",
-          "cn": "双手置于腿上"
-        },
-        {
-          "tag": "hand_on_own_thigh",
-          "cn": "手抚大腿"
-        },
-        {
-          "tag": "hands_on_own_thighs",
-          "cn": "双手置于大腿上"
-        },
-        {
-          "tag": "hand_on_own_knee",
-          "cn": "单手放在膝盖上"
-        },
-        {
-          "tag": "hands_on_own_knees",
-          "cn": "双手扶膝"
-        },
-        {
-          "tag": "hand_between_own_legs",
-          "cn": "手置于双腿间"
-        },
-        {
-          "tag": "hand_on_own_foot",
-          "cn": "手摸脚"
-        },
-        {
-          "tag": "hands_on_own_feet",
-          "cn": "双手抓脚"
-        },
-        {
-          "tag": "hands_on_feet",
-          "cn": "手摸脚"
-        },
-        {
-          "tag": "holding_hands",
-          "cn": "牵手"
-        },
-        {
-          "tag": "hand_in_pocket",
-          "cn": "单手插兜"
-        },
-        {
-          "tag": "hands_in_pockets",
-          "cn": "双手插兜"
-        },
-        {
-          "tag": "headpat",
-          "cn": "摸头"
-        },
-        {
-          "tag": "cheek_pinching",
-          "cn": "捏脸"
-        },
-        {
-          "tag": "cheek_poking",
-          "cn": "戳脸颊"
-        },
-        {
-          "tag": "cheek_squash",
-          "cn": "挤压脸颊"
-        },
-        {
-          "tag": "patting_back",
-          "cn": "拍背"
-        },
-        {
-          "tag": "palms",
-          "cn": "手掌"
-        }
-      ],
-      "nsfw": [
-        {
-          "tag": "hand_in_bra",
-          "cn": "手伸入胸罩"
-        },
-        {
-          "tag": "hand_on_own_crotch",
-          "cn": "手放裆部"
-        },
-        {
-          "tag": "hands_on_own_crotch",
-          "cn": "双手抚裆"
         }
       ]
     },
@@ -2775,301 +1751,13 @@
         {
           "tag": "foot_focus",
           "cn": "脚部特写"
-        }
-      ],
-      "nsfw": [
-        {
-          "tag": "foot_pussy",
-          "cn": "足交阴道模拟"
         },
         {
           "tag": "toe_cleavage",
           "cn": "露趾沟"
         }
-      ]
-    },
-    "shoulders": {
-      "sfw": [
-        {
-          "tag": "broad_shoulders",
-          "cn": "宽肩"
-        },
-        {
-          "tag": "shoulder_blades",
-          "cn": "肩胛骨"
-        },
-        {
-          "tag": "epaulettes",
-          "cn": "肩章"
-        },
-        {
-          "tag": "pauldrons",
-          "cn": "肩甲"
-        },
-        {
-          "tag": "shoulder_pads",
-          "cn": "运动护肩"
-        },
-        {
-          "tag": "shoulder_massage",
-          "cn": "肩部按摩"
-        }
-      ]
-    },
-    "other_body_parts": {
-      "sfw": [
-        {
-          "tag": "ear_focus",
-          "cn": "耳朵特写"
-        },
-        {
-          "tag": "forehead",
-          "cn": "额头"
-        },
-        {
-          "tag": "forehead_mark",
-          "cn": "额头印记"
-        },
-        {
-          "tag": "head_wings",
-          "cn": "头部羽翼"
-        },
-        {
-          "tag": "lips",
-          "cn": "嘴唇"
-        },
-        {
-          "tag": "tongue",
-          "cn": "舌头"
-        },
-        {
-          "tag": "long_tongue",
-          "cn": "长舌"
-        },
-        {
-          "tag": "back",
-          "cn": "背部"
-        },
-        {
-          "tag": "hip_dips",
-          "cn": "髋部凹陷"
-        },
-        {
-          "tag": "wide_hips",
-          "cn": "宽胯"
-        },
-        {
-          "tag": "narrow_waist",
-          "cn": "细腰"
-        },
-        {
-          "tag": "stomach",
-          "cn": "腹部"
-        },
-        {
-          "tag": "belly",
-          "cn": "小肚子"
-        },
-        {
-          "tag": "navel",
-          "cn": "肚脐"
-        },
-        {
-          "tag": "covered_navel",
-          "cn": "隔衣显肚脐"
-        },
-        {
-          "tag": "knees",
-          "cn": "膝盖"
-        },
-        {
-          "tag": "legs",
-          "cn": "腿部"
-        },
-        {
-          "tag": "long_legs",
-          "cn": "长腿"
-        },
-        {
-          "tag": "slim_legs",
-          "cn": "纤细双腿"
-        },
-        {
-          "tag": "thighs",
-          "cn": "大腿"
-        },
-        {
-          "tag": "thick_thighs",
-          "cn": "粗腿"
-        },
-        {
-          "tag": "wings",
-          "cn": "翅膀"
-        }
       ],
-      "nsfw": [
-        {
-          "tag": "areola_slip",
-          "cn": "露乳晕"
-        },
-        {
-          "tag": "nipple_slip",
-          "cn": "乳头走光"
-        },
-        {
-          "tag": "clitoris_slip",
-          "cn": "阴蒂露出"
-        },
-        {
-          "tag": "penis_peek",
-          "cn": "阴茎微露"
-        },
-        {
-          "tag": "pussy_peek",
-          "cn": "阴部微露"
-        },
-        {
-          "tag": "groin",
-          "cn": "腹股沟"
-        },
-        {
-          "tag": "pussy",
-          "cn": "阴部"
-        },
-        {
-          "tag": "cleft_of_venus",
-          "cn": "一线天"
-        },
-        {
-          "tag": "clitoris",
-          "cn": "阴蒂"
-        },
-        {
-          "tag": "fat_mons",
-          "cn": "丰满阴阜"
-        },
-        {
-          "tag": "mons_pubis",
-          "cn": "阴阜"
-        },
-        {
-          "tag": "perineum",
-          "cn": "会阴"
-        },
-        {
-          "tag": "penis",
-          "cn": "阴茎"
-        },
-        {
-          "tag": "bulge",
-          "cn": "裆部隆起"
-        },
-        {
-          "tag": "covered_penis",
-          "cn": "衣物显露阴茎轮廓"
-        },
-        {
-          "tag": "erection_under_clothes",
-          "cn": "衣下勃起"
-        },
-        {
-          "tag": "erection",
-          "cn": "勃起"
-        },
-        {
-          "tag": "foreskin",
-          "cn": "包皮"
-        },
-        {
-          "tag": "phimosis",
-          "cn": "包茎"
-        },
-        {
-          "tag": "flaccid",
-          "cn": "疲软"
-        },
-        {
-          "tag": "large_penis",
-          "cn": "巨根"
-        },
-        {
-          "tag": "small_penis",
-          "cn": "小阴茎"
-        },
-        {
-          "tag": "testicles",
-          "cn": "睾丸"
-        },
-        {
-          "tag": "covered_testicles",
-          "cn": "遮盖的睾丸"
-        },
-        {
-          "tag": "small_testicles",
-          "cn": "小睾丸"
-        },
-        {
-          "tag": "large_testicles",
-          "cn": "大睾丸"
-        },
-        {
-          "tag": "huge_testicles",
-          "cn": "巨大睾丸"
-        },
-        {
-          "tag": "gigantic_testicles",
-          "cn": "巨型睾丸"
-        },
-        {
-          "tag": "groin_tendon",
-          "cn": "腹股沟筋"
-        },
-        {
-          "tag": "big_belly",
-          "cn": "大肚子"
-        },
-        {
-          "tag": "stomach_bulge",
-          "cn": "腹部隆起"
-        },
-        {
-          "tag": "loli",
-          "cn": "萝莉"
-        },
-        {
-          "tag": "toddlercon",
-          "cn": "幼儿色情"
-        },
-        {
-          "tag": "trap",
-          "cn": "伪娘"
-        },
-        {
-          "tag": "reverse_trap",
-          "cn": "伪郎"
-        },
-        {
-          "tag": "cuntboy",
-          "cn": "阴户男孩"
-        },
-        {
-          "tag": "futanari",
-          "cn": "扶她"
-        },
-        {
-          "tag": "implied_futanari",
-          "cn": "疑似扶她"
-        },
-        {
-          "tag": "full-package_futanari",
-          "cn": "全套扶他"
-        },
-        {
-          "tag": "pregnant",
-          "cn": "怀孕"
-        }
-      ],
-      "both": true
+      "nsfw": []
     }
   },
   "attire_and_accessories": {
@@ -3408,48 +2096,8 @@
           "cn": "交叉系带开衩"
         },
         {
-          "tag": "high_tops",
-          "cn": "高帮运动鞋"
-        },
-        {
-          "tag": "converse",
-          "cn": "匡威"
-        },
-        {
-          "tag": "oxfords",
-          "cn": "牛津鞋"
-        },
-        {
-          "tag": "flats",
-          "cn": "平底鞋"
-        },
-        {
           "tag": "footwear_ribbon",
           "cn": "鞋上丝带"
-        },
-        {
-          "tag": "mary_janes",
-          "cn": "玛丽珍鞋"
-        },
-        {
-          "tag": "okobo",
-          "cn": "漆木屐"
-        },
-        {
-          "tag": "flip-flops",
-          "cn": "人字拖"
-        },
-        {
-          "tag": "zouri",
-          "cn": "草履"
-        },
-        {
-          "tag": "crocs",
-          "cn": "洞洞鞋"
-        },
-        {
-          "tag": "uwabaki",
-          "cn": "室内鞋"
         },
         {
           "tag": "apron",
@@ -3640,16 +2288,8 @@
           "cn": "校服"
         },
         {
-          "tag": "gakuran",
-          "cn": "学兰"
-        },
-        {
           "tag": "meiji_schoolgirl_uniform",
           "cn": "明治时期女子校服"
-        },
-        {
-          "tag": "shosei",
-          "cn": "书生"
         },
         {
           "tag": "track_suit",
@@ -3718,14 +2358,6 @@
         {
           "tag": "tankini",
           "cn": "背心式泳衣"
-        },
-        {
-          "tag": "swim_briefs",
-          "cn": "三角泳裤"
-        },
-        {
-          "tag": "jammers",
-          "cn": "竞速泳裤"
         },
         {
           "tag": "legskin",
@@ -4490,6 +3122,510 @@
         {
           "tag": "tube_top",
           "cn": "抹胸"
+        },
+        {
+          "tag": "armpits",
+          "cn": "腋下"
+        },
+        {
+          "tag": "armpit_cutout",
+          "cn": "腋下镂空"
+        },
+        {
+          "tag": "bare_arms",
+          "cn": "裸露手臂"
+        },
+        {
+          "tag": "arm_cutout",
+          "cn": "袖部镂空"
+        },
+        {
+          "tag": "bare_shoulders",
+          "cn": "露肩"
+        },
+        {
+          "tag": "off_shoulder",
+          "cn": "一字肩"
+        },
+        {
+          "tag": "shoulder_cutout",
+          "cn": "肩部镂空"
+        },
+        {
+          "tag": "sleeves_rolled_up",
+          "cn": "卷袖子"
+        },
+        {
+          "tag": "sleeveless",
+          "cn": "无袖"
+        },
+        {
+          "tag": "low-cut_armhole",
+          "cn": "大开袖笼"
+        },
+        {
+          "tag": "sleeves_pushed_up",
+          "cn": "挽起袖子"
+        },
+        {
+          "tag": "hood_down",
+          "cn": "兜帽放下"
+        },
+        {
+          "tag": "center_opening",
+          "cn": "胸前开口"
+        },
+        {
+          "tag": "open_coat",
+          "cn": "敞开的外套"
+        },
+        {
+          "tag": "open_collar",
+          "cn": "开领"
+        },
+        {
+          "tag": "open_hoodie",
+          "cn": "未拉上的连帽衫"
+        },
+        {
+          "tag": "open_jacket",
+          "cn": "敞开的夹克"
+        },
+        {
+          "tag": "open_robe",
+          "cn": "敞开的长袍"
+        },
+        {
+          "tag": "open_shirt",
+          "cn": "敞开的衬衫"
+        },
+        {
+          "tag": "open_vest",
+          "cn": "开襟背心"
+        },
+        {
+          "tag": "cleavage",
+          "cn": "乳沟"
+        },
+        {
+          "tag": "cleavage_cutout",
+          "cn": "乳沟镂空"
+        },
+        {
+          "tag": "sideboob",
+          "cn": "侧乳"
+        },
+        {
+          "tag": "underboob",
+          "cn": "下乳"
+        },
+        {
+          "tag": "underboob_cutout",
+          "cn": "下乳镂空"
+        },
+        {
+          "tag": "back_cutout",
+          "cn": "背部开口"
+        },
+        {
+          "tag": "backless_outfit",
+          "cn": "露背装"
+        },
+        {
+          "tag": "bare_back",
+          "cn": "露背"
+        },
+        {
+          "tag": "midriff",
+          "cn": "露脐"
+        },
+        {
+          "tag": "navel_cutout",
+          "cn": "肚脐镂空"
+        },
+        {
+          "tag": "side_cutout",
+          "cn": "侧面镂空"
+        },
+        {
+          "tag": "stomach_cutout",
+          "cn": "腹部镂空"
+        },
+        {
+          "tag": "bare_legs",
+          "cn": "裸腿"
+        },
+        {
+          "tag": "hip_vent",
+          "cn": "腰间开口"
+        },
+        {
+          "tag": "leg_cutout",
+          "cn": "腿部镂空"
+        },
+        {
+          "tag": "thigh_cutout",
+          "cn": "大腿镂空"
+        },
+        {
+          "tag": "side_slit",
+          "cn": "侧开衩"
+        },
+        {
+          "tag": "covering_head",
+          "cn": "蒙头"
+        },
+        {
+          "tag": "covering_own_ears",
+          "cn": "捂耳"
+        },
+        {
+          "tag": "covering_one_eye",
+          "cn": "主动遮住单眼"
+        },
+        {
+          "tag": "covering_own_eyes",
+          "cn": "捂住自己眼睛"
+        },
+        {
+          "tag": "covering_face",
+          "cn": "遮脸"
+        },
+        {
+          "tag": "covering_own_mouth",
+          "cn": "掩嘴"
+        },
+        {
+          "tag": "adjusting_clothes",
+          "cn": "整理衣物"
+        },
+        {
+          "tag": "clothes_grab",
+          "cn": "抓衣服"
+        },
+        {
+          "tag": "collar_grab",
+          "cn": "抓衣领"
+        },
+        {
+          "tag": "necktie_grab",
+          "cn": "抓领带"
+        },
+        {
+          "tag": "collar_tug",
+          "cn": "拉衣领"
+        },
+        {
+          "tag": "dress_tug",
+          "cn": "拉下裙摆"
+        },
+        {
+          "tag": "shirt_tug",
+          "cn": "拉扯衬衫"
+        },
+        {
+          "tag": "skirt_tug",
+          "cn": "拽裙摆"
+        },
+        {
+          "tag": "wringing_clothes",
+          "cn": "拧干衣物"
+        },
+        {
+          "tag": "tan",
+          "cn": "日晒肤色"
+        },
+        {
+          "tag": "tanlines",
+          "cn": "晒痕"
+        },
+        {
+          "tag": "pants_rolled_up",
+          "cn": "卷裤脚"
+        },
+        {
+          "tag": "skirt_rolled_up",
+          "cn": "卷边短裙"
+        },
+        {
+          "tag": "mole_on_breast",
+          "cn": "乳痣"
+        },
+        {
+          "tag": "lingerie",
+          "cn": "性感内衣"
+        },
+        {
+          "tag": "babydoll",
+          "cn": "娃娃裙睡衣"
+        },
+        {
+          "tag": "bra",
+          "cn": "胸罩"
+        },
+        {
+          "tag": "bustier",
+          "cn": "胸衣"
+        },
+        {
+          "tag": "camisole",
+          "cn": "吊带衫"
+        },
+        {
+          "tag": "chemise",
+          "cn": "吊带睡裙"
+        },
+        {
+          "tag": "corset",
+          "cn": "束腰"
+        },
+        {
+          "tag": "lace",
+          "cn": "蕾丝"
+        },
+        {
+          "tag": "nightgown",
+          "cn": "睡裙"
+        },
+        {
+          "tag": "panties",
+          "cn": "内裤"
+        },
+        {
+          "tag": "boyshort_panties",
+          "cn": "平角内裤"
+        },
+        {
+          "tag": "teddy_(lingerie)",
+          "cn": "连体衣（内衣）"
+        },
+        {
+          "tag": "thong",
+          "cn": "丁字裤"
+        },
+        {
+          "tag": "g-string",
+          "cn": "细带丁字裤"
+        },
+        {
+          "tag": "latex",
+          "cn": "乳胶"
+        },
+        {
+          "tag": "playboy_bunny",
+          "cn": "兔女郎"
+        },
+        {
+          "tag": "string_bikini",
+          "cn": "系带比基尼"
+        },
+        {
+          "tag": "micro_bikini",
+          "cn": "微型比基尼"
+        },
+        {
+          "tag": "fundoshi",
+          "cn": "兜裆布"
+        },
+        {
+          "tag": "side-tie_bikini_bottom",
+          "cn": "侧系带比基尼下装"
+        },
+        {
+          "tag": "lowleg_bikini",
+          "cn": "低叉比基尼"
+        },
+        {
+          "tag": "thong_bikini",
+          "cn": "丁字比基尼"
+        },
+        {
+          "tag": "see-through_sleeves",
+          "cn": "透视袖子"
+        },
+        {
+          "tag": "checkered_sleeves",
+          "cn": "格纹袖"
+        },
+        {
+          "tag": "plaid_sleeves",
+          "cn": "格子袖"
+        },
+        {
+          "tag": "polka_dot_sleeves",
+          "cn": "波点袖"
+        },
+        {
+          "tag": "print_sleeves",
+          "cn": "印花袖套"
+        },
+        {
+          "tag": "ribbed_sleeves",
+          "cn": "罗纹袖"
+        },
+        {
+          "tag": "striped_sleeves",
+          "cn": "条纹袖"
+        },
+        {
+          "tag": "short_sleeves",
+          "cn": "短袖"
+        },
+        {
+          "tag": "short_over_long_sleeves",
+          "cn": "短袖叠穿长袖"
+        },
+        {
+          "tag": "three-quarter_sleeves",
+          "cn": "七分袖"
+        },
+        {
+          "tag": "long_sleeves",
+          "cn": "长袖"
+        },
+        {
+          "tag": "sleeves_past_wrists",
+          "cn": "萌袖"
+        },
+        {
+          "tag": "sleeves_past_fingers",
+          "cn": "过指袖"
+        },
+        {
+          "tag": "uneven_sleeves",
+          "cn": "长短袖"
+        },
+        {
+          "tag": "detached_sleeves",
+          "cn": "分离袖"
+        },
+        {
+          "tag": "single_detached_sleeve",
+          "cn": "单侧分离袖"
+        },
+        {
+          "tag": "single_sleeve",
+          "cn": "单袖"
+        },
+        {
+          "tag": "torn_sleeves",
+          "cn": "撕裂的袖子"
+        },
+        {
+          "tag": "feather-trimmed_sleeves",
+          "cn": "羽毛饰袖"
+        },
+        {
+          "tag": "frilled_sleeves",
+          "cn": "荷叶边袖"
+        },
+        {
+          "tag": "fur-trimmed_sleeves",
+          "cn": "毛皮镶边袖"
+        },
+        {
+          "tag": "lace-trimmed_sleeves",
+          "cn": "蕾丝边袖"
+        },
+        {
+          "tag": "ribbon-trimmed_sleeves",
+          "cn": "缎带装饰袖"
+        },
+        {
+          "tag": "bell_sleeves",
+          "cn": "喇叭袖"
+        },
+        {
+          "tag": "compression_sleeve",
+          "cn": "压缩袖套"
+        },
+        {
+          "tag": "cross-laced_sleeves",
+          "cn": "交叉系带袖"
+        },
+        {
+          "tag": "elbow_sleeve",
+          "cn": "护肘"
+        },
+        {
+          "tag": "fishnet_sleeves",
+          "cn": "渔网袖"
+        },
+        {
+          "tag": "furisode_sleeves",
+          "cn": "振袖袖子"
+        },
+        {
+          "tag": "juliet_sleeves",
+          "cn": "朱丽叶袖"
+        },
+        {
+          "tag": "layered_sleeves",
+          "cn": "多层袖"
+        },
+        {
+          "tag": "mismatched_sleeves",
+          "cn": "双色袖"
+        },
+        {
+          "tag": "paw_sleeves",
+          "cn": "肉垫袖"
+        },
+        {
+          "tag": "puff_and_slash_sleeves",
+          "cn": "泡泡开衩袖"
+        },
+        {
+          "tag": "puffy_sleeves",
+          "cn": "泡泡袖"
+        },
+        {
+          "tag": "puffy_detached_sleeves",
+          "cn": "蓬松袖套"
+        },
+        {
+          "tag": "puffy_long_sleeves",
+          "cn": "泡泡长袖"
+        },
+        {
+          "tag": "puffy_short_sleeves",
+          "cn": "泡泡短袖"
+        },
+        {
+          "tag": "raglan_sleeves",
+          "cn": "插肩袖"
+        },
+        {
+          "tag": "thumb_hole_sleeves",
+          "cn": "拇指扣袖"
+        },
+        {
+          "tag": "wide_sleeves",
+          "cn": "宽袖"
+        },
+        {
+          "tag": "arm_out_of_sleeve",
+          "cn": "单臂脱袖"
+        },
+        {
+          "tag": "hands_in_opposite_sleeves",
+          "cn": "揣袖子"
+        },
+        {
+          "tag": "pinching_sleeves",
+          "cn": "捏袖口"
+        },
+        {
+          "tag": "rolling_sleeves_up",
+          "cn": "卷袖子"
+        },
+        {
+          "tag": "sleeve_cuffs",
+          "cn": "袖口"
+        },
+        {
+          "tag": "up_sleeve",
+          "cn": "袖口走光"
         }
       ],
       "nsfw": [
@@ -4500,18 +3636,6 @@
         {
           "tag": "nude",
           "cn": "裸体"
-        },
-        {
-          "tag": "clothed_female_nude_female",
-          "cn": "着装女性与裸体女性"
-        },
-        {
-          "tag": "clothed_male_nude_female",
-          "cn": "男衣女裸"
-        },
-        {
-          "tag": "clothed_male_nude_male",
-          "cn": "着衣男与裸男"
         },
         {
           "tag": "clothing_aside",
@@ -4610,80 +3734,8 @@
           "cn": "浴巾滑落"
         },
         {
-          "tag": "male_underwear_pull",
-          "cn": "男性拉扯内裤"
-        },
-        {
-          "tag": "armpits",
-          "cn": "腋下"
-        },
-        {
-          "tag": "armpit_cutout",
-          "cn": "腋下镂空"
-        },
-        {
-          "tag": "bare_arms",
-          "cn": "裸露手臂"
-        },
-        {
-          "tag": "arm_cutout",
-          "cn": "袖部镂空"
-        },
-        {
-          "tag": "bare_shoulders",
-          "cn": "露肩"
-        },
-        {
-          "tag": "off_shoulder",
-          "cn": "一字肩"
-        },
-        {
-          "tag": "shoulder_cutout",
-          "cn": "肩部镂空"
-        },
-        {
-          "tag": "sleeves_rolled_up",
-          "cn": "卷袖子"
-        },
-        {
-          "tag": "sleeveless",
-          "cn": "无袖"
-        },
-        {
-          "tag": "low-cut_armhole",
-          "cn": "大开袖笼"
-        },
-        {
-          "tag": "sleeves_pushed_up",
-          "cn": "挽起袖子"
-        },
-        {
-          "tag": "hood_down",
-          "cn": "兜帽放下"
-        },
-        {
-          "tag": "center_opening",
-          "cn": "胸前开口"
-        },
-        {
-          "tag": "open_coat",
-          "cn": "敞开的外套"
-        },
-        {
-          "tag": "open_collar",
-          "cn": "开领"
-        },
-        {
           "tag": "dress_pull",
           "cn": "下拉连衣裙"
-        },
-        {
-          "tag": "open_hoodie",
-          "cn": "未拉上的连帽衫"
-        },
-        {
-          "tag": "open_jacket",
-          "cn": "敞开的夹克"
         },
         {
           "tag": "leotard_pull",
@@ -4698,20 +3750,8 @@
           "cn": "拉扯睡衣"
         },
         {
-          "tag": "open_robe",
-          "cn": "敞开的长袍"
-        },
-        {
           "tag": "shirt_aside",
           "cn": "撩起衬衫"
-        },
-        {
-          "tag": "topless_male",
-          "cn": "男性裸上身"
-        },
-        {
-          "tag": "open_shirt",
-          "cn": "敞开的衬衫"
         },
         {
           "tag": "shirt_lift",
@@ -4734,10 +3774,6 @@
           "cn": "拉起上衣"
         },
         {
-          "tag": "open_vest",
-          "cn": "开襟背心"
-        },
-        {
           "tag": "breasts_out",
           "cn": "双乳露出"
         },
@@ -4758,88 +3794,16 @@
           "cn": "后乳"
         },
         {
-          "tag": "cleavage",
-          "cn": "乳沟"
-        },
-        {
-          "tag": "cleavage_cutout",
-          "cn": "乳沟镂空"
-        },
-        {
-          "tag": "sideboob",
-          "cn": "侧乳"
-        },
-        {
-          "tag": "underboob",
-          "cn": "下乳"
-        },
-        {
-          "tag": "underboob_cutout",
-          "cn": "下乳镂空"
-        },
-        {
-          "tag": "back_cutout",
-          "cn": "背部开口"
-        },
-        {
-          "tag": "backless_outfit",
-          "cn": "露背装"
-        },
-        {
-          "tag": "bare_back",
-          "cn": "露背"
-        },
-        {
           "tag": "frontless_outfit",
           "cn": "无前襟服装"
-        },
-        {
-          "tag": "midriff",
-          "cn": "露脐"
-        },
-        {
-          "tag": "navel_cutout",
-          "cn": "肚脐镂空"
-        },
-        {
-          "tag": "side_cutout",
-          "cn": "侧面镂空"
         },
         {
           "tag": "sideless_outfit",
           "cn": "侧露装"
         },
         {
-          "tag": "stomach_cutout",
-          "cn": "腹部镂空"
-        },
-        {
-          "tag": "barefoot",
-          "cn": "赤脚"
-        },
-        {
-          "tag": "bare_legs",
-          "cn": "裸腿"
-        },
-        {
           "tag": "dress_lift",
           "cn": "掀起连衣裙"
-        },
-        {
-          "tag": "hip_vent",
-          "cn": "腰间开口"
-        },
-        {
-          "tag": "leg_cutout",
-          "cn": "腿部镂空"
-        },
-        {
-          "tag": "thigh_cutout",
-          "cn": "大腿镂空"
-        },
-        {
-          "tag": "side_slit",
-          "cn": "侧开衩"
         },
         {
           "tag": "bottomless",
@@ -5042,92 +4006,12 @@
           "cn": "遮挡裆部"
         },
         {
-          "tag": "covering_head",
-          "cn": "蒙头"
-        },
-        {
-          "tag": "covering_own_ears",
-          "cn": "捂耳"
-        },
-        {
-          "tag": "covering_one_eye",
-          "cn": "主动遮住单眼"
-        },
-        {
-          "tag": "covering_own_eyes",
-          "cn": "捂住自己眼睛"
-        },
-        {
-          "tag": "covering_face",
-          "cn": "遮脸"
-        },
-        {
-          "tag": "covering_own_mouth",
-          "cn": "掩嘴"
-        },
-        {
           "tag": "nude_cover",
           "cn": "裸体遮挡"
         },
         {
-          "tag": "adjusting_clothes",
-          "cn": "整理衣物"
-        },
-        {
-          "tag": "clothes_grab",
-          "cn": "抓衣服"
-        },
-        {
-          "tag": "collar_grab",
-          "cn": "抓衣领"
-        },
-        {
-          "tag": "necktie_grab",
-          "cn": "抓领带"
-        },
-        {
-          "tag": "grabbing_another's_skirt",
-          "cn": "抓扯他人裙子"
-        },
-        {
-          "tag": "collar_tug",
-          "cn": "拉衣领"
-        },
-        {
-          "tag": "dress_tug",
-          "cn": "拉下裙摆"
-        },
-        {
-          "tag": "shirt_tug",
-          "cn": "拉扯衬衫"
-        },
-        {
-          "tag": "skirt_tug",
-          "cn": "拽裙摆"
-        },
-        {
-          "tag": "wringing_clothes",
-          "cn": "拧干衣物"
-        },
-        {
           "tag": "nude_modeling",
           "cn": "裸体模特"
-        },
-        {
-          "tag": "tan",
-          "cn": "日晒肤色"
-        },
-        {
-          "tag": "tanlines",
-          "cn": "晒痕"
-        },
-        {
-          "tag": "pants_rolled_up",
-          "cn": "卷裤脚"
-        },
-        {
-          "tag": "skirt_rolled_up",
-          "cn": "卷边短裙"
         },
         {
           "tag": "clothes_on_and_off",
@@ -5178,20 +4062,12 @@
           "cn": "胸部巧克力"
         },
         {
-          "tag": "face_between_breasts",
-          "cn": "脸埋胸"
-        },
-        {
           "tag": "food_on_breasts",
           "cn": "胸部上的食物"
         },
         {
           "tag": "head_between_breasts",
           "cn": "埋胸"
-        },
-        {
-          "tag": "mole_on_breast",
-          "cn": "乳痣"
         },
         {
           "tag": "object_on_breast",
@@ -5204,10 +4080,6 @@
         {
           "tag": "panties_on_breasts",
           "cn": "胸前套内裤"
-        },
-        {
-          "tag": "person_between_breasts",
-          "cn": "夹在胸部间的人"
         },
         {
           "tag": "sucking_own_breasts",
@@ -5226,120 +4098,28 @@
           "cn": "贫乳抓捏"
         },
         {
-          "tag": "male_with_breasts",
-          "cn": "男性乳房"
-        },
-        {
-          "tag": "face_to_breasts",
-          "cn": "脸贴胸部"
-        },
-        {
-          "tag": "face_to_pecs",
-          "cn": "脸贴胸肌"
-        },
-        {
           "tag": "rei_no_himo",
           "cn": "例之绳"
-        },
-        {
-          "tag": "lingerie",
-          "cn": "性感内衣"
-        },
-        {
-          "tag": "babydoll",
-          "cn": "娃娃裙睡衣"
         },
         {
           "tag": "bodystocking",
           "cn": "连体丝袜"
         },
         {
-          "tag": "bra",
-          "cn": "胸罩"
-        },
-        {
-          "tag": "bustier",
-          "cn": "胸衣"
-        },
-        {
-          "tag": "camisole",
-          "cn": "吊带衫"
-        },
-        {
-          "tag": "chemise",
-          "cn": "吊带睡裙"
-        },
-        {
-          "tag": "corset",
-          "cn": "束腰"
-        },
-        {
-          "tag": "lace",
-          "cn": "蕾丝"
-        },
-        {
-          "tag": "nightgown",
-          "cn": "睡裙"
-        },
-        {
-          "tag": "panties",
-          "cn": "内裤"
-        },
-        {
-          "tag": "boyshort_panties",
-          "cn": "平角内裤"
-        },
-        {
           "tag": "strapless_bottom",
           "cn": "无带下装"
-        },
-        {
-          "tag": "teddy_(lingerie)",
-          "cn": "连体衣（内衣）"
-        },
-        {
-          "tag": "thong",
-          "cn": "丁字裤"
-        },
-        {
-          "tag": "g-string",
-          "cn": "细带丁字裤"
         },
         {
           "tag": "pearl_thong",
           "cn": "珍珠丁字裤"
         },
         {
-          "tag": "male_underwear",
-          "cn": "男士内裤"
-        },
-        {
           "tag": "ball_bra",
           "cn": "睾丸罩"
         },
         {
-          "tag": "boxers",
-          "cn": "平角内裤"
-        },
-        {
-          "tag": "briefs",
-          "cn": "男士三角裤"
-        },
-        {
-          "tag": "boxer_briefs",
-          "cn": "紧身平角裤"
-        },
-        {
           "tag": "bikini_briefs",
           "cn": "比基尼三角裤"
-        },
-        {
-          "tag": "jockstrap",
-          "cn": "护裆"
-        },
-        {
-          "tag": "penis_sheath",
-          "cn": "阴茎套"
         },
         {
           "tag": "armbinder",
@@ -5360,10 +4140,6 @@
         {
           "tag": "gimp_mask",
           "cn": "束缚面具"
-        },
-        {
-          "tag": "latex",
-          "cn": "乳胶"
         },
         {
           "tag": "ass_cutout",
@@ -5450,40 +4226,16 @@
           "cn": "乳贴"
         },
         {
-          "tag": "playboy_bunny",
-          "cn": "兔女郎"
-        },
-        {
-          "tag": "string_bikini",
-          "cn": "系带比基尼"
-        },
-        {
-          "tag": "micro_bikini",
-          "cn": "微型比基尼"
-        },
-        {
           "tag": "see-through_leotard",
           "cn": "透视连体衣"
-        },
-        {
-          "tag": "fundoshi",
-          "cn": "兜裆布"
-        },
-        {
-          "tag": "side-tie_bikini_bottom",
-          "cn": "侧系带比基尼下装"
-        },
-        {
-          "tag": "lowleg_bikini",
-          "cn": "低叉比基尼"
         },
         {
           "tag": "venus_bikini",
           "cn": "维纳斯比基尼"
         },
         {
-          "tag": "thong_bikini",
-          "cn": "丁字比基尼"
+          "tag": "nipple_sleeves",
+          "cn": "乳环"
         }
       ]
     },
@@ -5786,10 +4538,6 @@
           "cn": "药盒帽"
         },
         {
-          "tag": "qingdai_guanmao",
-          "cn": "清代官帽"
-        },
-        {
           "tag": "sailor_hat",
           "cn": "水手帽"
         },
@@ -5804,10 +4552,6 @@
         {
           "tag": "tam_o'_shanter",
           "cn": "苏格兰圆帽"
-        },
-        {
-          "tag": "tate_eboshi",
-          "cn": "立乌帽子"
         },
         {
           "tag": "tokin_hat",
@@ -5954,24 +4698,12 @@
           "cn": "大拉翅"
         },
         {
-          "tag": "futou",
-          "cn": "幞头"
-        },
-        {
           "tag": "headscarf",
           "cn": "头巾"
         },
         {
           "tag": "jester_cap",
           "cn": "小丑帽"
-        },
-        {
-          "tag": "jin_(headwear)",
-          "cn": "帻"
-        },
-        {
-          "tag": "zhouzi_jin_(headwear)",
-          "cn": "周子巾（头饰）"
         },
         {
           "tag": "bowl_hat",
@@ -7176,600 +5908,6 @@
       ],
       "nsfw": []
     },
-    "sleeves": {
-      "sfw": [
-        {
-          "tag": "see-through_sleeves",
-          "cn": "透视袖子"
-        },
-        {
-          "tag": "gradient_sleeves",
-          "cn": "渐变色袖子"
-        },
-        {
-          "tag": "two-tone_sleeves",
-          "cn": "双色袖"
-        },
-        {
-          "tag": "multicolored_sleeves",
-          "cn": "多色袖"
-        },
-        {
-          "tag": "aqua_sleeves",
-          "cn": "水色袖套"
-        },
-        {
-          "tag": "black_sleeves",
-          "cn": "黑色袖子"
-        },
-        {
-          "tag": "blue_sleeves",
-          "cn": "蓝色袖子"
-        },
-        {
-          "tag": "brown_sleeves",
-          "cn": "褐色袖子"
-        },
-        {
-          "tag": "green_sleeves",
-          "cn": "绿袖"
-        },
-        {
-          "tag": "grey_sleeves",
-          "cn": "灰色袖子"
-        },
-        {
-          "tag": "orange_sleeves",
-          "cn": "橙色袖子"
-        },
-        {
-          "tag": "pink_sleeves",
-          "cn": "粉色袖子"
-        },
-        {
-          "tag": "purple_sleeves",
-          "cn": "紫色袖子"
-        },
-        {
-          "tag": "red_sleeves",
-          "cn": "红袖子"
-        },
-        {
-          "tag": "white_sleeves",
-          "cn": "白色袖子"
-        },
-        {
-          "tag": "yellow_sleeves",
-          "cn": "黄色袖子"
-        },
-        {
-          "tag": "checkered_sleeves",
-          "cn": "格纹袖"
-        },
-        {
-          "tag": "plaid_sleeves",
-          "cn": "格子袖"
-        },
-        {
-          "tag": "polka_dot_sleeves",
-          "cn": "波点袖"
-        },
-        {
-          "tag": "print_sleeves",
-          "cn": "印花袖套"
-        },
-        {
-          "tag": "ribbed_sleeves",
-          "cn": "罗纹袖"
-        },
-        {
-          "tag": "striped_sleeves",
-          "cn": "条纹袖"
-        },
-        {
-          "tag": "short_sleeves",
-          "cn": "短袖"
-        },
-        {
-          "tag": "short_over_long_sleeves",
-          "cn": "短袖叠穿长袖"
-        },
-        {
-          "tag": "three-quarter_sleeves",
-          "cn": "七分袖"
-        },
-        {
-          "tag": "long_sleeves",
-          "cn": "长袖"
-        },
-        {
-          "tag": "sleeves_past_wrists",
-          "cn": "萌袖"
-        },
-        {
-          "tag": "sleeves_past_fingers",
-          "cn": "过指袖"
-        },
-        {
-          "tag": "uneven_sleeves",
-          "cn": "长短袖"
-        },
-        {
-          "tag": "detached_sleeves",
-          "cn": "分离袖"
-        },
-        {
-          "tag": "single_detached_sleeve",
-          "cn": "单侧分离袖"
-        },
-        {
-          "tag": "single_sleeve",
-          "cn": "单袖"
-        },
-        {
-          "tag": "torn_sleeves",
-          "cn": "撕裂的袖子"
-        },
-        {
-          "tag": "feather-trimmed_sleeves",
-          "cn": "羽毛饰袖"
-        },
-        {
-          "tag": "frilled_sleeves",
-          "cn": "荷叶边袖"
-        },
-        {
-          "tag": "fur-trimmed_sleeves",
-          "cn": "毛皮镶边袖"
-        },
-        {
-          "tag": "lace-trimmed_sleeves",
-          "cn": "蕾丝边袖"
-        },
-        {
-          "tag": "ribbon-trimmed_sleeves",
-          "cn": "缎带装饰袖"
-        },
-        {
-          "tag": "bell_sleeves",
-          "cn": "喇叭袖"
-        },
-        {
-          "tag": "compression_sleeve",
-          "cn": "压缩袖套"
-        },
-        {
-          "tag": "cross-laced_sleeves",
-          "cn": "交叉系带袖"
-        },
-        {
-          "tag": "elbow_sleeve",
-          "cn": "护肘"
-        },
-        {
-          "tag": "fishnet_sleeves",
-          "cn": "渔网袖"
-        },
-        {
-          "tag": "furisode_sleeves",
-          "cn": "振袖袖子"
-        },
-        {
-          "tag": "juliet_sleeves",
-          "cn": "朱丽叶袖"
-        },
-        {
-          "tag": "layered_sleeves",
-          "cn": "多层袖"
-        },
-        {
-          "tag": "mismatched_sleeves",
-          "cn": "双色袖"
-        },
-        {
-          "tag": "paw_sleeves",
-          "cn": "肉垫袖"
-        },
-        {
-          "tag": "puff_and_slash_sleeves",
-          "cn": "泡泡开衩袖"
-        },
-        {
-          "tag": "puffy_sleeves",
-          "cn": "泡泡袖"
-        },
-        {
-          "tag": "puffy_detached_sleeves",
-          "cn": "蓬松袖套"
-        },
-        {
-          "tag": "puffy_long_sleeves",
-          "cn": "泡泡长袖"
-        },
-        {
-          "tag": "puffy_short_sleeves",
-          "cn": "泡泡短袖"
-        },
-        {
-          "tag": "raglan_sleeves",
-          "cn": "插肩袖"
-        },
-        {
-          "tag": "thumb_hole_sleeves",
-          "cn": "拇指扣袖"
-        },
-        {
-          "tag": "wide_sleeves",
-          "cn": "宽袖"
-        },
-        {
-          "tag": "arm_out_of_sleeve",
-          "cn": "单臂脱袖"
-        },
-        {
-          "tag": "hands_in_opposite_sleeves",
-          "cn": "揣袖子"
-        },
-        {
-          "tag": "pinching_sleeves",
-          "cn": "捏袖口"
-        },
-        {
-          "tag": "rolling_sleeves_up",
-          "cn": "卷袖子"
-        },
-        {
-          "tag": "sleeve_cuffs",
-          "cn": "袖口"
-        },
-        {
-          "tag": "up_sleeve",
-          "cn": "袖口走光"
-        }
-      ],
-      "nsfw": [
-        {
-          "tag": "nipple_sleeves",
-          "cn": "乳环"
-        }
-      ]
-    },
-    "handwear": {
-      "sfw": [
-        {
-          "tag": "elbow_gloves",
-          "cn": "长筒手套"
-        },
-        {
-          "tag": "fingerless_gloves",
-          "cn": "露指手套"
-        },
-        {
-          "tag": "partially_fingerless_gloves",
-          "cn": "半露指手套"
-        },
-        {
-          "tag": "fold-over_gloves",
-          "cn": "翻褶手套"
-        },
-        {
-          "tag": "glove_cuffs",
-          "cn": "手套袖口"
-        },
-        {
-          "tag": "half_gloves",
-          "cn": "短手套"
-        },
-        {
-          "tag": "paw_gloves",
-          "cn": "兽爪手套"
-        },
-        {
-          "tag": "cat_paws",
-          "cn": "猫爪"
-        },
-        {
-          "tag": "torn_gloves",
-          "cn": "破损手套"
-        },
-        {
-          "tag": "layered_gloves",
-          "cn": "层叠手套"
-        },
-        {
-          "tag": "cross-laced_gloves",
-          "cn": "交叉系带手套"
-        },
-        {
-          "tag": "glove_cutout",
-          "cn": "露背手套"
-        },
-        {
-          "tag": "print_gloves",
-          "cn": "印花手套"
-        },
-        {
-          "tag": "striped_gloves",
-          "cn": "条纹手套"
-        },
-        {
-          "tag": "paw_print_palms",
-          "cn": "掌心爪印"
-        },
-        {
-          "tag": "cow_print_gloves",
-          "cn": "奶牛纹手套"
-        },
-        {
-          "tag": "glove_bow",
-          "cn": "手套蝴蝶结"
-        },
-        {
-          "tag": "spiked_gloves",
-          "cn": "钉刺手套"
-        },
-        {
-          "tag": "fur-trimmed_gloves",
-          "cn": "毛边手套"
-        },
-        {
-          "tag": "frilled_gloves",
-          "cn": "荷叶边手套"
-        },
-        {
-          "tag": "lace-trimmed_gloves",
-          "cn": "蕾丝边手套"
-        },
-        {
-          "tag": "ribbon-trimmed_gloves",
-          "cn": "缎带装饰手套"
-        },
-        {
-          "tag": "single_glove",
-          "cn": "单只手套"
-        },
-        {
-          "tag": "mismatched_gloves",
-          "cn": "异色手套"
-        },
-        {
-          "tag": "single_elbow_glove",
-          "cn": "单侧长手套"
-        },
-        {
-          "tag": "single_fingerless_glove",
-          "cn": "单只露指手套"
-        },
-        {
-          "tag": "uneven_gloves",
-          "cn": "长短手套"
-        },
-        {
-          "tag": "yugake",
-          "cn": "弓道手套"
-        },
-        {
-          "tag": "archery_shooting_glove",
-          "cn": "射箭护指"
-        },
-        {
-          "tag": "artist_glove",
-          "cn": "防污手套"
-        },
-        {
-          "tag": "fishnet_gloves",
-          "cn": "渔网手套"
-        },
-        {
-          "tag": "lace_gloves",
-          "cn": "蕾丝手套"
-        },
-        {
-          "tag": "latex_gloves",
-          "cn": "乳胶手套"
-        },
-        {
-          "tag": "leather_gloves",
-          "cn": "皮手套"
-        },
-        {
-          "tag": "rubber_gloves",
-          "cn": "橡胶手套"
-        },
-        {
-          "tag": "see-through_gloves",
-          "cn": "透视手套"
-        },
-        {
-          "tag": "adjusting_gloves",
-          "cn": "整理手套"
-        },
-        {
-          "tag": "biting_glove",
-          "cn": "咬手套"
-        },
-        {
-          "tag": "glove_in_mouth",
-          "cn": "口含手套"
-        },
-        {
-          "tag": "glove_pull",
-          "cn": "脱手套"
-        },
-        {
-          "tag": "holding_gloves",
-          "cn": "手持手套"
-        },
-        {
-          "tag": "putting_on_gloves",
-          "cn": "戴手套中"
-        },
-        {
-          "tag": "removing_glove",
-          "cn": "脱手套"
-        },
-        {
-          "tag": "aqua_gloves",
-          "cn": "水蓝色手套"
-        },
-        {
-          "tag": "black_gloves",
-          "cn": "黑色手套"
-        },
-        {
-          "tag": "blue_gloves",
-          "cn": "蓝色手套"
-        },
-        {
-          "tag": "brown_gloves",
-          "cn": "棕色手套"
-        },
-        {
-          "tag": "green_gloves",
-          "cn": "绿手套"
-        },
-        {
-          "tag": "grey_gloves",
-          "cn": "灰色手套"
-        },
-        {
-          "tag": "multicolored_gloves",
-          "cn": "多色手套"
-        },
-        {
-          "tag": "orange_gloves",
-          "cn": "橙色手套"
-        },
-        {
-          "tag": "pink_gloves",
-          "cn": "粉色手套"
-        },
-        {
-          "tag": "purple_gloves",
-          "cn": "紫色手套"
-        },
-        {
-          "tag": "red_gloves",
-          "cn": "红色手套"
-        },
-        {
-          "tag": "white_gloves",
-          "cn": "白手套"
-        },
-        {
-          "tag": "yellow_gloves",
-          "cn": "黄色手套"
-        },
-        {
-          "tag": "gloves",
-          "cn": "手套"
-        },
-        {
-          "tag": "baseball_mitt",
-          "cn": "棒球手套"
-        },
-        {
-          "tag": "boxing_gloves",
-          "cn": "拳击手套"
-        },
-        {
-          "tag": "bridal_gauntlets",
-          "cn": "新娘手套"
-        },
-        {
-          "tag": "finger_cots",
-          "cn": "指套"
-        },
-        {
-          "tag": "gauntlets",
-          "cn": "护手"
-        },
-        {
-          "tag": "kote",
-          "cn": "笼手"
-        },
-        {
-          "tag": "kurokote",
-          "cn": "黑笼手"
-        },
-        {
-          "tag": "mittens",
-          "cn": "连指手套"
-        },
-        {
-          "tag": "oven_mitts",
-          "cn": "厚隔热手套"
-        },
-        {
-          "tag": "bandaged_hand",
-          "cn": "绷带手"
-        },
-        {
-          "tag": "bandaid_on_hand",
-          "cn": "手部创可贴"
-        },
-        {
-          "tag": "claw_ring",
-          "cn": "爪形指环"
-        },
-        {
-          "tag": "hand_chains",
-          "cn": "手链"
-        },
-        {
-          "tag": "string_around_finger",
-          "cn": "手指缠线"
-        },
-        {
-          "tag": "string_of_fate",
-          "cn": "命运红线"
-        },
-        {
-          "tag": "ring",
-          "cn": "戒指"
-        },
-        {
-          "tag": "butterfly_ring",
-          "cn": "蝴蝶戒指"
-        },
-        {
-          "tag": "ornate_ring",
-          "cn": "华丽戒指"
-        },
-        {
-          "tag": "wedding_ring",
-          "cn": "结婚戒指"
-        },
-        {
-          "tag": "finger_tattoo",
-          "cn": "手指纹身"
-        },
-        {
-          "tag": "hand_jewel",
-          "cn": "手背宝石"
-        },
-        {
-          "tag": "material_growth",
-          "cn": "异物生长"
-        },
-        {
-          "tag": "hand_mouth",
-          "cn": "手掌口"
-        },
-        {
-          "tag": "hand_tattoo",
-          "cn": "手部纹身"
-        },
-        {
-          "tag": "hand_hair",
-          "cn": "手背毛"
-        },
-        {
-          "tag": "knuckle_hair",
-          "cn": "指节毛"
-        }
-      ]
-    },
     "legwear": {
       "sfw": [
         {
@@ -8047,9 +6185,7 @@
         {
           "tag": "loose_socks",
           "cn": "泡泡袜"
-        }
-      ],
-      "nsfw": [
+        },
         {
           "tag": "sock_pull",
           "cn": "扯袜子"
@@ -8077,7 +6213,9 @@
         {
           "tag": "thighhighs",
           "cn": "大腿袜"
-        },
+        }
+      ],
+      "nsfw": [
         {
           "tag": "crotchless_pantyhose",
           "cn": "开裆连裤袜"
@@ -8265,16 +6403,56 @@
         {
           "tag": "winged_shoes",
           "cn": "飞翼鞋"
+        },
+        {
+          "tag": "high_tops",
+          "cn": "高帮运动鞋"
+        },
+        {
+          "tag": "converse",
+          "cn": "匡威"
+        },
+        {
+          "tag": "oxfords",
+          "cn": "牛津鞋"
+        },
+        {
+          "tag": "flats",
+          "cn": "平底鞋"
+        },
+        {
+          "tag": "mary_janes",
+          "cn": "玛丽珍鞋"
+        },
+        {
+          "tag": "okobo",
+          "cn": "漆木屐"
+        },
+        {
+          "tag": "flip-flops",
+          "cn": "人字拖"
+        },
+        {
+          "tag": "zouri",
+          "cn": "草履"
+        },
+        {
+          "tag": "crocs",
+          "cn": "洞洞鞋"
+        },
+        {
+          "tag": "uwabaki",
+          "cn": "室内鞋"
+        },
+        {
+          "tag": "barefoot",
+          "cn": "赤脚"
         }
       ],
       "nsfw": []
     },
     "accessories": {
       "sfw": [
-        {
-          "tag": "bindi",
-          "cn": "吉祥痣"
-        },
         {
           "tag": "ear_cuffs",
           "cn": "耳骨夹"
@@ -8320,28 +6498,12 @@
           "cn": "月桂冠"
         },
         {
-          "tag": "triangular_headpiece",
-          "cn": "三角头巾"
-        },
-        {
-          "tag": "changmingsuo",
-          "cn": "长命锁"
-        },
-        {
           "tag": "collar_chain_(jewelry)",
           "cn": "领链"
         },
         {
-          "tag": "dog_tags",
-          "cn": "军牌"
-        },
-        {
           "tag": "lapel_pin",
           "cn": "翻领别针"
-        },
-        {
-          "tag": "tie_clip",
-          "cn": "领带夹"
         },
         {
           "tag": "scarf_choker",
@@ -8384,10 +6546,6 @@
           "cn": "腕甲"
         },
         {
-          "tag": "cuff_links",
-          "cn": "袖扣"
-        },
-        {
           "tag": "wristband",
           "cn": "腕带"
         },
@@ -8420,10 +6578,6 @@
           "cn": "赤脚凉鞋（饰品）"
         },
         {
-          "tag": "calflet",
-          "cn": "小腿环"
-        },
-        {
           "tag": "knee_strap",
           "cn": "膝带"
         },
@@ -8448,24 +6602,8 @@
           "cn": "袜带"
         },
         {
-          "tag": "shin_strap",
-          "cn": "护胫带"
-        },
-        {
-          "tag": "thighlet",
-          "cn": "大腿环"
-        },
-        {
           "tag": "thigh_strap",
           "cn": "腿环"
-        },
-        {
-          "tag": "aiguillette",
-          "cn": "饰绪"
-        },
-        {
-          "tag": "bandolier",
-          "cn": "弹药带"
         },
         {
           "tag": "belly_chain",
@@ -8480,14 +6618,6 @@
           "cn": "腰带饰品"
         },
         {
-          "tag": "wallet_chain",
-          "cn": "钱包链"
-        },
-        {
-          "tag": "boutonniere",
-          "cn": "襟花"
-        },
-        {
           "tag": "cape",
           "cn": "披风"
         },
@@ -8496,16 +6626,8 @@
           "cn": "胸花"
         },
         {
-          "tag": "crinoline",
-          "cn": "克里诺林裙撑"
-        },
-        {
           "tag": "fake_tail",
           "cn": "假尾巴"
-        },
-        {
-          "tag": "fanny_pack",
-          "cn": "腰包"
         },
         {
           "tag": "harness",
@@ -8516,28 +6638,8 @@
           "cn": "胸前束带"
         },
         {
-          "tag": "haori_himo",
-          "cn": "羽织纽"
-        },
-        {
           "tag": "obi",
           "cn": "和服腰带"
-        },
-        {
-          "tag": "obiage",
-          "cn": "带扬"
-        },
-        {
-          "tag": "obidome",
-          "cn": "带留"
-        },
-        {
-          "tag": "obijime",
-          "cn": "带缔"
-        },
-        {
-          "tag": "pocket_square",
-          "cn": "口袋巾"
         },
         {
           "tag": "sarong",
@@ -8548,32 +6650,12 @@
           "cn": "饰带"
         },
         {
-          "tag": "cummerbund",
-          "cn": "腰封"
-        },
-        {
-          "tag": "shimenawa",
-          "cn": "注连绳"
-        },
-        {
           "tag": "suspenders",
           "cn": "背带"
         },
         {
-          "tag": "sweater_guard",
-          "cn": "开衫夹"
-        },
-        {
           "tag": "waist_cape",
           "cn": "腰间披风"
-        },
-        {
-          "tag": "yaopei",
-          "cn": "腰佩"
-        },
-        {
-          "tag": "bling",
-          "cn": "金饰"
         },
         {
           "tag": "body_jewelry",
@@ -8584,20 +6666,8 @@
           "cn": "胸针"
         },
         {
-          "tag": "grills",
-          "cn": "牙饰"
-        },
-        {
-          "tag": "medallion",
-          "cn": "奖章吊坠"
-        },
-        {
           "tag": "bag",
           "cn": "包"
-        },
-        {
-          "tag": "badge",
-          "cn": "徽章"
         },
         {
           "tag": "bandages",
@@ -8608,36 +6678,8 @@
           "cn": "创可贴"
         },
         {
-          "tag": "beads",
-          "cn": "珠子"
-        },
-        {
           "tag": "bell",
           "cn": "铃铛"
-        },
-        {
-          "tag": "buckle",
-          "cn": "扣环"
-        },
-        {
-          "tag": "buttons",
-          "cn": "纽扣"
-        },
-        {
-          "tag": "button_badge",
-          "cn": "圆形徽章"
-        },
-        {
-          "tag": "charm_(object)",
-          "cn": "挂件"
-        },
-        {
-          "tag": "chinese_knot",
-          "cn": "中国结"
-        },
-        {
-          "tag": "decoden",
-          "cn": "装饰贴钻"
         },
         {
           "tag": "frills",
@@ -8648,76 +6690,16 @@
           "cn": "毛皮镶边"
         },
         {
-          "tag": "gem",
-          "cn": "宝石"
-        },
-        {
-          "tag": "rhinestone",
-          "cn": "水钻"
-        },
-        {
-          "tag": "nail_art",
-          "cn": "美甲"
-        },
-        {
-          "tag": "nail_ornament",
-          "cn": "美甲装饰"
-        },
-        {
-          "tag": "o-ring",
-          "cn": "O型环"
-        },
-        {
-          "tag": "pocket",
-          "cn": "口袋"
-        },
-        {
-          "tag": "pom_pom_(clothes)",
-          "cn": "毛绒球"
-        },
-        {
           "tag": "ribbon",
           "cn": "丝带"
-        },
-        {
-          "tag": "spikes",
-          "cn": "尖刺"
-        },
-        {
-          "tag": "sticker",
-          "cn": "贴纸"
-        },
-        {
-          "tag": "studs",
-          "cn": "铆钉"
         },
         {
           "tag": "tassel",
           "cn": "流苏"
         },
         {
-          "tag": "zipper",
-          "cn": "拉链"
-        },
-        {
-          "tag": "zipper_pull_tab",
-          "cn": "拉链头"
-        },
-        {
           "tag": "cane",
           "cn": "手杖"
-        },
-        {
-          "tag": "cellphone_strap",
-          "cn": "手机挂件"
-        },
-        {
-          "tag": "cigarette_holder",
-          "cn": "烟嘴"
-        },
-        {
-          "tag": "mp3_player",
-          "cn": "MP3播放器"
         },
         {
           "tag": "hand_fan",
@@ -8728,24 +6710,12 @@
           "cn": "手帕"
         },
         {
-          "tag": "pencil_case",
-          "cn": "笔袋"
-        },
-        {
-          "tag": "pocket_watch",
-          "cn": "怀表"
-        },
-        {
           "tag": "tail_ornament",
           "cn": "尾饰"
         },
         {
           "tag": "umbrella",
           "cn": "雨伞"
-        },
-        {
-          "tag": "wallet",
-          "cn": "钱包"
         },
         {
           "tag": "wing_ornament",
@@ -8780,44 +6750,8 @@
           "cn": "面具"
         },
         {
-          "tag": "plague_doctor_mask",
-          "cn": "鸟嘴面具"
-        },
-        {
-          "tag": "surgical_mask",
-          "cn": "医用口罩"
-        },
-        {
-          "tag": "lapels",
-          "cn": "翻领"
-        },
-        {
-          "tag": "arm_guards",
-          "cn": "臂甲"
-        },
-        {
-          "tag": "knee_pads",
-          "cn": "护膝"
-        },
-        {
-          "tag": "single_knee_pad",
-          "cn": "单侧护膝"
-        },
-        {
-          "tag": "shin_guards",
-          "cn": "护胫"
-        },
-        {
           "tag": "watch",
           "cn": "表（通用）"
-        },
-        {
-          "tag": "fingernails",
-          "cn": "指甲"
-        },
-        {
-          "tag": "toe_ring",
-          "cn": "脚趾环"
         },
         {
           "tag": "anklet",
@@ -8958,18 +6892,6 @@
           "cn": "四肢着地"
         },
         {
-          "tag": "bear_position",
-          "cn": "熊式四肢着地"
-        },
-        {
-          "tag": "bowlegged_pose",
-          "cn": "外八字站姿"
-        },
-        {
-          "tag": "chest_stand",
-          "cn": "胸倒立"
-        },
-        {
           "tag": "cowering",
           "cn": "畏缩"
         },
@@ -9052,94 +6974,6 @@
         {
           "tag": "twisted_torso",
           "cn": "扭腰"
-        },
-        {
-          "tag": "arm_behind_back",
-          "cn": "手臂置于背后"
-        },
-        {
-          "tag": "arms_behind_back",
-          "cn": "双手背在身后"
-        },
-        {
-          "tag": "arm_up",
-          "cn": "举手"
-        },
-        {
-          "tag": "arm_behind_head",
-          "cn": "单臂放在头后"
-        },
-        {
-          "tag": "arms_up",
-          "cn": "双臂上举"
-        },
-        {
-          "tag": "arms_behind_head",
-          "cn": "双手抱头"
-        },
-        {
-          "tag": "outstretched_arm",
-          "cn": "单臂伸出"
-        },
-        {
-          "tag": "outstretched_arms",
-          "cn": "双臂伸出"
-        },
-        {
-          "tag": "spread_arms",
-          "cn": "张开双臂"
-        },
-        {
-          "tag": "arm_at_side",
-          "cn": "手臂下垂"
-        },
-        {
-          "tag": "arms_at_sides",
-          "cn": "双臂下垂"
-        },
-        {
-          "tag": "airplane_arms",
-          "cn": "飞机臂"
-        },
-        {
-          "tag": "crossed_arms",
-          "cn": "双臂交叉"
-        },
-        {
-          "tag": "flexing",
-          "cn": "展示肌肉"
-        },
-        {
-          "tag": "praise_the_sun",
-          "cn": "赞美太阳"
-        },
-        {
-          "tag": "t-pose",
-          "cn": "T字站姿"
-        },
-        {
-          "tag": "a-pose",
-          "cn": "A字姿势"
-        },
-        {
-          "tag": "v_arms",
-          "cn": "V字手臂"
-        },
-        {
-          "tag": "w_arms",
-          "cn": "W型手臂"
-        },
-        {
-          "tag": "outstretched_hand",
-          "cn": "伸出的手"
-        },
-        {
-          "tag": "interlocked_fingers",
-          "cn": "十指交叉"
-        },
-        {
-          "tag": "own_hands_together",
-          "cn": "双手相触"
         },
         {
           "tag": "contrapposto",
@@ -9226,14 +7060,6 @@
           "cn": "搬运"
         },
         {
-          "tag": "body_bridge",
-          "cn": "后弯拱桥"
-        },
-        {
-          "tag": "ghost_pose",
-          "cn": "幽灵姿势"
-        },
-        {
           "tag": "head_and_hip_pose",
           "cn": "单手抱头叉腰"
         },
@@ -9250,16 +7076,8 @@
           "cn": "反派站姿"
         },
         {
-          "tag": "gendou_pose",
-          "cn": "碇源堂姿势"
-        },
-        {
           "tag": "henshin_pose",
           "cn": "变身姿势"
-        },
-        {
-          "tag": "jojo_pose",
-          "cn": "JOJO立"
         }
       ],
       "nsfw": [
@@ -9526,10 +7344,6 @@
         {
           "tag": "double_v",
           "cn": "双手比V"
-        },
-        {
-          "tag": "fidgeting",
-          "cn": "局促不安"
         },
         {
           "tag": "finger_counting",
@@ -9822,6 +7636,594 @@
         {
           "tag": "victory_pose",
           "cn": "胜利姿势"
+        },
+        {
+          "tag": "hand_on_own_head",
+          "cn": "手扶头部"
+        },
+        {
+          "tag": "hands_on_own_head",
+          "cn": "手放自己头顶"
+        },
+        {
+          "tag": "hand_on_own_face",
+          "cn": "手扶脸"
+        },
+        {
+          "tag": "hands_on_own_face",
+          "cn": "双手捧脸"
+        },
+        {
+          "tag": "hand_on_own_forehead",
+          "cn": "手扶额头"
+        },
+        {
+          "tag": "hand_on_own_cheek",
+          "cn": "手托脸颊"
+        },
+        {
+          "tag": "hands_on_own_cheeks",
+          "cn": "双手捧脸"
+        },
+        {
+          "tag": "hand_on_own_chin",
+          "cn": "手托下巴"
+        },
+        {
+          "tag": "hands_on_own_chin",
+          "cn": "双手托腮"
+        },
+        {
+          "tag": "head_rest",
+          "cn": "托腮倚头"
+        },
+        {
+          "tag": "head_on_hand",
+          "cn": "托腮"
+        },
+        {
+          "tag": "hand_on_own_chest",
+          "cn": "手按胸口"
+        },
+        {
+          "tag": "hands_on_own_chest",
+          "cn": "双手抚胸"
+        },
+        {
+          "tag": "hand_on_own_shoulder",
+          "cn": "手搭自己肩上"
+        },
+        {
+          "tag": "hands_on_own_shoulders",
+          "cn": "双手搭在自己肩上"
+        },
+        {
+          "tag": "hand_on_own_stomach",
+          "cn": "手抚腹部"
+        },
+        {
+          "tag": "hands_on_own_stomach",
+          "cn": "双手按腹"
+        },
+        {
+          "tag": "hand_on_own_arm",
+          "cn": "手抚手臂"
+        },
+        {
+          "tag": "hands_on_own_arms",
+          "cn": "双手扶臂"
+        },
+        {
+          "tag": "hand_on_own_elbow",
+          "cn": "手扶手肘"
+        },
+        {
+          "tag": "hand_on_own_hip",
+          "cn": "单手叉腰"
+        },
+        {
+          "tag": "hands_on_own_hips",
+          "cn": "叉腰"
+        },
+        {
+          "tag": "hand_on_own_leg",
+          "cn": "手放于腿上"
+        },
+        {
+          "tag": "hands_on_own_legs",
+          "cn": "双手置于腿上"
+        },
+        {
+          "tag": "hand_on_own_thigh",
+          "cn": "手抚大腿"
+        },
+        {
+          "tag": "hands_on_own_thighs",
+          "cn": "双手置于大腿上"
+        },
+        {
+          "tag": "hand_on_own_knee",
+          "cn": "单手放在膝盖上"
+        },
+        {
+          "tag": "hands_on_own_knees",
+          "cn": "双手扶膝"
+        },
+        {
+          "tag": "hand_between_own_legs",
+          "cn": "手置于双腿间"
+        },
+        {
+          "tag": "hand_on_own_foot",
+          "cn": "手摸脚"
+        },
+        {
+          "tag": "hands_on_own_feet",
+          "cn": "双手抓脚"
+        },
+        {
+          "tag": "hands_on_feet",
+          "cn": "手摸脚"
+        },
+        {
+          "tag": "holding_hands",
+          "cn": "牵手"
+        },
+        {
+          "tag": "hand_in_pocket",
+          "cn": "单手插兜"
+        },
+        {
+          "tag": "hands_in_pockets",
+          "cn": "双手插兜"
+        },
+        {
+          "tag": "headpat",
+          "cn": "摸头"
+        },
+        {
+          "tag": "cheek_pinching",
+          "cn": "捏脸"
+        },
+        {
+          "tag": "cheek_poking",
+          "cn": "戳脸颊"
+        },
+        {
+          "tag": "cheek_squash",
+          "cn": "挤压脸颊"
+        },
+        {
+          "tag": "patting_back",
+          "cn": "拍背"
+        },
+        {
+          "tag": "arm_behind_back",
+          "cn": "手臂置于背后"
+        },
+        {
+          "tag": "arms_behind_back",
+          "cn": "双手背在身后"
+        },
+        {
+          "tag": "arm_up",
+          "cn": "举手"
+        },
+        {
+          "tag": "arm_behind_head",
+          "cn": "单臂放在头后"
+        },
+        {
+          "tag": "arms_up",
+          "cn": "双臂上举"
+        },
+        {
+          "tag": "arms_behind_head",
+          "cn": "双手抱头"
+        },
+        {
+          "tag": "outstretched_arm",
+          "cn": "单臂伸出"
+        },
+        {
+          "tag": "outstretched_arms",
+          "cn": "双臂伸出"
+        },
+        {
+          "tag": "spread_arms",
+          "cn": "张开双臂"
+        },
+        {
+          "tag": "arm_at_side",
+          "cn": "手臂下垂"
+        },
+        {
+          "tag": "arms_at_sides",
+          "cn": "双臂下垂"
+        },
+        {
+          "tag": "crossed_arms",
+          "cn": "双臂交叉"
+        },
+        {
+          "tag": "flexing",
+          "cn": "展示肌肉"
+        },
+        {
+          "tag": "v_arms",
+          "cn": "V字手臂"
+        },
+        {
+          "tag": "w_arms",
+          "cn": "W型手臂"
+        },
+        {
+          "tag": "outstretched_hand",
+          "cn": "伸出的手"
+        },
+        {
+          "tag": "interlocked_fingers",
+          "cn": "十指交叉"
+        },
+        {
+          "tag": "own_hands_together",
+          "cn": "双手相触"
+        },
+        {
+          "tag": "holding_unworn_boots",
+          "cn": "手持未穿过的靴子"
+        },
+        {
+          "tag": "holding_unworn_sandals",
+          "cn": "手持未穿过的凉鞋"
+        },
+        {
+          "tag": "holding_unworn_shoes",
+          "cn": "手持未穿的鞋"
+        },
+        {
+          "tag": "holding_sock",
+          "cn": "手持袜子"
+        },
+        {
+          "tag": "holding_bag",
+          "cn": "手持包"
+        },
+        {
+          "tag": "holding_hair_ornament",
+          "cn": "拿着发饰"
+        },
+        {
+          "tag": "holding_hair_tie",
+          "cn": "手持发带"
+        },
+        {
+          "tag": "holding_mirror",
+          "cn": "手持镜子"
+        },
+        {
+          "tag": "holding_cane",
+          "cn": "手持手杖"
+        },
+        {
+          "tag": "holding_umbrella",
+          "cn": "撑伞"
+        },
+        {
+          "tag": "holding_pillow",
+          "cn": "怀抱枕头"
+        },
+        {
+          "tag": "holding_own_ankle",
+          "cn": "抓着自己的脚踝"
+        },
+        {
+          "tag": "holding_own_foot",
+          "cn": "抱脚"
+        },
+        {
+          "tag": "holding_own_leg",
+          "cn": "抱住自己的腿"
+        },
+        {
+          "tag": "holding_megaphone",
+          "cn": "手持扩音器"
+        },
+        {
+          "tag": "holding_microphone_stand",
+          "cn": "手持麦克风架"
+        },
+        {
+          "tag": "holding_microphone",
+          "cn": "手持麦克风"
+        },
+        {
+          "tag": "holding_phone",
+          "cn": "手持手机"
+        },
+        {
+          "tag": "holding_handheld_game_console",
+          "cn": "手持掌机"
+        },
+        {
+          "tag": "holding_laptop",
+          "cn": "手持笔记本电脑"
+        },
+        {
+          "tag": "holding_tablet_pc",
+          "cn": "手持平板电脑"
+        },
+        {
+          "tag": "holding_controller",
+          "cn": "手持手柄"
+        },
+        {
+          "tag": "holding_camera",
+          "cn": "手持相机"
+        },
+        {
+          "tag": "holding_food",
+          "cn": "手持食物"
+        },
+        {
+          "tag": "holding_drink",
+          "cn": "手持饮料"
+        },
+        {
+          "tag": "holding_cake",
+          "cn": "手持蛋糕"
+        },
+        {
+          "tag": "holding_candy",
+          "cn": "手持糖果"
+        },
+        {
+          "tag": "holding_chocolate",
+          "cn": "拿着巧克力"
+        },
+        {
+          "tag": "holding_cotton_candy",
+          "cn": "手持棉花糖"
+        },
+        {
+          "tag": "holding_donut",
+          "cn": "手持甜甜圈"
+        },
+        {
+          "tag": "holding_ice_cream",
+          "cn": "手持冰淇淋"
+        },
+        {
+          "tag": "holding_ice_cream_cone",
+          "cn": "手持甜筒冰淇淋"
+        },
+        {
+          "tag": "holding_pocky",
+          "cn": "手持百奇"
+        },
+        {
+          "tag": "holding_fruit",
+          "cn": "手持水果"
+        },
+        {
+          "tag": "holding_bottle",
+          "cn": "手持瓶子"
+        },
+        {
+          "tag": "holding_cup",
+          "cn": "手持杯子"
+        },
+        {
+          "tag": "holding_chopsticks",
+          "cn": "手持筷子"
+        },
+        {
+          "tag": "holding_fork",
+          "cn": "手持叉子"
+        },
+        {
+          "tag": "holding_spoon",
+          "cn": "手持汤勺"
+        },
+        {
+          "tag": "holding_bowl",
+          "cn": "手持碗"
+        },
+        {
+          "tag": "holding_plate",
+          "cn": "端盘子"
+        },
+        {
+          "tag": "holding_tray",
+          "cn": "端着托盘"
+        },
+        {
+          "tag": "holding_candle",
+          "cn": "手持蜡烛"
+        },
+        {
+          "tag": "holding_lantern",
+          "cn": "手拿灯笼"
+        },
+        {
+          "tag": "holding_guitar",
+          "cn": "持吉他"
+        },
+        {
+          "tag": "holding_violin",
+          "cn": "手持小提琴"
+        },
+        {
+          "tag": "holding_bouquet",
+          "cn": "手持花束"
+        },
+        {
+          "tag": "holding_flower",
+          "cn": "持花"
+        },
+        {
+          "tag": "holding_leaf",
+          "cn": "手持叶片"
+        },
+        {
+          "tag": "holding_wreath",
+          "cn": "手持花环"
+        },
+        {
+          "tag": "holding_bird",
+          "cn": "手持鸟类"
+        },
+        {
+          "tag": "holding_cat",
+          "cn": "抱猫"
+        },
+        {
+          "tag": "holding_dog",
+          "cn": "抱着狗"
+        },
+        {
+          "tag": "holding_rabbit",
+          "cn": "抱着兔子"
+        },
+        {
+          "tag": "holding_crystal",
+          "cn": "手持水晶"
+        },
+        {
+          "tag": "holding_gem",
+          "cn": "手持宝石"
+        },
+        {
+          "tag": "holding_feather",
+          "cn": "手持羽毛"
+        },
+        {
+          "tag": "holding_paper",
+          "cn": "手持纸张"
+        },
+        {
+          "tag": "holding_book",
+          "cn": "手持书本"
+        },
+        {
+          "tag": "holding_magazine",
+          "cn": "手持杂志"
+        },
+        {
+          "tag": "holding_manga",
+          "cn": "拿着漫画"
+        },
+        {
+          "tag": "holding_newspaper",
+          "cn": "手持报纸"
+        },
+        {
+          "tag": "holding_letter",
+          "cn": "手持信件"
+        },
+        {
+          "tag": "holding_notebook",
+          "cn": "手持笔记本"
+        },
+        {
+          "tag": "holding_cross",
+          "cn": "持十字架"
+        },
+        {
+          "tag": "holding_crown",
+          "cn": "手持皇冠"
+        },
+        {
+          "tag": "holding_scepter",
+          "cn": "手持权杖"
+        },
+        {
+          "tag": "holding_riding_crop",
+          "cn": "手持马鞭"
+        },
+        {
+          "tag": "holding_cigarette",
+          "cn": "手持香烟"
+        },
+        {
+          "tag": "holding_racket",
+          "cn": "持拍"
+        },
+        {
+          "tag": "holding_tennis_racket",
+          "cn": "手持网球拍"
+        },
+        {
+          "tag": "holding_weapon",
+          "cn": "手持武器"
+        },
+        {
+          "tag": "holding_card",
+          "cn": "持卡"
+        },
+        {
+          "tag": "holding_dagger",
+          "cn": "持匕首"
+        },
+        {
+          "tag": "holding_knife",
+          "cn": "持刀"
+        },
+        {
+          "tag": "holding_polearm",
+          "cn": "手持长柄武器"
+        },
+        {
+          "tag": "holding_sword",
+          "cn": "持剑"
+        },
+        {
+          "tag": "holding_bow_(weapon)",
+          "cn": "持弓"
+        },
+        {
+          "tag": "holding_gun",
+          "cn": "手持枪"
+        },
+        {
+          "tag": "holding_shield",
+          "cn": "手持盾牌"
+        },
+        {
+          "tag": "holding_sheath",
+          "cn": "手持刀鞘"
+        },
+        {
+          "tag": "holding_anchor",
+          "cn": "手持锚"
+        },
+        {
+          "tag": "holding_glowstick",
+          "cn": "手持荧光棒"
+        },
+        {
+          "tag": "holding_money",
+          "cn": "手里拿钱"
+        },
+        {
+          "tag": "holding_ribbon",
+          "cn": "手持缎带"
+        },
+        {
+          "tag": "between_fingers",
+          "cn": "指间夹持"
+        },
+        {
+          "tag": "grabbing",
+          "cn": "抓取"
+        },
+        {
+          "tag": "holding_behind_back",
+          "cn": "背后持物"
+        },
+        {
+          "tag": "holding_with_tail",
+          "cn": "用尾巴抓握"
         }
       ],
       "nsfw": [
@@ -9884,1391 +8286,19 @@
         {
           "tag": "groping_motion",
           "cn": "抓握动作"
-        }
-      ]
-    },
-    "dances": {
-      "sfw": [
-        {
-          "tag": "arabesque_(pose)",
-          "cn": "阿拉贝斯克（芭蕾姿势）"
-        },
-        {
-          "tag": "dab_(dance)",
-          "cn": "打本舞"
-        },
-        {
-          "tag": "the_monkey_(dance)",
-          "cn": "猴子舞"
-        },
-        {
-          "tag": "dip_(dance_move)",
-          "cn": "下腰舞步"
-        },
-        {
-          "tag": "choo_choo_train",
-          "cn": "Choo_Choo_TRAIN"
-        },
-        {
-          "tag": "ballet",
-          "cn": "芭蕾"
-        },
-        {
-          "tag": "belly_dancing",
-          "cn": "肚皮舞"
-        },
-        {
-          "tag": "breakdance",
-          "cn": "霹雳舞"
-        },
-        {
-          "tag": "hula",
-          "cn": "草裙舞"
-        },
-        {
-          "tag": "para_para",
-          "cn": "Para_Para"
-        },
-        {
-          "tag": "samba",
-          "cn": "桑巴"
-        },
-        {
-          "tag": "tango",
-          "cn": "探戈"
-        },
-        {
-          "tag": "waltz_(dance)",
-          "cn": "华尔兹"
-        },
-        {
-          "tag": "wotagei",
-          "cn": "御宅艺"
-        },
-        {
-          "tag": "easy_breezy",
-          "cn": "Easy_Breezy（别对映像研出手！）"
-        },
-        {
-          "tag": "motteke!_serafuku",
-          "cn": "拿去吧！水手服"
-        },
-        {
-          "tag": "shukusei!!_loli-kami_requiem",
-          "cn": "肃圣！！萝莉神安魂曲"
-        },
-        {
-          "tag": "buri_hamachi",
-          "cn": "鰤鱼滨町（魔塔大陆）"
-        },
-        {
-          "tag": "caramelldansen_(meme)",
-          "cn": "Caramelldansen（迷因）"
-        },
-        {
-          "tag": "cat_breakdancing_(meme)",
-          "cn": "猫咪霹雳舞（模因）"
-        },
-        {
-          "tag": "fukkireta",
-          "cn": "Fukkireta（甩葱歌/抖肩）"
-        },
-        {
-          "tag": "kitsune_dance",
-          "cn": "狐狸舞"
-        },
-        {
-          "tag": "me!me!me!_dance_(meme)",
-          "cn": "ME!ME!ME!_标志舞蹈"
-        },
-        {
-          "tag": "sad_cat_dance_(meme)",
-          "cn": "悲伤猫跳舞（迷因）"
-        },
-        {
-          "tag": "shikairo_days_dance_(meme)",
-          "cn": "鹿色日和舞（模因）"
-        },
-        {
-          "tag": "zui_zui_dance",
-          "cn": "瑞瑞舞"
-        }
-      ],
-      "nsfw": [
-        {
-          "tag": "twerking",
-          "cn": "电臀舞"
-        },
-        {
-          "tag": "pole_dancing",
-          "cn": "钢管舞"
-        }
-      ]
-    },
-    "holding": {
-      "sfw": [
-        {
-          "tag": "holding_unworn_clothes",
-          "cn": "手持未穿衣物"
-        },
-        {
-          "tag": "holding_coat",
-          "cn": "手持大衣"
-        },
-        {
-          "tag": "holding_shirt",
-          "cn": "手拿衬衫"
-        },
-        {
-          "tag": "holding_shorts",
-          "cn": "手持短裤"
-        },
-        {
-          "tag": "holding_swimsuit",
-          "cn": "手持泳衣"
-        },
-        {
-          "tag": "holding_unworn_cape",
-          "cn": "手持未穿披风"
-        },
-        {
-          "tag": "holding_unworn_dress",
-          "cn": "手里拿着没穿的连衣裙"
-        },
-        {
-          "tag": "holding_unworn_jacket",
-          "cn": "手持外套"
-        },
-        {
-          "tag": "holding_unworn_skirt",
-          "cn": "手持未穿的裙子"
-        },
-        {
-          "tag": "holding_collar",
-          "cn": "抓衣领"
-        },
-        {
-          "tag": "holding_mask",
-          "cn": "手持面具"
-        },
-        {
-          "tag": "holding_unworn_necktie",
-          "cn": "手持领带"
-        },
-        {
-          "tag": "holding_unworn_scarf",
-          "cn": "手持未佩戴的围巾"
-        },
-        {
-          "tag": "holding_unworn_boots",
-          "cn": "手持未穿过的靴子"
-        },
-        {
-          "tag": "holding_unworn_sandals",
-          "cn": "手持未穿过的凉鞋"
-        },
-        {
-          "tag": "holding_unworn_shoes",
-          "cn": "手持未穿的鞋"
-        },
-        {
-          "tag": "holding_sock",
-          "cn": "手持袜子"
-        },
-        {
-          "tag": "holding_bag",
-          "cn": "手持包"
-        },
-        {
-          "tag": "holding_briefcase",
-          "cn": "手持公文包"
-        },
-        {
-          "tag": "holding_suitcase",
-          "cn": "手提行李箱"
-        },
-        {
-          "tag": "holding_wallet",
-          "cn": "拿着钱包"
-        },
-        {
-          "tag": "holding_hair_ornament",
-          "cn": "拿着发饰"
-        },
-        {
-          "tag": "holding_hair_tie",
-          "cn": "手持发带"
-        },
-        {
-          "tag": "holding_jewelry",
-          "cn": "手持珠宝"
-        },
-        {
-          "tag": "holding_necklace",
-          "cn": "手持项链"
-        },
-        {
-          "tag": "holding_ring",
-          "cn": "手持戒指"
-        },
-        {
-          "tag": "holding_pocket_watch",
-          "cn": "拿着怀表"
-        },
-        {
-          "tag": "holding_compact",
-          "cn": "持有粉饼盒"
-        },
-        {
-          "tag": "holding_lipstick_tube",
-          "cn": "手持口红管"
-        },
-        {
-          "tag": "holding_mirror",
-          "cn": "手持镜子"
-        },
-        {
-          "tag": "holding_comb",
-          "cn": "手持梳子"
-        },
-        {
-          "tag": "holding_belt",
-          "cn": "抓着腰带"
-        },
-        {
-          "tag": "holding_cane",
-          "cn": "手持手杖"
-        },
-        {
-          "tag": "holding_clothes_hanger",
-          "cn": "拿着衣架"
-        },
-        {
-          "tag": "holding_handkerchief",
-          "cn": "手持手帕"
-        },
-        {
-          "tag": "holding_tissue",
-          "cn": "手持纸巾"
-        },
-        {
-          "tag": "holding_umbrella",
-          "cn": "撑伞"
-        },
-        {
-          "tag": "holding_wig",
-          "cn": "手持假发"
-        },
-        {
-          "tag": "holding_blanket",
-          "cn": "抱着毯子"
-        },
-        {
-          "tag": "holding_pillow",
-          "cn": "怀抱枕头"
-        },
-        {
-          "tag": "holding_sheet",
-          "cn": "抓着床单"
-        },
-        {
-          "tag": "holding_own_ankle",
-          "cn": "抓着自己的脚踝"
-        },
-        {
-          "tag": "holding_own_foot",
-          "cn": "抱脚"
-        },
-        {
-          "tag": "holding_own_hair",
-          "cn": "抓着自己的头发"
-        },
-        {
-          "tag": "holding_own_leg",
-          "cn": "抱住自己的腿"
-        },
-        {
-          "tag": "holding_own_tail",
-          "cn": "抓着自己的尾巴"
-        },
-        {
-          "tag": "holding_own_wrist",
-          "cn": "握住自己的手腕"
-        },
-        {
-          "tag": "holding_basket",
-          "cn": "手提篮子"
-        },
-        {
-          "tag": "holding_box",
-          "cn": "手持盒子"
-        },
-        {
-          "tag": "holding_cage",
-          "cn": "手持笼子"
-        },
-        {
-          "tag": "holding_halloween_bucket",
-          "cn": "手持万圣节桶"
-        },
-        {
-          "tag": "holding_sack",
-          "cn": "手持麻袋"
-        },
-        {
-          "tag": "holding_earphones",
-          "cn": "手持耳机"
-        },
-        {
-          "tag": "holding_headphones",
-          "cn": "手持耳机"
-        },
-        {
-          "tag": "holding_megaphone",
-          "cn": "手持扩音器"
-        },
-        {
-          "tag": "holding_microphone_stand",
-          "cn": "手持麦克风架"
-        },
-        {
-          "tag": "holding_microphone",
-          "cn": "手持麦克风"
-        },
-        {
-          "tag": "holding_mp3_player",
-          "cn": "手持MP3播放器"
-        },
-        {
-          "tag": "holding_phone",
-          "cn": "手持手机"
-        },
-        {
-          "tag": "holding_walkie-talkie",
-          "cn": "手持对讲机"
-        },
-        {
-          "tag": "holding_handheld_game_console",
-          "cn": "手持掌机"
-        },
-        {
-          "tag": "holding_laptop",
-          "cn": "手持笔记本电脑"
-        },
-        {
-          "tag": "holding_tablet_pc",
-          "cn": "手持平板电脑"
-        },
-        {
-          "tag": "holding_computer_mouse",
-          "cn": "手持鼠标"
-        },
-        {
-          "tag": "holding_controller",
-          "cn": "手持手柄"
-        },
-        {
-          "tag": "holding_camera",
-          "cn": "手持相机"
-        },
-        {
-          "tag": "holding_tripod",
-          "cn": "手持三脚架"
-        },
-        {
-          "tag": "holding_barcode_scanner",
-          "cn": "手持条形码扫描枪"
-        },
-        {
-          "tag": "holding_food",
-          "cn": "手持食物"
-        },
-        {
-          "tag": "holding_drink",
-          "cn": "手持饮料"
-        },
-        {
-          "tag": "holding_cake",
-          "cn": "手持蛋糕"
-        },
-        {
-          "tag": "holding_candy",
-          "cn": "手持糖果"
-        },
-        {
-          "tag": "holding_candy_apple",
-          "cn": "手持苹果糖"
-        },
-        {
-          "tag": "holding_chocolate",
-          "cn": "拿着巧克力"
-        },
-        {
-          "tag": "holding_cookie",
-          "cn": "手持曲奇"
-        },
-        {
-          "tag": "holding_cotton_candy",
-          "cn": "手持棉花糖"
-        },
-        {
-          "tag": "holding_crepe",
-          "cn": "手持可丽饼"
-        },
-        {
-          "tag": "holding_donut",
-          "cn": "手持甜甜圈"
-        },
-        {
-          "tag": "holding_ice_cream",
-          "cn": "手持冰淇淋"
-        },
-        {
-          "tag": "holding_ice_cream_cone",
-          "cn": "手持甜筒冰淇淋"
-        },
-        {
-          "tag": "holding_pocky",
-          "cn": "手持百奇"
-        },
-        {
-          "tag": "holding_popsicle",
-          "cn": "手持冰棍"
-        },
-        {
-          "tag": "holding_burger",
-          "cn": "手持汉堡"
-        },
-        {
-          "tag": "holding_pizza",
-          "cn": "手持披萨"
-        },
-        {
-          "tag": "holding_sandwich",
-          "cn": "拿着三明治"
-        },
-        {
-          "tag": "holding_bento",
-          "cn": "手持便当"
-        },
-        {
-          "tag": "holding_skewer",
-          "cn": "手持串烧"
-        },
-        {
-          "tag": "holding_carrot",
-          "cn": "手持胡萝卜"
-        },
-        {
-          "tag": "holding_egg",
-          "cn": "手持蛋"
-        },
-        {
-          "tag": "holding_fruit",
-          "cn": "手持水果"
-        },
-        {
-          "tag": "holding_mushroom",
-          "cn": "手持蘑菇"
-        },
-        {
-          "tag": "holding_pumpkin",
-          "cn": "手持南瓜"
-        },
-        {
-          "tag": "holding_vegetable",
-          "cn": "手持蔬菜"
-        },
-        {
-          "tag": "holding_bottle",
-          "cn": "手持瓶子"
-        },
-        {
-          "tag": "holding_can",
-          "cn": "拿着罐子"
-        },
-        {
-          "tag": "holding_cup",
-          "cn": "手持杯子"
-        },
-        {
-          "tag": "holding_drink_carton",
-          "cn": "手持纸盒饮料"
-        },
-        {
-          "tag": "holding_juice_box",
-          "cn": "拿着纸盒饮料"
-        },
-        {
-          "tag": "holding_milk_carton",
-          "cn": "手持牛奶盒"
-        },
-        {
-          "tag": "holding_gourd",
-          "cn": "手持葫芦"
-        },
-        {
-          "tag": "holding_drinking_straw",
-          "cn": "手拿吸管"
-        },
-        {
-          "tag": "holding_hair_brush",
-          "cn": "手持发刷"
-        },
-        {
-          "tag": "holding_hair_dryer",
-          "cn": "手持吹风机"
-        },
-        {
-          "tag": "holding_shower_head",
-          "cn": "手持花洒"
-        },
-        {
-          "tag": "holding_toothbrush",
-          "cn": "手持牙刷"
-        },
-        {
-          "tag": "holding_towel",
-          "cn": "手持毛巾"
-        },
-        {
-          "tag": "holding_bamboo_steamer",
-          "cn": "手拿竹蒸笼"
-        },
-        {
-          "tag": "holding_coffee_pot",
-          "cn": "手持咖啡壶"
-        },
-        {
-          "tag": "holding_cooking_pot",
-          "cn": "拿着锅"
-        },
-        {
-          "tag": "holding_frying_pan",
-          "cn": "手持平底锅"
-        },
-        {
-          "tag": "holding_kettle",
-          "cn": "手持水壶"
-        },
-        {
-          "tag": "holding_teapot",
-          "cn": "手持茶壶"
-        },
-        {
-          "tag": "holding_chopsticks",
-          "cn": "手持筷子"
-        },
-        {
-          "tag": "holding_fork",
-          "cn": "手持叉子"
-        },
-        {
-          "tag": "holding_spoon",
-          "cn": "手持汤勺"
-        },
-        {
-          "tag": "holding_spork",
-          "cn": "手持叉勺"
-        },
-        {
-          "tag": "holding_cocktail_shaker",
-          "cn": "手持调酒壶"
-        },
-        {
-          "tag": "holding_ladle",
-          "cn": "手持长勺"
-        },
-        {
-          "tag": "holding_pastry_bag",
-          "cn": "手持裱花袋"
-        },
-        {
-          "tag": "holding_spatula",
-          "cn": "手持锅铲"
-        },
-        {
-          "tag": "holding_tongs",
-          "cn": "手持夹子"
-        },
-        {
-          "tag": "holding_whisk",
-          "cn": "手持打蛋器"
-        },
-        {
-          "tag": "holding_bowl",
-          "cn": "手持碗"
-        },
-        {
-          "tag": "holding_plate",
-          "cn": "端盘子"
-        },
-        {
-          "tag": "holding_saucer",
-          "cn": "手持茶托"
-        },
-        {
-          "tag": "holding_tray",
-          "cn": "端着托盘"
-        },
-        {
-          "tag": "holding_magnifying_glass",
-          "cn": "手持放大镜"
-        },
-        {
-          "tag": "holding_telescope",
-          "cn": "手持望远镜"
-        },
-        {
-          "tag": "holding_test_tube",
-          "cn": "手持试管"
-        },
-        {
-          "tag": "holding_vial",
-          "cn": "手持药瓶"
-        },
-        {
-          "tag": "holding_candle",
-          "cn": "手持蜡烛"
-        },
-        {
-          "tag": "holding_candlestand",
-          "cn": "手持烛台"
-        },
-        {
-          "tag": "holding_flashlight",
-          "cn": "手持手电筒"
-        },
-        {
-          "tag": "holding_lantern",
-          "cn": "手拿灯笼"
-        },
-        {
-          "tag": "holding_torch",
-          "cn": "手持火炬"
-        },
-        {
-          "tag": "holding_bandages",
-          "cn": "手持绷带"
-        },
-        {
-          "tag": "holding_bandaid",
-          "cn": "手持创可贴"
-        },
-        {
-          "tag": "holding_pill",
-          "cn": "拿药丸"
-        },
-        {
-          "tag": "holding_stethoscope",
-          "cn": "手持听诊器"
-        },
-        {
-          "tag": "holding_thermometer",
-          "cn": "手持温度计"
-        },
-        {
-          "tag": "holding_bow_(music)",
-          "cn": "持琴弓"
-        },
-        {
-          "tag": "holding_drumsticks",
-          "cn": "手持鼓槌"
-        },
-        {
-          "tag": "holding_instrument",
-          "cn": "持乐器"
-        },
-        {
-          "tag": "holding_bass_guitar",
-          "cn": "拿着贝斯"
-        },
-        {
-          "tag": "holding_flute",
-          "cn": "持笛"
-        },
-        {
-          "tag": "holding_guitar",
-          "cn": "持吉他"
-        },
-        {
-          "tag": "holding_lyre",
-          "cn": "手持里拉琴"
-        },
-        {
-          "tag": "holding_maracas",
-          "cn": "持沙锤"
-        },
-        {
-          "tag": "holding_saxophone",
-          "cn": "手持萨克斯风"
-        },
-        {
-          "tag": "holding_trombone",
-          "cn": "手持长号"
-        },
-        {
-          "tag": "holding_trumpet",
-          "cn": "手持小号"
-        },
-        {
-          "tag": "holding_ukulele",
-          "cn": "拿着尤克里里"
-        },
-        {
-          "tag": "holding_violin",
-          "cn": "手持小提琴"
-        },
-        {
-          "tag": "holding_plectrum",
-          "cn": "手持拨片"
-        },
-        {
-          "tag": "holding_creature",
-          "cn": "抱着生物"
-        },
-        {
-          "tag": "holding_bouquet",
-          "cn": "手持花束"
-        },
-        {
-          "tag": "holding_branch",
-          "cn": "手持树枝"
-        },
-        {
-          "tag": "holding_clover",
-          "cn": "手持三叶草"
-        },
-        {
-          "tag": "holding_flower_pot",
-          "cn": "手持花盆"
-        },
-        {
-          "tag": "holding_flower",
-          "cn": "持花"
-        },
-        {
-          "tag": "holding_leaf",
-          "cn": "手持叶片"
-        },
-        {
-          "tag": "holding_mistletoe",
-          "cn": "手持槲寄生"
-        },
-        {
-          "tag": "holding_petal",
-          "cn": "手持花瓣"
-        },
-        {
-          "tag": "holding_plant",
-          "cn": "手持植物"
-        },
-        {
-          "tag": "holding_stick",
-          "cn": "手持木棍"
-        },
-        {
-          "tag": "holding_wreath",
-          "cn": "手持花环"
-        },
-        {
-          "tag": "holding_animal",
-          "cn": "怀抱动物"
-        },
-        {
-          "tag": "holding_bird",
-          "cn": "手持鸟类"
-        },
-        {
-          "tag": "holding_cat",
-          "cn": "抱猫"
-        },
-        {
-          "tag": "holding_dog",
-          "cn": "抱着狗"
-        },
-        {
-          "tag": "holding_fish",
-          "cn": "手持鱼"
-        },
-        {
-          "tag": "holding_frog",
-          "cn": "手持青蛙"
-        },
-        {
-          "tag": "holding_rabbit",
-          "cn": "抱着兔子"
-        },
-        {
-          "tag": "holding_snake",
-          "cn": "手持蛇"
-        },
-        {
-          "tag": "holding_crystal",
-          "cn": "手持水晶"
-        },
-        {
-          "tag": "holding_gem",
-          "cn": "手持宝石"
-        },
-        {
-          "tag": "holding_rock",
-          "cn": "手持石头"
-        },
-        {
-          "tag": "holding_feather",
-          "cn": "手持羽毛"
-        },
-        {
-          "tag": "holding_seashell",
-          "cn": "拿着贝壳"
-        },
-        {
-          "tag": "holding_drawing",
-          "cn": "拿着画作"
-        },
-        {
-          "tag": "holding_drawing_tablet",
-          "cn": "手持数位板"
-        },
-        {
-          "tag": "holding_paint_palette",
-          "cn": "手持调色板"
-        },
-        {
-          "tag": "holding_paintbrush",
-          "cn": "手持画笔"
         },
         {
-          "tag": "holding_sketchbook",
-          "cn": "拿着写生簿"
+          "tag": "hand_in_bra",
+          "cn": "手伸入胸罩"
         },
         {
-          "tag": "holding_stylus",
-          "cn": "手持触控笔"
+          "tag": "hand_on_own_crotch",
+          "cn": "手放裆部"
         },
         {
-          "tag": "holding_paper",
-          "cn": "手持纸张"
+          "tag": "hands_on_own_crotch",
+          "cn": "双手抚裆"
         },
-        {
-          "tag": "holding_book",
-          "cn": "手持书本"
-        },
-        {
-          "tag": "holding_magazine",
-          "cn": "手持杂志"
-        },
-        {
-          "tag": "holding_manga",
-          "cn": "拿着漫画"
-        },
-        {
-          "tag": "holding_newspaper",
-          "cn": "手持报纸"
-        },
-        {
-          "tag": "holding_scroll",
-          "cn": "手持卷轴"
-        },
-        {
-          "tag": "holding_diploma",
-          "cn": "手持毕业证书"
-        },
-        {
-          "tag": "holding_id_card",
-          "cn": "手持身份证"
-        },
-        {
-          "tag": "holding_ticket",
-          "cn": "手持车票"
-        },
-        {
-          "tag": "holding_envelope",
-          "cn": "手持信封"
-        },
-        {
-          "tag": "holding_letter",
-          "cn": "手持信件"
-        },
-        {
-          "tag": "holding_notebook",
-          "cn": "手持笔记本"
-        },
-        {
-          "tag": "holding_notepad",
-          "cn": "手持记事本"
-        },
-        {
-          "tag": "holding_folder",
-          "cn": "手持文件夹"
-        },
-        {
-          "tag": "holding_ema",
-          "cn": "拿着绘马"
-        },
-        {
-          "tag": "holding_gohei",
-          "cn": "手持御币"
-        },
-        {
-          "tag": "holding_ofuda",
-          "cn": "手持御札"
-        },
-        {
-          "tag": "holding_omikuji",
-          "cn": "拿着神签"
-        },
-        {
-          "tag": "holding_tanzaku",
-          "cn": "手持短册"
-        },
-        {
-          "tag": "holding_cross",
-          "cn": "持十字架"
-        },
-        {
-          "tag": "holding_crown",
-          "cn": "手持皇冠"
-        },
-        {
-          "tag": "holding_scepter",
-          "cn": "手持权杖"
-        },
-        {
-          "tag": "holding_riding_crop",
-          "cn": "手持马鞭"
-        },
-        {
-          "tag": "holding_cigar",
-          "cn": "手持雪茄"
-        },
-        {
-          "tag": "holding_cigarette_pack",
-          "cn": "拿着烟盒"
-        },
-        {
-          "tag": "holding_cigarette",
-          "cn": "手持香烟"
-        },
-        {
-          "tag": "holding_lighter",
-          "cn": "手持打火机"
-        },
-        {
-          "tag": "holding_smoking_pipe",
-          "cn": "手持烟斗"
-        },
-        {
-          "tag": "holding_ball",
-          "cn": "持球"
-        },
-        {
-          "tag": "holding_dumbbell",
-          "cn": "手持哑铃"
-        },
-        {
-          "tag": "holding_golf_club",
-          "cn": "手持高尔夫球杆"
-        },
-        {
-          "tag": "holding_jump_rope",
-          "cn": "手持跳绳"
-        },
-        {
-          "tag": "holding_racket",
-          "cn": "持拍"
-        },
-        {
-          "tag": "holding_tennis_racket",
-          "cn": "手持网球拍"
-        },
-        {
-          "tag": "holding_skateboard",
-          "cn": "手持滑板"
-        },
-        {
-          "tag": "holding_stopwatch",
-          "cn": "手持秒表"
-        },
-        {
-          "tag": "holding_surfboard",
-          "cn": "拿着冲浪板"
-        },
-        {
-          "tag": "holding_whistle",
-          "cn": "手持口哨"
-        },
-        {
-          "tag": "holding_butterfly_net",
-          "cn": "手持捕虫网"
-        },
-        {
-          "tag": "holding_fishing_rod",
-          "cn": "手持鱼竿"
-        },
-        {
-          "tag": "holding_oar",
-          "cn": "手持船桨"
-        },
-        {
-          "tag": "holding_paddle",
-          "cn": "手持船桨"
-        },
-        {
-          "tag": "holding_swim_ring",
-          "cn": "手持游泳圈"
-        },
-        {
-          "tag": "holding_pom_poms",
-          "cn": "手持啦啦队花球"
-        },
-        {
-          "tag": "holding_trophy",
-          "cn": "手持奖杯"
-        },
-        {
-          "tag": "holding_chalk",
-          "cn": "拿着粉笔"
-        },
-        {
-          "tag": "holding_crayon",
-          "cn": "手持蜡笔"
-        },
-        {
-          "tag": "holding_marker",
-          "cn": "拿着马克笔"
-        },
-        {
-          "tag": "holding_pen",
-          "cn": "持笔"
-        },
-        {
-          "tag": "holding_pencil",
-          "cn": "手持铅笔"
-        },
-        {
-          "tag": "holding_quill",
-          "cn": "手持羽毛笔"
-        },
-        {
-          "tag": "holding_ruler",
-          "cn": "手持尺子"
-        },
-        {
-          "tag": "holding_scissors",
-          "cn": "持剪刀"
-        },
-        {
-          "tag": "holding_pointer",
-          "cn": "手持教鞭"
-        },
-        {
-          "tag": "holding_weapon",
-          "cn": "手持武器"
-        },
-        {
-          "tag": "holding_crowbar",
-          "cn": "手持撬棍"
-        },
-        {
-          "tag": "holding_hammer",
-          "cn": "手持锤子"
-        },
-        {
-          "tag": "holding_mallet",
-          "cn": "手持木槌"
-        },
-        {
-          "tag": "holding_pickaxe",
-          "cn": "手持镐"
-        },
-        {
-          "tag": "holding_power_drill",
-          "cn": "手持电钻"
-        },
-        {
-          "tag": "holding_saw",
-          "cn": "手持锯子"
-        },
-        {
-          "tag": "holding_screwdriver",
-          "cn": "手持螺丝刀"
-        },
-        {
-          "tag": "holding_shovel",
-          "cn": "手持铲子"
-        },
-        {
-          "tag": "holding_wrench",
-          "cn": "手持扳手"
-        },
-        {
-          "tag": "holding_axe",
-          "cn": "手持斧头"
-        },
-        {
-          "tag": "holding_chainsaw",
-          "cn": "手持电锯"
-        },
-        {
-          "tag": "holding_broom",
-          "cn": "手持扫帚"
-        },
-        {
-          "tag": "holding_bucket",
-          "cn": "手持水桶"
-        },
-        {
-          "tag": "holding_duster",
-          "cn": "手持掸子"
-        },
-        {
-          "tag": "holding_dustpan",
-          "cn": "手持簸箕"
-        },
-        {
-          "tag": "holding_mop",
-          "cn": "持拖把"
-        },
-        {
-          "tag": "holding_sponge",
-          "cn": "拿着海绵"
-        },
-        {
-          "tag": "holding_hose",
-          "cn": "手持水管"
-        },
-        {
-          "tag": "holding_pitchfork",
-          "cn": "手持草叉"
-        },
-        {
-          "tag": "holding_sickle",
-          "cn": "手持镰刀"
-        },
-        {
-          "tag": "holding_trowel",
-          "cn": "手持泥铲"
-        },
-        {
-          "tag": "holding_watering_can",
-          "cn": "手持浇水壶"
-        },
-        {
-          "tag": "holding_cable",
-          "cn": "手持线缆"
-        },
-        {
-          "tag": "holding_nail",
-          "cn": "手持钉子"
-        },
-        {
-          "tag": "holding_string",
-          "cn": "手持绳索"
-        },
-        {
-          "tag": "holding_card",
-          "cn": "持卡"
-        },
-        {
-          "tag": "holding_chess_piece",
-          "cn": "手持棋子"
-        },
-        {
-          "tag": "holding_dice",
-          "cn": "手持骰子"
-        },
-        {
-          "tag": "holding_mahjong_tile",
-          "cn": "拿着麻将牌"
-        },
-        {
-          "tag": "holding_pinwheel",
-          "cn": "手持风车"
-        },
-        {
-          "tag": "holding_rattle",
-          "cn": "手持摇铃"
-        },
-        {
-          "tag": "holding_snow_globe",
-          "cn": "手持雪花球"
-        },
-        {
-          "tag": "holding_baton_(weapon)",
-          "cn": "持警棍"
-        },
-        {
-          "tag": "holding_club",
-          "cn": "手持棍棒"
-        },
-        {
-          "tag": "holding_cleaver",
-          "cn": "手持剁骨刀"
-        },
-        {
-          "tag": "holding_dagger",
-          "cn": "持匕首"
-        },
-        {
-          "tag": "holding_flail",
-          "cn": "手持连枷"
-        },
-        {
-          "tag": "holding_knife",
-          "cn": "持刀"
-        },
-        {
-          "tag": "holding_knife_behind_back",
-          "cn": "背后藏刀"
-        },
-        {
-          "tag": "holding_lead_pipe",
-          "cn": "拿着铅管"
-        },
-        {
-          "tag": "holding_mace",
-          "cn": "手持钉头锤"
-        },
-        {
-          "tag": "holding_machete",
-          "cn": "手持大砍刀"
-        },
-        {
-          "tag": "holding_nunchaku",
-          "cn": "手持双节棍"
-        },
-        {
-          "tag": "holding_polearm",
-          "cn": "手持长柄武器"
-        },
-        {
-          "tag": "holding_sword",
-          "cn": "持剑"
-        },
-        {
-          "tag": "holding_bow_(weapon)",
-          "cn": "持弓"
-        },
-        {
-          "tag": "holding_cannon",
-          "cn": "手持大炮"
-        },
-        {
-          "tag": "holding_crossbow",
-          "cn": "手持弩"
-        },
-        {
-          "tag": "holding_energy_gun",
-          "cn": "手持能量枪"
-        },
-        {
-          "tag": "holding_flamethrower",
-          "cn": "手持喷火器"
-        },
-        {
-          "tag": "holding_gun",
-          "cn": "手持枪"
-        },
-        {
-          "tag": "holding_rocket_launcher",
-          "cn": "手持火箭筒"
-        },
-        {
-          "tag": "holding_slingshot",
-          "cn": "手持弹弓"
-        },
-        {
-          "tag": "holding_turret",
-          "cn": "手持炮塔"
-        },
-        {
-          "tag": "holding_chakram",
-          "cn": "手持环刃"
-        },
-        {
-          "tag": "holding_grenade",
-          "cn": "手持手榴弹"
-        },
-        {
-          "tag": "holding_kunai",
-          "cn": "手持苦无"
-        },
-        {
-          "tag": "holding_arrow",
-          "cn": "手持箭矢"
-        },
-        {
-          "tag": "holding_bullet",
-          "cn": "手持子弹"
-        },
-        {
-          "tag": "holding_magazine_(weapon)",
-          "cn": "手持弹匣"
-        },
-        {
-          "tag": "holding_torpedo",
-          "cn": "手持鱼雷"
-        },
-        {
-          "tag": "holding_bomb",
-          "cn": "手持炸弹"
-        },
-        {
-          "tag": "holding_shield",
-          "cn": "手持盾牌"
-        },
-        {
-          "tag": "holding_sheath",
-          "cn": "手持刀鞘"
-        },
-        {
-          "tag": "holding_anchor",
-          "cn": "手持锚"
-        },
-        {
-          "tag": "holding_coin",
-          "cn": "手持硬币"
-        },
-        {
-          "tag": "holding_glowstick",
-          "cn": "手持荧光棒"
-        },
-        {
-          "tag": "holding_key",
-          "cn": "持钥匙"
-        },
-        {
-          "tag": "holding_mini_person",
-          "cn": "手持小人"
-        },
-        {
-          "tag": "holding_money",
-          "cn": "手里拿钱"
-        },
-        {
-          "tag": "holding_ribbon",
-          "cn": "手持缎带"
-        },
-        {
-          "tag": "between_fingers",
-          "cn": "指间夹持"
-        },
-        {
-          "tag": "grabbing",
-          "cn": "抓取"
-        },
-        {
-          "tag": "holding_behind_back",
-          "cn": "背后持物"
-        },
-        {
-          "tag": "holding_with_tail",
-          "cn": "用尾巴抓握"
-        }
-      ],
-      "nsfw": [
         {
           "tag": "leash",
           "cn": "牵引绳"
@@ -11298,20 +8328,12 @@
           "cn": "瞄准观众"
         },
         {
-          "tag": "apologizing",
-          "cn": "道歉"
-        },
-        {
           "tag": "applying_makeup",
           "cn": "正在化妆"
         },
         {
           "tag": "bathing",
           "cn": "沐浴"
-        },
-        {
-          "tag": "begging",
-          "cn": "乞求"
         },
         {
           "tag": "biting",
@@ -11322,16 +8344,8 @@
           "cn": "咬自己的尾巴"
         },
         {
-          "tag": "biting_cheek",
-          "cn": "咬脸颊"
-        },
-        {
           "tag": "biting_own_finger",
           "cn": "咬手指"
-        },
-        {
-          "tag": "biting_head",
-          "cn": "咬头"
         },
         {
           "tag": "biting_own_lip",
@@ -11354,28 +8368,12 @@
           "cn": "弹跳"
         },
         {
-          "tag": "breaking",
-          "cn": "打碎"
-        },
-        {
-          "tag": "breathing_(animated)",
-          "cn": "呼吸（动画）"
-        },
-        {
-          "tag": "heavy_breathing",
-          "cn": "呼吸沉重"
-        },
-        {
           "tag": "blowing_bubbles",
           "cn": "吹泡泡"
         },
         {
           "tag": "blowing_bubble_gum",
           "cn": "吹泡泡糖"
-        },
-        {
-          "tag": "bumping",
-          "cn": "碰撞"
         },
         {
           "tag": "catching",
@@ -11394,14 +8392,6 @@
           "cn": "打扫"
         },
         {
-          "tag": "dishwashing",
-          "cn": "洗碗"
-        },
-        {
-          "tag": "sweeping",
-          "cn": "扫地"
-        },
-        {
           "tag": "climbing",
           "cn": "攀爬"
         },
@@ -11410,40 +8400,8 @@
           "cn": "安慰"
         },
         {
-          "tag": "concentrating",
-          "cn": "集中精神"
-        },
-        {
           "tag": "cooking",
           "cn": "烹饪"
-        },
-        {
-          "tag": "baking",
-          "cn": "烘焙"
-        },
-        {
-          "tag": "chocolate_making",
-          "cn": "制作巧克力"
-        },
-        {
-          "tag": "decorating_baked_goods",
-          "cn": "烘焙食品装饰"
-        },
-        {
-          "tag": "roasting",
-          "cn": "烘烤"
-        },
-        {
-          "tag": "stirring",
-          "cn": "搅拌"
-        },
-        {
-          "tag": "coughing",
-          "cn": "咳嗽"
-        },
-        {
-          "tag": "crushing",
-          "cn": "挤压"
         },
         {
           "tag": "crying",
@@ -11456,18 +8414,6 @@
         {
           "tag": "cutting",
           "cn": "切割"
-        },
-        {
-          "tag": "digging",
-          "cn": "挖掘"
-        },
-        {
-          "tag": "diving",
-          "cn": "潜水"
-        },
-        {
-          "tag": "dive",
-          "cn": "俯冲"
         },
         {
           "tag": "dodging",
@@ -11498,60 +8444,16 @@
           "cn": "驾驶"
         },
         {
-          "tag": "dropping",
-          "cn": "掉落"
-        },
-        {
-          "tag": "drying",
-          "cn": "晾干中"
-        },
-        {
           "tag": "dual_wielding",
           "cn": "双持"
-        },
-        {
-          "tag": "quadruple_wielding",
-          "cn": "四刀流"
-        },
-        {
-          "tag": "triple_wielding",
-          "cn": "三刀流"
-        },
-        {
-          "tag": "ear_cleaning",
-          "cn": "掏耳朵"
         },
         {
           "tag": "eating",
           "cn": "进食"
         },
         {
-          "tag": "chewing",
-          "cn": "咀嚼"
-        },
-        {
-          "tag": "swallowing",
-          "cn": "吞咽"
-        },
-        {
-          "tag": "tasting",
-          "cn": "品尝"
-        },
-        {
-          "tag": "eavesdropping",
-          "cn": "窃听"
-        },
-        {
           "tag": "elbowing",
           "cn": "肘击"
-        },
-        {
-          "tag": "facepaint",
-          "cn": "面部彩绘"
-        },
-        {
-          "tag": "fainting",
-          "cn": "昏厥"
         },
         {
           "tag": "fanning",
@@ -11570,20 +8472,8 @@
           "cn": "喂食"
         },
         {
-          "tag": "fed_by_viewer",
-          "cn": "被观众喂食"
-        },
-        {
-          "tag": "fighting",
-          "cn": "打架"
-        },
-        {
           "tag": "firing",
           "cn": "射击"
-        },
-        {
-          "tag": "flailing",
-          "cn": "乱挥手臂"
         },
         {
           "tag": "flapping",
@@ -11594,28 +8484,8 @@
           "cn": "调情"
         },
         {
-          "tag": "gardening",
-          "cn": "园艺"
-        },
-        {
-          "tag": "watering",
-          "cn": "浇水"
-        },
-        {
           "tag": "giving",
           "cn": "给予"
-        },
-        {
-          "tag": "glowing",
-          "cn": "发光"
-        },
-        {
-          "tag": "hatching",
-          "cn": "破壳"
-        },
-        {
-          "tag": "healing",
-          "cn": "治疗魔法"
         },
         {
           "tag": "hiding",
@@ -11624,14 +8494,6 @@
         {
           "tag": "hitting",
           "cn": "击打"
-        },
-        {
-          "tag": "imagining",
-          "cn": "想象"
-        },
-        {
-          "tag": "imitating",
-          "cn": "模仿"
         },
         {
           "tag": "juggling",
@@ -11682,56 +8544,16 @@
           "cn": "舔手指"
         },
         {
-          "tag": "licking_blade",
-          "cn": "舔舐刀刃"
-        },
-        {
           "tag": "licking_leg",
           "cn": "舔腿"
-        },
-        {
-          "tag": "licking_navel",
-          "cn": "舔肚脐"
-        },
-        {
-          "tag": "licking_thigh",
-          "cn": "舔大腿"
         },
         {
           "tag": "lifting",
           "cn": "举起"
         },
         {
-          "tag": "measuring",
-          "cn": "测量"
-        },
-        {
-          "tag": "melting",
-          "cn": "融化"
-        },
-        {
-          "tag": "mind_reading",
-          "cn": "读心术"
-        },
-        {
-          "tag": "multitasking",
-          "cn": "一心多用"
-        },
-        {
-          "tag": "nose_picking",
-          "cn": "挖鼻孔"
-        },
-        {
-          "tag": "opening",
-          "cn": "开封"
-        },
-        {
           "tag": "patting",
           "cn": "轻拍/抚摸"
-        },
-        {
-          "tag": "peeling",
-          "cn": "削皮"
         },
         {
           "tag": "petting",
@@ -11742,52 +8564,20 @@
           "cn": "捏"
         },
         {
-          "tag": "pitching",
-          "cn": "投球"
-        },
-        {
-          "tag": "playing",
-          "cn": "玩耍中"
-        },
-        {
-          "tag": "playing_games",
-          "cn": "玩游戏"
-        },
-        {
           "tag": "playing_video_games",
           "cn": "玩电子游戏"
-        },
-        {
-          "tag": "playing_instrument",
-          "cn": "演奏乐器"
-        },
-        {
-          "tag": "playing_sports",
-          "cn": "进行体育运动"
         },
         {
           "tag": "poking",
           "cn": "戳"
         },
         {
-          "tag": "polishing",
-          "cn": "抛光"
-        },
-        {
           "tag": "pouring",
           "cn": "倾倒"
         },
         {
-          "tag": "decantering",
-          "cn": "高空倒酒"
-        },
-        {
           "tag": "praying",
           "cn": "祈祷"
-        },
-        {
-          "tag": "protecting",
-          "cn": "保护"
         },
         {
           "tag": "pulling",
@@ -11810,18 +8600,6 @@
           "cn": "阅读"
         },
         {
-          "tag": "reloading",
-          "cn": "装弹"
-        },
-        {
-          "tag": "repairing",
-          "cn": "修理"
-        },
-        {
-          "tag": "resisting",
-          "cn": "抗拒"
-        },
-        {
           "tag": "resting",
           "cn": "休息"
         },
@@ -11830,20 +8608,8 @@
           "cn": "骑乘"
         },
         {
-          "tag": "broom_riding",
-          "cn": "骑扫帚"
-        },
-        {
-          "tag": "umbrella_riding",
-          "cn": "骑乘雨伞"
-        },
-        {
           "tag": "ripping",
           "cn": "撕裂"
-        },
-        {
-          "tag": "roaring",
-          "cn": "咆哮"
         },
         {
           "tag": "rolling",
@@ -11858,10 +8624,6 @@
           "cn": "抓挠"
         },
         {
-          "tag": "searching",
-          "cn": "寻找"
-        },
-        {
           "tag": "shaking",
           "cn": "摇晃"
         },
@@ -11870,20 +8632,8 @@
           "cn": "共享"
         },
         {
-          "tag": "shaving",
-          "cn": "剃毛"
-        },
-        {
-          "tag": "shopping",
-          "cn": "购物"
-        },
-        {
           "tag": "singing",
           "cn": "歌唱"
-        },
-        {
-          "tag": "sinking",
-          "cn": "下沉"
         },
         {
           "tag": "sketching",
@@ -11914,24 +8664,12 @@
           "cn": "吸烟"
         },
         {
-          "tag": "sneezing",
-          "cn": "打喷嚏"
-        },
-        {
-          "tag": "snowing",
-          "cn": "降雪"
-        },
-        {
           "tag": "spilling",
           "cn": "溢出"
         },
         {
           "tag": "spinning",
           "cn": "旋转"
-        },
-        {
-          "tag": "spitting",
-          "cn": "吐唾沫"
         },
         {
           "tag": "splashing",
@@ -11950,18 +8688,6 @@
           "cn": "堆叠"
         },
         {
-          "tag": "stomping",
-          "cn": "踩踏"
-        },
-        {
-          "tag": "choking_on_object",
-          "cn": "异物哽噎"
-        },
-        {
-          "tag": "studying",
-          "cn": "学习"
-        },
-        {
           "tag": "finger_sucking",
           "cn": "吮吸手指"
         },
@@ -11970,24 +8696,8 @@
           "cn": "吮吸拇指"
         },
         {
-          "tag": "summoning",
-          "cn": "召唤"
-        },
-        {
           "tag": "sunbathing",
           "cn": "日光浴"
-        },
-        {
-          "tag": "surfing",
-          "cn": "冲浪"
-        },
-        {
-          "tag": "broom_surfing",
-          "cn": "扫帚冲浪"
-        },
-        {
-          "tag": "sky_surfing",
-          "cn": "空中冲浪"
         },
         {
           "tag": "swaying",
@@ -12022,18 +8732,6 @@
           "cn": "说话"
         },
         {
-          "tag": "sleep_talking",
-          "cn": "说梦话"
-        },
-        {
-          "tag": "teaching",
-          "cn": "教学"
-        },
-        {
-          "tag": "text_messaging",
-          "cn": "发短信"
-        },
-        {
           "tag": "throwing",
           "cn": "投掷"
         },
@@ -12050,68 +8748,20 @@
           "cn": "训练"
         },
         {
-          "tag": "trembling",
-          "cn": "颤抖"
-        },
-        {
-          "tag": "trolling",
-          "cn": "钓鱼/恶搞"
-        },
-        {
-          "tag": "twitching",
-          "cn": "抽搐"
-        },
-        {
-          "tag": "tying",
-          "cn": "系带"
-        },
-        {
-          "tag": "tying_footwear",
-          "cn": "系鞋带"
-        },
-        {
-          "tag": "typing",
-          "cn": "打字"
-        },
-        {
           "tag": "unsheathing",
           "cn": "拔刀"
-        },
-        {
-          "tag": "wading",
-          "cn": "涉水"
-        },
-        {
-          "tag": "waiting",
-          "cn": "等待"
-        },
-        {
-          "tag": "pet_walking",
-          "cn": "遛宠物"
         },
         {
           "tag": "washing",
           "cn": "洗涤"
         },
         {
-          "tag": "body_soaping",
-          "cn": "身体涂抹肥皂"
-        },
-        {
           "tag": "watching",
           "cn": "观看中"
         },
         {
-          "tag": "watching_television",
-          "cn": "看电视"
-        },
-        {
           "tag": "whipping",
           "cn": "鞭打"
-        },
-        {
-          "tag": "whisking",
-          "cn": "打蛋搅拌"
         },
         {
           "tag": "whispering",
@@ -12122,172 +8772,28 @@
           "cn": "吹口哨"
         },
         {
-          "tag": "working",
-          "cn": "工作中"
-        },
-        {
-          "tag": "wringing",
-          "cn": "拧干"
-        },
-        {
-          "tag": "zipping",
-          "cn": "拉拉链"
-        },
-        {
-          "tag": "battle",
-          "cn": "战斗"
-        },
-        {
           "tag": "blowing",
           "cn": "吹气"
-        },
-        {
-          "tag": "bowling",
-          "cn": "保龄球"
-        },
-        {
-          "tag": "boxing",
-          "cn": "拳击"
         },
         {
           "tag": "mind_control",
           "cn": "精神控制"
         },
         {
-          "tag": "model_building",
-          "cn": "模型制作"
-        },
-        {
-          "tag": "burning",
-          "cn": "燃烧"
-        },
-        {
-          "tag": "camping",
-          "cn": "露营"
-        },
-        {
-          "tag": "carving",
-          "cn": "雕刻"
-        },
-        {
           "tag": "clapping",
           "cn": "鼓掌"
-        },
-        {
-          "tag": "dating",
-          "cn": "约会"
-        },
-        {
-          "tag": "dissolving",
-          "cn": "溶解"
         },
         {
           "tag": "drawing_(action)",
           "cn": "绘画（动作）"
         },
         {
-          "tag": "drawing_(object)",
-          "cn": "画作（物体）"
-        },
-        {
-          "tag": "child's_drawing",
-          "cn": "儿童画风"
-        },
-        {
-          "tag": "fading",
-          "cn": "消散"
-        },
-        {
-          "tag": "fencing",
-          "cn": "击剑"
-        },
-        {
-          "tag": "fishing",
-          "cn": "钓鱼"
-        },
-        {
           "tag": "flashing",
           "cn": "闪露"
         },
         {
-          "tag": "goldfish_scooping",
-          "cn": "捞金鱼"
-        },
-        {
-          "tag": "grilling",
-          "cn": "烧烤烹饪"
-        },
-        {
-          "tag": "hiking",
-          "cn": "远足"
-        },
-        {
-          "tag": "hitchhiking",
-          "cn": "搭便车"
-        },
-        {
           "tag": "horseback_riding",
           "cn": "骑马"
-        },
-        {
-          "tag": "kiss",
-          "cn": "接吻"
-        },
-        {
-          "tag": "knitting",
-          "cn": "编织"
-        },
-        {
-          "tag": "marching",
-          "cn": "行进"
-        },
-        {
-          "tag": "misunderstanding",
-          "cn": "误会"
-        },
-        {
-          "tag": "painting_(action)",
-          "cn": "绘画（动作）"
-        },
-        {
-          "tag": "racing",
-          "cn": "竞速"
-        },
-        {
-          "tag": "recording",
-          "cn": "录像中"
-        },
-        {
-          "tag": "shipping_(fandom)",
-          "cn": "同人配对妄想"
-        },
-        {
-          "tag": "rowing",
-          "cn": "划船"
-        },
-        {
-          "tag": "scolding",
-          "cn": "责骂"
-        },
-        {
-          "tag": "sewing",
-          "cn": "缝纫"
-        },
-        {
-          "tag": "skating",
-          "cn": "溜冰/滑冰"
-        },
-        {
-          "tag": "figure_skating",
-          "cn": "花样滑冰"
-        },
-        {
-          "tag": "ice_skating",
-          "cn": "滑冰"
-        },
-        {
-          "tag": "skiing",
-          "cn": "双板滑雪"
         },
         {
           "tag": "slapping",
@@ -12298,28 +8804,8 @@
           "cn": "游泳"
         },
         {
-          "tag": "freediving",
-          "cn": "自由潜水"
-        },
-        {
           "tag": "tail_wagging",
           "cn": "摇尾巴"
-        },
-        {
-          "tag": "wedding",
-          "cn": "婚礼"
-        },
-        {
-          "tag": "welding",
-          "cn": "焊接"
-        },
-        {
-          "tag": "wrestling",
-          "cn": "摔跤"
-        },
-        {
-          "tag": "arm_wrestling",
-          "cn": "扳手腕"
         },
         {
           "tag": "writing",
@@ -12328,10 +8814,6 @@
         {
           "tag": "yawning",
           "cn": "打哈欠"
-        },
-        {
-          "tag": "egg_laying",
-          "cn": "产卵"
         },
         {
           "tag": "taunting",
@@ -12354,16 +8836,156 @@
           "cn": "踩踏"
         },
         {
-          "tag": "tickling_feet",
-          "cn": "挠脚心"
+          "tag": "mature_female",
+          "cn": "成熟女性"
         },
         {
-          "tag": "surrounded_by_feet",
-          "cn": "被脚环绕"
+          "tag": "curvy",
+          "cn": "丰满"
         },
         {
-          "tag": "feet_only",
-          "cn": "足部特写"
+          "tag": "skinny",
+          "cn": "纤瘦"
+        },
+        {
+          "tag": "smelling",
+          "cn": "嗅闻"
+        },
+        {
+          "tag": "smelling_clothes",
+          "cn": "闻衣服"
+        },
+        {
+          "tag": "smelling_underwear",
+          "cn": "闻内衣"
+        },
+        {
+          "tag": "spanking",
+          "cn": "打屁股"
+        },
+        {
+          "tag": "pantsing",
+          "cn": "扯裤子"
+        },
+        {
+          "tag": "mooning",
+          "cn": "露臀"
+        },
+        {
+          "tag": "skinny_dipping",
+          "cn": "裸泳"
+        },
+        {
+          "tag": "eating_hair",
+          "cn": "吃头发"
+        },
+        {
+          "tag": "hairdressing",
+          "cn": "美发"
+        },
+        {
+          "tag": "braiding_hair",
+          "cn": "编发"
+        },
+        {
+          "tag": "cutting_hair",
+          "cn": "剪发"
+        },
+        {
+          "tag": "cutting_own_hair",
+          "cn": "剪自己的头发"
+        },
+        {
+          "tag": "brushing_hair",
+          "cn": "梳头"
+        },
+        {
+          "tag": "brushing_own_hair",
+          "cn": "梳理头发"
+        },
+        {
+          "tag": "tying_hair",
+          "cn": "扎头发"
+        },
+        {
+          "tag": "untying_hair",
+          "cn": "解开头发"
+        },
+        {
+          "tag": "ruffling_hair",
+          "cn": "揉乱头发"
+        },
+        {
+          "tag": "hand_in_own_hair",
+          "cn": "手插头发"
+        },
+        {
+          "tag": "hands_in_own_hair",
+          "cn": "双手插入自己头发中"
+        },
+        {
+          "tag": "grabbing_own_hair",
+          "cn": "揪住自己的头发"
+        },
+        {
+          "tag": "playing_with_own_hair",
+          "cn": "玩弄自己头发"
+        },
+        {
+          "tag": "adjusting_hair",
+          "cn": "整理头发"
+        },
+        {
+          "tag": "bunching_hair",
+          "cn": "手拢发束"
+        },
+        {
+          "tag": "hair_flip",
+          "cn": "拨开头发"
+        },
+        {
+          "tag": "hair_lift",
+          "cn": "撩起头发"
+        },
+        {
+          "tag": "tucking_hair",
+          "cn": "撩发"
+        },
+        {
+          "tag": "kissing_hair",
+          "cn": "亲吻头发"
+        },
+        {
+          "tag": "smelling_hair",
+          "cn": "闻头发"
+        },
+        {
+          "tag": "bust_measuring",
+          "cn": "测量胸围"
+        },
+        {
+          "tag": "slapping_breasts",
+          "cn": "拍打乳房"
+        },
+        {
+          "tag": "bouncing_breasts",
+          "cn": "乳摇"
+        },
+        {
+          "tag": "carried_breast_rest",
+          "cn": "托胸"
+        },
+        {
+          "tag": "breast_conscious",
+          "cn": "在意胸部"
+        },
+        {
+          "tag": "breast_contest",
+          "cn": "胸部相扑"
+        },
+        {
+          "tag": "breast_envy",
+          "cn": "胸部嫉妒"
         }
       ],
       "nsfw": [
@@ -12456,10 +9078,6 @@
           "cn": "足交后"
         },
         {
-          "tag": "feet",
-          "cn": "脚"
-        },
-        {
           "tag": "licking_foot",
           "cn": "舔脚"
         },
@@ -12534,10 +9152,6 @@
         {
           "tag": "pecjob",
           "cn": "胸交"
-        },
-        {
-          "tag": "pectorals",
-          "cn": "胸肌"
         },
         {
           "tag": "perpendicular_paizuri",
@@ -12660,10 +9274,6 @@
           "cn": "尾巴自慰"
         },
         {
-          "tag": "tail",
-          "cn": "尾巴"
-        },
-        {
           "tag": "tail_insertion",
           "cn": "尾巴插入"
         },
@@ -12728,10 +9338,6 @@
           "cn": "多人口交"
         },
         {
-          "tag": "multiple_penis_fellatio",
-          "cn": "多根阴茎口交"
-        },
-        {
           "tag": "upright_69",
           "cn": "站立式69"
         },
@@ -12756,102 +9362,6 @@
           "cn": "舔腋"
         },
         {
-          "tag": "group_sex",
-          "cn": "群交"
-        },
-        {
-          "tag": "bisexual_female",
-          "cn": "双性恋女性"
-        },
-        {
-          "tag": "bisexual_male",
-          "cn": "双性恋男性"
-        },
-        {
-          "tag": "oral_sandwich",
-          "cn": "口交夹心"
-        },
-        {
-          "tag": "gangbang",
-          "cn": "轮奸"
-        },
-        {
-          "tag": "double_penetration",
-          "cn": "双重插入"
-        },
-        {
-          "tag": "triple_penetration",
-          "cn": "三重插入"
-        },
-        {
-          "tag": "love_train",
-          "cn": "火车便当（性行为）"
-        },
-        {
-          "tag": "orgy",
-          "cn": "乱交"
-        },
-        {
-          "tag": "teamwork_(sexual)",
-          "cn": "多人协作（性行为）"
-        },
-        {
-          "tag": "threesome",
-          "cn": "3P"
-        },
-        {
-          "tag": "mmf_threesome",
-          "cn": "两男一女三人行"
-        },
-        {
-          "tag": "ffm_threesome",
-          "cn": "两女一男三人行"
-        },
-        {
-          "tag": "mmm_threesome",
-          "cn": "三男3P"
-        },
-        {
-          "tag": "fff_threesome",
-          "cn": "三女3P"
-        },
-        {
-          "tag": "fdd_threesome",
-          "cn": "FDD_三人行"
-        },
-        {
-          "tag": "mdd_threesome",
-          "cn": "MDD_3P"
-        },
-        {
-          "tag": "ffd_threesome",
-          "cn": "FFD三人行"
-        },
-        {
-          "tag": "mmd_threesome",
-          "cn": "MMD三人行"
-        },
-        {
-          "tag": "ddd_threesome",
-          "cn": "扶她三人行"
-        },
-        {
-          "tag": "mfd_threesome",
-          "cn": "男/女/扶他_3P"
-        },
-        {
-          "tag": "foursome",
-          "cn": "四人行"
-        },
-        {
-          "tag": "fivesome",
-          "cn": "五人行"
-        },
-        {
-          "tag": "cervical_penetration",
-          "cn": "宫颈贯穿"
-        },
-        {
           "tag": "covered_penetration",
           "cn": "遮挡下的性交"
         },
@@ -12860,20 +9370,8 @@
           "cn": "深度插入"
         },
         {
-          "tag": "inflation",
-          "cn": "膨胀"
-        },
-        {
-          "tag": "cum_inflation",
-          "cn": "精液腹胀"
-        },
-        {
           "tag": "large_insertion",
           "cn": "巨物插入"
-        },
-        {
-          "tag": "male_penetrated",
-          "cn": "男性被插入"
         },
         {
           "tag": "multiple_insertions",
@@ -12894,10 +9392,6 @@
         {
           "tag": "anal_object_insertion",
           "cn": "肛门异物插入"
-        },
-        {
-          "tag": "urethral_insertion",
-          "cn": "尿道插入"
         },
         {
           "tag": "fingering",
@@ -12922,14 +9416,6 @@
         {
           "tag": "implied_fingering",
           "cn": "疑似指交"
-        },
-        {
-          "tag": "fisting",
-          "cn": "拳交"
-        },
-        {
-          "tag": "anal_fisting",
-          "cn": "肛门拳交"
         },
         {
           "tag": "after_sex",
@@ -12960,10 +9446,6 @@
           "cn": "乳交后"
         },
         {
-          "tag": "after_rape",
-          "cn": "强奸后"
-        },
-        {
           "tag": "after_vaginal",
           "cn": "阴道性交后"
         },
@@ -12976,24 +9458,8 @@
           "cn": "肛交"
         },
         {
-          "tag": "double_anal",
-          "cn": "双重肛交"
-        },
-        {
           "tag": "imminent_anal",
           "cn": "即将肛交"
-        },
-        {
-          "tag": "pegging",
-          "cn": "逆肛交"
-        },
-        {
-          "tag": "triple_anal",
-          "cn": "三穴"
-        },
-        {
-          "tag": "multiple_anal",
-          "cn": "多重肛门插入"
         },
         {
           "tag": "clothed_sex",
@@ -13036,52 +9502,8 @@
           "cn": "阴道性交"
         },
         {
-          "tag": "double_vaginal",
-          "cn": "双阴道性交"
-        },
-        {
           "tag": "imminent_vaginal",
           "cn": "即将插入阴道"
-        },
-        {
-          "tag": "yaoi",
-          "cn": "耽美"
-        },
-        {
-          "tag": "implied_yaoi",
-          "cn": "暗示耽美"
-        },
-        {
-          "tag": "bulges_touching",
-          "cn": "隔衣裆部接触"
-        },
-        {
-          "tag": "penises_touching",
-          "cn": "阴茎接触"
-        },
-        {
-          "tag": "testicles_touching",
-          "cn": "睾丸相触"
-        },
-        {
-          "tag": "yuri",
-          "cn": "百合"
-        },
-        {
-          "tag": "implied_yuri",
-          "cn": "暗示百合"
-        },
-        {
-          "tag": "tribadism",
-          "cn": "磨豆腐"
-        },
-        {
-          "tag": "diaper",
-          "cn": "尿布"
-        },
-        {
-          "tag": "mature_female",
-          "cn": "成熟女性"
         },
         {
           "tag": "leash_pull",
@@ -13094,34 +9516,6 @@
         {
           "tag": "pony_play",
           "cn": "小马扮演"
-        },
-        {
-          "tag": "giant",
-          "cn": "巨人"
-        },
-        {
-          "tag": "giantess",
-          "cn": "巨大娘"
-        },
-        {
-          "tag": "miniboy",
-          "cn": "微型男孩"
-        },
-        {
-          "tag": "minigirl",
-          "cn": "迷你女孩"
-        },
-        {
-          "tag": "curvy",
-          "cn": "丰满"
-        },
-        {
-          "tag": "skinny",
-          "cn": "纤瘦"
-        },
-        {
-          "tag": "breast_expansion",
-          "cn": "胸部膨胀"
         },
         {
           "tag": "breast_smother",
@@ -13252,18 +9646,6 @@
           "cn": "精液"
         },
         {
-          "tag": "bukkake",
-          "cn": "精浴"
-        },
-        {
-          "tag": "cumdump",
-          "cn": "肉便器"
-        },
-        {
-          "tag": "cum_bath",
-          "cn": "精液浴"
-        },
-        {
           "tag": "cumdrip",
           "cn": "精液滴落"
         },
@@ -13384,14 +9766,6 @@
           "cn": "自射面部"
         },
         {
-          "tag": "felching",
-          "cn": "吸精吞精"
-        },
-        {
-          "tag": "gokkun",
-          "cn": "吞精"
-        },
-        {
           "tag": "exhibitionism",
           "cn": "裸露癖"
         },
@@ -13404,28 +9778,12 @@
           "cn": "公共场合裸露"
         },
         {
-          "tag": "zenra",
-          "cn": "全裸日常"
-        },
-        {
           "tag": "stealth_bondage",
           "cn": "隐秘束缚"
         },
         {
           "tag": "stealth_sex",
           "cn": "隐奸"
-        },
-        {
-          "tag": "cheating_(relationship)",
-          "cn": "出轨"
-        },
-        {
-          "tag": "netorare",
-          "cn": "寝取（NTR）"
-        },
-        {
-          "tag": "reverse_netorare",
-          "cn": "逆NTR"
         },
         {
           "tag": "prostitution",
@@ -13446,74 +9804,6 @@
         {
           "tag": "walk-in",
           "cn": "闯入"
-        },
-        {
-          "tag": "crossdressing",
-          "cn": "变装"
-        },
-        {
-          "tag": "crossdressing_(mtf)",
-          "cn": "女装（男变女）"
-        },
-        {
-          "tag": "crossdressing_(ftm)",
-          "cn": "女扮男装"
-        },
-        {
-          "tag": "cuntboy_with_male",
-          "cn": "扶他与男性"
-        },
-        {
-          "tag": "futa_with_female",
-          "cn": "扶她与女性"
-        },
-        {
-          "tag": "female_on_futa",
-          "cn": "女对扶他"
-        },
-        {
-          "tag": "futa_with_futa",
-          "cn": "扶她对扶她"
-        },
-        {
-          "tag": "futa_with_male",
-          "cn": "扶她与男性"
-        },
-        {
-          "tag": "futa_on_male",
-          "cn": "扶她对男性"
-        },
-        {
-          "tag": "male_on_futa",
-          "cn": "男上扶她"
-        },
-        {
-          "tag": "futa_without_pussy",
-          "cn": "扶他（无阴道）"
-        },
-        {
-          "tag": "newhalf_with_female",
-          "cn": "扶他与女性"
-        },
-        {
-          "tag": "newhalf_with_male",
-          "cn": "扶他与男性"
-        },
-        {
-          "tag": "newhalf_with_newhalf",
-          "cn": "伪娘与伪娘"
-        },
-        {
-          "tag": "incest",
-          "cn": "乱伦"
-        },
-        {
-          "tag": "twincest",
-          "cn": "双子乱伦"
-        },
-        {
-          "tag": "inseki",
-          "cn": "姻戚"
         },
         {
           "tag": "rape",
@@ -13576,22 +9866,6 @@
           "cn": "破处"
         },
         {
-          "tag": "dirty_talk",
-          "cn": "下流话"
-        },
-        {
-          "tag": "requesting_internal_cumshot",
-          "cn": "请求内射"
-        },
-        {
-          "tag": "requesting_impregnation",
-          "cn": "要求受孕"
-        },
-        {
-          "tag": "bust_cup",
-          "cn": "乳沟酒"
-        },
-        {
           "tag": "female_ejaculation",
           "cn": "潮吹"
         },
@@ -13602,22 +9876,6 @@
         {
           "tag": "impregnation",
           "cn": "受孕"
-        },
-        {
-          "tag": "selfcest",
-          "cn": "自攻自受"
-        },
-        {
-          "tag": "smelling",
-          "cn": "嗅闻"
-        },
-        {
-          "tag": "smelling_clothes",
-          "cn": "闻衣服"
-        },
-        {
-          "tag": "smelling_underwear",
-          "cn": "闻内衣"
         },
         {
           "tag": "tentacles",
@@ -13646,30 +9904,6 @@
         {
           "tag": "tentacles_on_male",
           "cn": "触手缠绕男性"
-        },
-        {
-          "tag": "peeing",
-          "cn": "排尿"
-        },
-        {
-          "tag": "drinking_pee",
-          "cn": "饮尿"
-        },
-        {
-          "tag": "golden_shower",
-          "cn": "黄金浴"
-        },
-        {
-          "tag": "peeing_on_viewer",
-          "cn": "对观众排尿"
-        },
-        {
-          "tag": "have_to_pee",
-          "cn": "憋尿"
-        },
-        {
-          "tag": "peeing_self",
-          "cn": "尿裤子"
         },
         {
           "tag": "simulated_fellatio",
@@ -13732,28 +9966,8 @@
           "cn": "潮吹"
         },
         {
-          "tag": "bedwetting",
-          "cn": "尿床"
-        },
-        {
-          "tag": "spanking",
-          "cn": "打屁股"
-        },
-        {
-          "tag": "pantsing",
-          "cn": "扯裤子"
-        },
-        {
-          "tag": "mooning",
-          "cn": "露臀"
-        },
-        {
           "tag": "streaking",
           "cn": "裸奔"
-        },
-        {
-          "tag": "skinny_dipping",
-          "cn": "裸泳"
         },
         {
           "tag": "tail_fondling",
@@ -13762,6 +9976,58 @@
         {
           "tag": "fanning_crotch",
           "cn": "给裆部扇风"
+        },
+        {
+          "tag": "covering_nipples",
+          "cn": "遮乳"
+        },
+        {
+          "tag": "biting_nipple",
+          "cn": "咬乳头"
+        },
+        {
+          "tag": "breast_lift",
+          "cn": "托举胸部"
+        },
+        {
+          "tag": "breast_press",
+          "cn": "胸部挤压"
+        },
+        {
+          "tag": "breast_suppress",
+          "cn": "压胸"
+        },
+        {
+          "tag": "lactating_into_container",
+          "cn": "泌乳入容器"
+        },
+        {
+          "tag": "licking_nipple",
+          "cn": "舔乳头"
+        },
+        {
+          "tag": "mutual_breast_sucking",
+          "cn": "互相吸乳"
+        },
+        {
+          "tag": "nipple_flick",
+          "cn": "弹乳头"
+        },
+        {
+          "tag": "nipple_press",
+          "cn": "乳头按压"
+        },
+        {
+          "tag": "nipple_rub",
+          "cn": "揉乳头"
+        },
+        {
+          "tag": "penis_to_breast",
+          "cn": "阴茎贴胸"
+        },
+        {
+          "tag": "reverse_paizuri",
+          "cn": "反向乳交"
         }
       ]
     }

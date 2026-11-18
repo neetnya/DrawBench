@@ -36,8 +36,16 @@
 
                                 <TextBlock Grid.Column="0" Text="连抽" Style="{StaticResource FieldLabel}" Margin="0,0,6,0" />
                                 <TextBox Grid.Column="1" x:Name="TxtRepeat" Text="1" />
-                                <CheckBox Grid.Column="3" x:Name="ChkSpace" Content="下划线转空格（推荐）"
-                                          IsChecked="True" VerticalAlignment="Center" />
+                                <WrapPanel Grid.Column="3" VerticalAlignment="Center">
+                                    <CheckBox x:Name="ChkSpace" Content="下划线转空格"
+                                              IsChecked="True" Margin="0,0,12,0" VerticalAlignment="Center" />
+                                    <CheckBox x:Name="ChkNsfw" Content="NSFW"
+                                              IsChecked="False" Margin="0,0,12,0" VerticalAlignment="Center"
+                                              ToolTip="关闭时只抽 SFW 安全词；开启时混合抽取 SFW 与 NSFW 词" />
+                                    <CheckBox x:Name="ChkMultiPerson" Content="多人"
+                                              IsChecked="False" VerticalAlignment="Center"
+                                              ToolTip="关闭时不抽需要多人的 tag；开启时若抽到多人 tag 则自动屏蔽前置 1girl，未抽到则保留" />
+                                </WrapPanel>
                             </Grid>
 
                             <Grid Margin="0,6,0,0">
@@ -59,24 +67,6 @@
                                          ToolTip="固定拼接在每条结果最后面，逗号分隔" />
                             </Grid>
 
-                            <!-- 抽卡模式 -->
-                            <Grid Margin="0,4,0,2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="模式" Style="{StaticResource FieldLabel}"
-                                           Margin="0,0,8,0" VerticalAlignment="Center" />
-                                <WrapPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <RadioButton x:Name="RdoSfw" Content="SFW" GroupName="GachaMode" IsChecked="True"
-                                                 Margin="0,0,16,0" ToolTip="只抽安全 tag，不含成人内容" />
-                                    <RadioButton x:Name="RdoNsfw" Content="NSFW" GroupName="GachaMode"
-                                                 Margin="0,0,16,0" ToolTip="只抽成人 tag；该模块没有成人词时自动回退安全词" />
-                                    <RadioButton x:Name="RdoAny" Content="ANY" GroupName="GachaMode"
-                                                 Margin="0,0,16,0" ToolTip="安全与成人 tag 混合抽取" />
-                                </WrapPanel>
-                            </Grid>
-
                             <!-- 快捷方案 -->
                             <WrapPanel Margin="0,8,0,2">
                                 <Button Content="常规全身" Style="{StaticResource SecondaryButton}"
@@ -85,11 +75,11 @@
                                         Click="OnPresetStandard" />
                                 <Button Content="人设外貌" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
-                                        ToolTip="只抽脸、眼、发、体型，不带服装与场景"
+                                        ToolTip="脸、眼、发、兽耳、胸部尺寸 + 纯白背景，适合人设立绘"
                                         Click="OnPresetCharacterOnly" />
                                 <Button Content="服装展示" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
-                                        ToolTip="风格、衣物、配饰、鞋袜，聚焦穿搭"
+                                        ToolTip="主服装、鞋袜、配饰、姿势 + 纯白背景，避免过载堆砌"
                                         Click="OnPresetOutfit" />
                                 <Button Content="全部清空" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,0,4"
@@ -105,11 +95,15 @@
                             </Grid>
                             <WrapPanel>
                                 <CheckBox x:Name="ChkHairColor" Content="发色" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHairLength" Content="发长" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHairStyles" Content="发型" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHairAccessories" Content="发饰" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHairTraits" Content="发质/特效" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHairActions" Content="头发动作" Margin="0,0,14,3" />
+                            </WrapPanel>
+                            <WrapPanel Margin="0,4,0,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,14,3">
+                                    <TextBlock Text="发长" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                    <ComboBox x:Name="CmbHairLength" MinWidth="160" Height="26" VerticalContentAlignment="Center"
+                                              DisplayMemberPath="Label" SelectedValuePath="Value" />
+                                </StackPanel>
                             </WrapPanel>
 
                             <!-- 2. 面部与五官 -->
@@ -134,14 +128,15 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkBreastsSize" Content="胸部尺寸" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkBreastsDetails" Content="胸部细节" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkAssSize" Content="臀部尺寸" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkAssDetails" Content="臀部细节" IsChecked="True" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHands" Content="手部" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkFeet" Content="脚部" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkShoulders" Content="肩部" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkBodyOther" Content="其他部位" Margin="0,0,14,3" />
+                            </WrapPanel>
+                            <WrapPanel Margin="0,4,0,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,12,3">
+                                    <TextBlock Text="胸部尺寸" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                    <ComboBox x:Name="CmbBreastsSize" MinWidth="135" Height="26" VerticalContentAlignment="Center"
+                                              DisplayMemberPath="Label" SelectedValuePath="Value" />
+                                </StackPanel>
                             </WrapPanel>
 
                             <!-- 4. 服装与配饰 -->
@@ -154,8 +149,6 @@
                             <WrapPanel>
                                 <CheckBox x:Name="ChkClothing" Content="主服装" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkHeadwearNeckwear" Content="头饰/颈饰" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkSleeves" Content="袖型" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkHandwear" Content="手套/手饰" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkLegwear" Content="袜类/腿饰" IsChecked="True" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkFootwear" Content="鞋类" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkAccessories" Content="其他配饰" Margin="0,0,14,3" />
@@ -169,10 +162,8 @@
                                 </Border>
                             </Grid>
                             <WrapPanel>
-                                <CheckBox x:Name="ChkPosture" Content="全身姿势" IsChecked="True" Margin="0,0,14,3" Checked="OnPostureDanceToggleChanged" ToolTip="与「舞蹈」互斥" />
-                                <CheckBox x:Name="ChkGestures" Content="手势" Margin="0,0,14,3" />
-                                <CheckBox x:Name="ChkDances" Content="舞蹈" Margin="0,0,14,3" Checked="OnPostureDanceToggleChanged" ToolTip="与「全身姿势」互斥" />
-                                <CheckBox x:Name="ChkHolding" Content="手持物" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkPosture" Content="全身姿势" IsChecked="True" Margin="0,0,14,3" />
+                                <CheckBox x:Name="ChkGestures" Content="手势/手持" Margin="0,0,14,3" />
                                 <CheckBox x:Name="ChkVerbs" Content="一般动作" Margin="0,0,14,3" />
                             </WrapPanel>
 
