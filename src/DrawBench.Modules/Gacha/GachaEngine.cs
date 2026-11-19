@@ -151,7 +151,7 @@ public static class GachaEngine
         "nipple-to-nipple", "penis_to_breast", "reverse_paizuri",
 
         // pose_and_action.posture (sfw)
-        "cheek-to-breast", "head_on_chest", "hug", "arm_hug", "carrying",
+        "cheek-to-breast", "sitting_on_lap", "head_on_chest", "hug", "arm_hug", "carrying",
 
         // pose_and_action.posture (nsfw)
         "sex", "69", "sex_from_behind", "doggystyle", "prone_bone", "standing_sex",

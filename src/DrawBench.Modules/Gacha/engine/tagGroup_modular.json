@@ -19,7 +19,21 @@
         "see-through_hair",
         "gradient_hair",
         "split-color_hair",
-        "two-tone_hair"
+        "two-tone_hair",
+        "two-tone_hair, black_hair, white_hair",
+        "two-tone_hair, pink_hair, blue_hair",
+        "two-tone_hair, red_hair, black_hair",
+        "gradient_hair, blonde_hair, pink_hair",
+        "gradient_hair, blue_hair, purple_hair",
+        "light_brown_hair",
+        "light_blue_hair",
+        "light_purple_hair",
+        "dark_blue_hair",
+        "platinum_blonde_hair",
+        "light_green_hair",
+        "gradient_hair, black_hair, red_hair",
+        "gradient_hair, white_hair, blue_hair",
+        "split-color_hair, black_hair, white_hair"
       ]
     },
     "hair_length": {
@@ -166,7 +180,8 @@
         "hair_up",
         "sidecut",
         "blunt_ends",
-        "hair_intakes"
+        "hair_intakes",
+        "ponytail"
       ],
       "nsfw": []
     },
@@ -401,7 +416,10 @@
         "akanbe",
         "doyagao",
         "heart_in_mouth",
-        "sexually_suggestive"
+        "sexually_suggestive",
+        "mole_under_eye",
+        "mole_under_mouth",
+        "sharp_teeth"
       ],
       "nsfw": [
         "afterglow",
@@ -502,7 +520,29 @@
         "cleavage",
         "sideboob",
         "underboob",
-        "midriff"
+        "midriff",
+        "skindentation",
+        "sweat",
+        "shiny_skin",
+        "steaming_body",
+        "goosebumps",
+        "wet",
+        "hickey",
+        "bite_marks",
+        "handprint",
+        "halo",
+        "horns",
+        "demon_horns",
+        "dragon_horns",
+        "angel_wings",
+        "demon_wings",
+        "feathered_wings",
+        "low_wings",
+        "cat_tail",
+        "fox_tail",
+        "horse_tail",
+        "demon_tail",
+        "animal_ear_fluff"
       ],
       "nsfw": [
         "one_breast_out",
@@ -708,7 +748,36 @@
         "wa_lolita",
         "idol_clothes",
         "bondage_outfit",
-        "reverse_bikini_armor"
+        "reverse_bikini_armor",
+        "flight_attendant",
+        "evening_gown",
+        "cocktail_dress",
+        "wedding_dress",
+        "witch",
+        "virgin_killer_sweater",
+        "oversized_shirt",
+        "white_bodycon",
+        "silk_robe",
+        "evening_gown, bare_shoulders, side_slit",
+        "wedding_dress, veil, white_gloves",
+        "wet_clothes, see-through_clothes",
+        "latex_bodysuit, glossy",
+        "magical_girl",
+        "highleg_leotard",
+        "white_dress",
+        "black_dress",
+        "blazer, dress_shirt, plaid_skirt",
+        "cardigan, blouse, pleated_skirt",
+        "sailor_shirt, pleated_skirt",
+        "hoodie, denim_shorts",
+        "oversized_shirt, dolphin_shorts",
+        "t-shirt, cutoff_jeans",
+        "cropped_jacket, tank_top, yoga_pants",
+        "turtleneck_sweater, miniskirt",
+        "long_coat, sweater, pleated_skirt",
+        "off-shoulder_sweater, high-waist_skirt",
+        "crop_top, lowleg_shorts",
+        "camisole, cardigan, miniskirt"
       ],
       "nsfw": [
         "completely_nude",
@@ -854,7 +923,13 @@
         "underboob_cutout",
         "back_cutout",
         "navel_cutout",
-        "stomach_cutout"
+        "stomach_cutout",
+        "cropped_blouse",
+        "deep_v-neckline",
+        "white_shirt",
+        "black_shirt",
+        "black_jacket",
+        "white_jacket"
       ],
       "nsfw": [
         "open_bra",
@@ -925,7 +1000,10 @@
         "hip_vent",
         "leg_cutout",
         "thigh_cutout",
-        "side_slit"
+        "side_slit",
+        "highleg_panties",
+        "black_skirt",
+        "black_shorts"
       ],
       "nsfw": [
         "bottomless",
@@ -996,7 +1074,13 @@
         "ankle_socks",
         "bobby_socks",
         "tabi",
-        "tube_socks"
+        "tube_socks",
+        "one_stocking_rolled_down",
+        "ripped_stockings",
+        "single_thighhigh",
+        "black_thighhighs",
+        "white_thighhighs",
+        "black_pantyhose"
       ],
       "nsfw": [
         "crotchless_pantyhose",
@@ -1481,7 +1565,11 @@
         "singing",
         "pillow_straddling",
         "pantyshot",
-        "crucifixion"
+        "crucifixion",
+        "against_wall",
+        "against_window",
+        "on_bed",
+        "sitting_on_lap"
       ],
       "nsfw": [
         "sex",
@@ -1994,7 +2082,14 @@
         "collar_tug",
         "dress_tug",
         "shirt_tug",
-        "skirt_tug"
+        "skirt_tug",
+        "finger_on_lips",
+        "licking_lips",
+        "akimbo",
+        "hand_on_hip",
+        "hands_above_head",
+        "hand_on_wall",
+        "selfie"
       ],
       "nsfw": [
         "grabbing_own_ass",
@@ -2223,7 +2318,10 @@
         "church",
         "cathedral",
         "observatory",
-        "planetarium"
+        "planetarium",
+        "stairwell",
+        "elevator",
+        "sofa"
       ],
       "nsfw": [
         "glory_hole",
