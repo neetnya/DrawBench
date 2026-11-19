@@ -39,10 +39,10 @@
                                 <WrapPanel Grid.Column="3" VerticalAlignment="Center">
                                     <CheckBox x:Name="ChkSpace" Content="下划线转空格"
                                               IsChecked="True" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                    <CheckBox x:Name="ChkNsfw" Content="NSFW"
+                                    <CheckBox x:Name="ChkNsfw" Content="启用过激池"
                                               IsChecked="False" Margin="0,0,12,0" VerticalAlignment="Center"
-                                              ToolTip="关闭时只抽 SFW 安全词；开启时混合抽取 SFW 与 NSFW 词" />
-                                    <CheckBox x:Name="ChkMultiPerson" Content="多人"
+                                              ToolTip="关闭时只抽常规池；开启时混合抽取常规池与过激（Explicit）池" />
+                                    <CheckBox x:Name="ChkMultiPerson" Content="启用多人"
                                               IsChecked="False" VerticalAlignment="Center"
                                               ToolTip="关闭时不抽需要多人的 tag；开启时若抽到多人 tag 则自动屏蔽前置 1girl, solo，未抽到则保留" />
                                 </WrapPanel>
@@ -200,30 +200,16 @@
                         </Border>
 
                         <Grid>
-                            <TextBox x:Name="TxtResult" IsReadOnly="True" AcceptsReturn="True"
+                            <TextBox x:Name="TxtResult" IsReadOnly="True" AcceptsReturn="True" Cursor="IBeam"
                                      Style="{StaticResource ConsoleBox}"
                                      TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                                      VerticalContentAlignment="Top" Padding="10,8" FontSize="16"
                                      FontWeight="Normal" Foreground="{StaticResource Ink}" />
-                            <TextBlock IsHitTestVisible="False" Margin="16,15,16,0" VerticalAlignment="Top"
-                                       TextWrapping="Wrap" FontSize="14" Foreground="{StaticResource Muted}"
-                                       Text="在左侧选择需要的参数，点击下方「抽卡」即可生成提示词">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=TxtResult}" Value="">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
                         </Grid>
                     </DockPanel>
                 </TabItem>
                 <TabItem Header="抽取明细" x:Name="TabLog">
-                    <TextBox x:Name="TxtLog" IsReadOnly="True" AcceptsReturn="True" Margin="8,8,8,8"
+                    <TextBox x:Name="TxtLog" IsReadOnly="True" AcceptsReturn="True" Cursor="IBeam" Margin="8,8,8,8"
                              Style="{StaticResource ConsoleBox}"
                              TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Top"

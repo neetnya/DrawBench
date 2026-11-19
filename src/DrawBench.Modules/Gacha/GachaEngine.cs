@@ -65,6 +65,9 @@ public sealed class RatingPool
 
     /// <summary>NSFW 开启时是否两池各抽一条。</summary>
     public bool Both { get; set; }
+
+    /// <summary>可选相对权重（未列出默认 1），随机抽取时生效。</summary>
+    public Dictionary<string, int>? Weights { get; set; }
 }
 
 public sealed class GachaDrawItem
@@ -143,7 +146,7 @@ public static class GachaEngine
         "kissing_hair", "smelling_hair", "washing_hair",
 
         // body_parts.details & breasts_details
-        "breast_contest", "breast_envy", "carried_breast_rest",
+        "breast_contest", "breast_envy", "flat_envy", "bust_measuring", "carried_breast_rest",
         "biting_nipple", "licking_nipple", "mutual_breast_sucking",
         "nipple-to-nipple", "penis_to_breast", "reverse_paizuri",
 
@@ -275,7 +278,7 @@ public static class GachaEngine
         }
 
         // 普通槽位
-        var activeSlots = new List<(SlotSpec Slot, string? FixedTag, List<List<string>>? Pools, int Pick)>();
+        var activeSlots = new List<(SlotSpec Slot, string? FixedTag, List<List<string>>? Pools, int Pick, Dictionary<string, int>? Weights)>();
         foreach (var slot in Slots)
         {
             string choice = slot.GetChoice(options);
@@ -283,7 +286,7 @@ public static class GachaEngine
 
             if (!string.Equals(choice, GachaOptions.RandomChoice, StringComparison.Ordinal))
             {
-                activeSlots.Add((slot, choice, null, 1));
+                activeSlots.Add((slot, choice, null, 1, null));
                 continue;
             }
 
@@ -295,7 +298,7 @@ public static class GachaEngine
 
             var picked = SelectPools(pool, options.IncludeNsfw, options.AllowMultiPerson);
             if (picked.Count > 0)
-                activeSlots.Add((slot, null, picked, Math.Clamp(pool.Pick, 1, 4)));
+                activeSlots.Add((slot, null, picked, Math.Clamp(pool.Pick, 1, 4), pool.Weights));
         }
 
         // 服装下拉与场景下拉的可用池
@@ -345,7 +348,7 @@ public static class GachaEngine
                 item.LogLines.Add($"[{module}.{subCategory}] {label}：{formatted}");
             }
 
-            foreach (var (slot, fixedTag, pools, pick) in activeSlots)
+            foreach (var (slot, fixedTag, pools, pick, weights) in activeSlots)
             {
                 if (fixedTag != null)
                 {
@@ -367,13 +370,13 @@ public static class GachaEngine
                 for (int k = 0; k < totalDraws; k++)
                 {
                     var pool = pools[k % pools.Count];
-                    string rawTag = DrawUniqueInItem(pool, usedRawTags, rng);
+                    string rawTag = DrawUniqueInItem(pool, usedRawTags, rng, weights);
                     RecordTag(slot.Module, slot.SubCategory, slot.Label, rawTag);
 
                     // 发型抽到呆毛系时，额外再抽一次发型
                     if (slot.SubCategory == "hair_styles" && AhogeTags.Contains(rawTag))
                     {
-                        string extraTag = DrawUniqueInItem(pool, usedRawTags, rng, excludeAhoge: true);
+                        string extraTag = DrawUniqueInItem(pool, usedRawTags, rng, weights, excludeAhoge: true);
                         RecordTag(slot.Module, slot.SubCategory, $"{slot.Label}（呆毛额外）", extraTag);
                     }
                 }
@@ -515,22 +518,47 @@ public static class GachaEngine
         return filtered;
     }
 
-    /// <summary>单条结果内等概率随机抽取不重复 tag。</summary>
-    private static string DrawUniqueInItem(List<string> pool, HashSet<string> usedRawTags, Random rng, bool excludeAhoge = false)
+    /// <summary>单条结果内随机抽取不重复 tag（若配置了 Weights 则按权重加权随机，否则等概率）。</summary>
+    private static string DrawUniqueInItem(
+        List<string> pool,
+        HashSet<string> usedRawTags,
+        Random rng,
+        Dictionary<string, int>? weights = null,
+        bool excludeAhoge = false)
     {
         if (pool.Count == 0) return string.Empty;
 
-        var candidates = new List<string>(pool.Count);
+        var candidates = new List<(string Tag, int Weight)>(pool.Count);
+        int totalWeight = 0;
         foreach (string tag in pool)
         {
             if (usedRawTags.Contains(tag)) continue;
             if (excludeAhoge && AhogeTags.Contains(tag)) continue;
-            candidates.Add(tag);
+
+            int w = 1;
+            if (weights != null && weights.TryGetValue(tag, out int configured))
+                w = configured;
+            if (w <= 0) continue;
+
+            candidates.Add((tag, w));
+            totalWeight += w;
         }
 
-        return candidates.Count > 0
-            ? candidates[rng.Next(candidates.Count)]
-            : pool[rng.Next(pool.Count)];
+        if (candidates.Count == 0)
+            return pool[rng.Next(pool.Count)];
+        if (candidates.Count == 1 || totalWeight <= 0)
+            return candidates[0].Tag;
+
+        if (weights == null)
+            return candidates[rng.Next(candidates.Count)].Tag;
+
+        int roll = rng.Next(totalWeight);
+        foreach (var (tag, weight) in candidates)
+        {
+            if (roll < weight) return tag;
+            roll -= weight;
+        }
+        return candidates[^1].Tag;
     }
 
     /// <summary>等概率随机抽取一条 tag。</summary>

@@ -17,7 +17,10 @@
         "patterned_hair",
         "roots_(hair)",
         "spotted_hair",
-        "see-through_hair"
+        "see-through_hair",
+        "gradient_hair",
+        "split-color_hair",
+        "two-tone_hair"
       ]
     },
     "hair_length": {
@@ -28,7 +31,14 @@
         "very_long_hair",
         "absurdly_long_hair"
       ],
-      "nsfw": []
+      "nsfw": [],
+      "weights": {
+        "short_hair": 5,
+        "medium_hair": 6,
+        "long_hair": 8,
+        "very_long_hair": 3,
+        "absurdly_long_hair": 1
+      }
     },
     "hair_styles": {
       "sfw": [
@@ -156,7 +166,8 @@
         "hair_half_undone",
         "hair_up",
         "sidecut",
-        "blunt_ends"
+        "blunt_ends",
+        "hair_intakes"
       ],
       "nsfw": []
     },
@@ -388,13 +399,16 @@
         "x<",
         ":<",
         ":>",
-        "+_-"
+        "+_-",
+        "akanbe",
+        "doyagao",
+        "heart_in_mouth",
+        "sexually_suggestive"
       ],
       "nsfw": [
         "afterglow",
         "ahegao",
         "torogao",
-        "sexually_suggestive",
         "aroused",
         "moaning"
       ]
@@ -437,9 +451,18 @@
         "breasts",
         "medium_breasts",
         "large_breasts",
-        "huge_breasts"
+        "huge_breasts",
+        "gigantic_breasts"
       ],
-      "nsfw": []
+      "nsfw": [],
+      "weights": {
+        "small_breasts": 5,
+        "breasts": 8,
+        "medium_breasts": 8,
+        "large_breasts": 5,
+        "huge_breasts": 2,
+        "gigantic_breasts": 1
+      }
     },
     "details": {
       "sfw": [
@@ -476,7 +499,8 @@
         "curvy",
         "skinny",
         "tail",
-        "feet"
+        "feet",
+        "compressed_breasts"
       ],
       "nsfw": [
         "one_breast_out",
@@ -489,13 +513,15 @@
         "huge_nipples",
         "light_areolae",
         "nipple-to-nipple",
+        "nipple_bar",
         "nipple_bells",
         "nipple_ribbon",
         "nipple_rings",
         "nipple_tag",
         "small_nipples",
         "speckled_areolae",
-        "tied_nipples"
+        "tied_nipples",
+        "foot_pussy"
       ]
     }
   },
@@ -633,23 +659,33 @@
         "lowleg_bikini",
         "thong_bikini",
         "furisode_sleeves",
-        "ghost_costume"
-      ],
-      "nsfw": [
-        "completely_nude",
-        "nude",
+        "ghost_costume",
+        "hair_bikini",
         "clothes_down",
         "open_clothes",
         "see-through_clothes",
         "unbuttoned",
         "unzipped",
-        "lifting_covers",
-        "untied_bikini_bottom",
-        "untied_bikini_top",
         "open_kimono",
         "open_towel",
         "frontless_outfit",
         "sideless_outfit",
+        "underwear_only",
+        "downblouse",
+        "rei_no_himo",
+        "bodystocking",
+        "bikini_briefs",
+        "bodysuit",
+        "revealing_clothes",
+        "see-through_leotard",
+        "venus_bikini"
+      ],
+      "nsfw": [
+        "completely_nude",
+        "nude",
+        "lifting_covers",
+        "untied_bikini_bottom",
+        "untied_bikini_top",
         "naked_apron",
         "nearly_naked_apron",
         "naked_bandage",
@@ -669,12 +705,6 @@
         "naked_suspenders",
         "naked_tabard",
         "naked_towel",
-        "underwear_only",
-        "downblouse",
-        "rei_no_himo",
-        "bodystocking",
-        "bikini_briefs",
-        "bodysuit",
         "bondage_mittens",
         "breast_cutouts",
         "breastless_clothes",
@@ -683,11 +713,8 @@
         "crotchless",
         "crotchless_leotard",
         "crotchless_swimsuit",
-        "revealing_clothes",
         "reverse_outfit",
-        "reverse_bunnysuit",
-        "see-through_leotard",
-        "venus_bikini"
+        "reverse_bunnysuit"
       ]
     },
     "tops": {
@@ -776,7 +803,14 @@
         "bustier",
         "camisole",
         "sleeves_past_wrists",
-        "sleeves_past_fingers"
+        "sleeves_past_fingers",
+        "hair_over_breasts",
+        "hair_over_one_breast",
+        "single-shoulder_sweater",
+        "chest_binder",
+        "taut_shirt",
+        "underbust",
+        "single_breast_curtain"
       ],
       "nsfw": [
         "open_bra",
@@ -833,17 +867,18 @@
         "thong",
         "g-string",
         "fundoshi",
-        "side-tie_bikini_bottom"
-      ],
-      "nsfw": [
-        "bottomless",
+        "side-tie_bikini_bottom",
+        "hair_over_crotch",
         "open_pants",
         "open_shorts",
         "skirt_around_one_leg",
         "skirt_around_ankles",
         "open_skirt",
         "strapless_bottom",
-        "pearl_thong",
+        "pearl_thong"
+      ],
+      "nsfw": [
+        "bottomless",
         "backless_panties",
         "backless_pants",
         "crotchless_bloomers",
@@ -888,6 +923,7 @@
         "front-seamed_legwear",
         "side-seamed_legwear",
         "see-through_legwear",
+        "shiny_legwear",
         "toeless_legwear",
         "bridal_legwear",
         "stirrup_legwear",
@@ -951,10 +987,12 @@
         "winged_boots",
         "winged_shoes",
         "high_tops",
+        "converse",
         "oxfords",
         "flats",
         "mary_janes",
-        "barefoot"
+        "barefoot",
+        "no_shoes"
       ],
       "nsfw": []
     },
@@ -1344,6 +1382,7 @@
         "leaning",
         "sleeping",
         "sunbathing",
+        "horseback_riding",
         "swimming",
         "blowing_bubbles",
         "blowing_bubble_gum",
@@ -1368,21 +1407,35 @@
         "bouncing_breasts",
         "breast_contest",
         "breast_envy",
-        "crucifixion"
+        "looking_back",
+        "looking_afar",
+        "looking_around",
+        "bent_over",
+        "on_side",
+        "folded",
+        "knees_to_chest",
+        "legs_over_head",
+        "legs_up",
+        "spread_legs",
+        "breasts_on_table",
+        "breasts_on_glass",
+        "breast_conscious",
+        "flat_envy",
+        "playing_video_games",
+        "singing",
+        "pillow_straddling"
       ],
       "nsfw": [
         "sex",
         "69",
         "sex_from_behind",
         "doggystyle",
-        "bent_over",
         "prone_bone",
         "standing_sex",
         "top-down_bottom-up",
         "spitroast",
         "reverse_spitroast",
         "spooning",
-        "on_side",
         "girl_on_top",
         "amazon_position",
         "cowgirl_position",
@@ -1392,10 +1445,6 @@
         "reverse_upright_straddle",
         "upright_straddle",
         "boy_on_top",
-        "folded",
-        "knees_to_chest",
-        "legs_over_head",
-        "legs_up",
         "missionary",
         "mating_press",
         "suspended_congress",
@@ -1428,7 +1477,6 @@
         "cuffs-to-collar",
         "superman_exposure",
         "spread_eagle_position",
-        "spread_legs",
         "masturbation",
         "crotch_rub",
         "pillow_humping",
@@ -1734,7 +1782,9 @@
         "holding_violin",
         "holding_flower",
         "holding_cat",
+        "holding_dog",
         "holding_book",
+        "holding_riding_crop",
         "holding_weapon",
         "holding_card",
         "holding_dagger",
@@ -1827,31 +1877,63 @@
         "putting_on_legwear",
         "removing_pantyhose",
         "removing_sock",
-        "removing_thighhigh"
+        "removing_thighhigh",
+        "looking_at_phone",
+        "averting_eyes",
+        "hand_on_own_ass",
+        "hands_on_own_ass",
+        "torso_grab",
+        "hand_in_bra",
+        "leash",
+        "holding_underwear",
+        "undressing",
+        "untying",
+        "unzipping",
+        "cape_lift",
+        "strap_lift",
+        "strap_pull",
+        "strap_slip",
+        "towel_slip",
+        "dress_lift",
+        "kimono_lift",
+        "yukata_lift",
+        "shirt_lift",
+        "sweater_lift",
+        "skirt_pull",
+        "skirt_lift",
+        "poking_own_breast",
+        "between_breasts",
+        "card_between_breasts",
+        "object_on_breast",
+        "bubble_tea_challenge",
+        "breast_rest",
+        "carried_breast_rest",
+        "bust_measuring",
+        "weighing_breasts",
+        "carry_me",
+        "kitsune_no_mado",
+        "reloading",
+        "typing",
+        "tribadism_gesture",
+        "fed_by_viewer",
+        "cunnilingus_gesture",
+        "fellatio_gesture",
+        "handjob_gesture",
+        "penetration_gesture",
+        "groping_motion"
       ],
       "nsfw": [
         "grabbing_own_ass",
-        "hand_on_own_ass",
-        "hands_on_own_ass",
         "grabbing_another's_ass",
         "grabbing_another's_breast",
         "guided_breast_grab",
         "nipple_tweak",
         "crotch_grab",
         "grabbing_own_breast",
-        "torso_grab",
-        "cunnilingus_gesture",
-        "fellatio_gesture",
-        "handjob_gesture",
-        "penetration_gesture",
-        "groping_motion",
-        "hand_in_bra",
         "hand_on_own_crotch",
         "hands_on_own_crotch",
-        "leash",
         "holding_condom",
         "holding_sex_toy",
-        "holding_underwear",
         "ass_smack",
         "smelling_ass",
         "footjob",
@@ -1946,35 +2028,22 @@
         "penis_measuring",
         "reverse_paizuri",
         "clothing_aside",
-        "undressing",
-        "untying",
-        "unzipping",
         "bikini_bottom_aside",
         "bikini_pull",
-        "cape_lift",
-        "strap_lift",
-        "strap_pull",
-        "strap_slip",
         "swimsuit_aside",
         "one-piece_swimsuit_pull",
-        "towel_slip",
         "dress_pull",
         "leotard_pull",
         "kimono_pull",
         "pajamas_pull",
-        "dress_lift",
         "dress_aside",
         "leotard_aside",
         "hakama_pull",
-        "kimono_lift",
-        "yukata_lift",
         "panty_lift",
         "panty_pull",
         "shirt_aside",
-        "shirt_lift",
         "shirt_pull",
         "shirt_slip",
-        "sweater_lift",
         "top_pull",
         "bra_lift",
         "bra_pull",
@@ -1983,9 +2052,7 @@
         "panties_aside",
         "pants_pull",
         "shorts_aside",
-        "shorts_pull",
-        "skirt_pull",
-        "skirt_lift"
+        "shorts_pull"
       ]
     }
   },
@@ -2052,12 +2119,12 @@
         "apartment",
         "hotel",
         "pool",
-        "aquarium"
+        "aquarium",
+        "love_hotel"
       ],
       "nsfw": [
         "glory_hole",
-        "soapland",
-        "love_hotel"
+        "soapland"
       ]
     },
     "backgrounds": {
