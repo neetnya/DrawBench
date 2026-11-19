@@ -449,19 +449,17 @@
       "sfw": [
         "small_breasts",
         "breasts",
-        "medium_breasts",
         "large_breasts",
         "huge_breasts",
         "gigantic_breasts"
       ],
       "nsfw": [],
       "weights": {
-        "small_breasts": 5,
-        "breasts": 8,
-        "medium_breasts": 8,
-        "large_breasts": 5,
-        "huge_breasts": 2,
-        "gigantic_breasts": 1
+        "breasts": 40,
+        "small_breasts": 28,
+        "large_breasts": 16,
+        "huge_breasts": 4,
+        "gigantic_breasts": 2
       }
     },
     "details": {
@@ -500,7 +498,13 @@
         "skinny",
         "tail",
         "feet",
-        "compressed_breasts"
+        "compressed_breasts",
+        "no_bra",
+        "armpits",
+        "cleavage",
+        "sideboob",
+        "underboob",
+        "midriff"
       ],
       "nsfw": [
         "one_breast_out",
@@ -521,7 +525,9 @@
         "small_nipples",
         "speckled_areolae",
         "tied_nipples",
-        "foot_pussy"
+        "foot_pussy",
+        "areola_slip",
+        "nipple_slip"
       ]
     }
   },
@@ -678,7 +684,34 @@
         "bodysuit",
         "revealing_clothes",
         "see-through_leotard",
-        "venus_bikini"
+        "venus_bikini",
+        "preppy_fashion",
+        "sportswear",
+        "winter_clothes",
+        "cyber_fashion",
+        "decora",
+        "fairy_kei",
+        "french_girly",
+        "himekaji",
+        "jersey_maid",
+        "jirai_kei",
+        "mori_kei",
+        "subcul_jirai",
+        "tenshi_kaiwai",
+        "uchuu_kei",
+        "visual_kei",
+        "yami_kawaii",
+        "yume_kawaii",
+        "lolita_fashion",
+        "classic_lolita",
+        "gothic_lolita",
+        "hime_lolita",
+        "qi_lolita",
+        "sweet_lolita",
+        "wa_lolita",
+        "idol_clothes",
+        "bondage_outfit",
+        "reverse_bikini_armor"
       ],
       "nsfw": [
         "completely_nude",
@@ -810,14 +843,29 @@
         "chest_binder",
         "taut_shirt",
         "underbust",
-        "single_breast_curtain"
+        "single_breast_curtain",
+        "pasties",
+        "sleeveless",
+        "off_shoulder",
+        "bare_shoulders",
+        "bare_back",
+        "armpit_cutout",
+        "arm_cutout",
+        "shoulder_cutout",
+        "center_opening",
+        "cleavage_cutout",
+        "underboob_cutout",
+        "back_cutout",
+        "navel_cutout",
+        "stomach_cutout"
       ],
       "nsfw": [
         "open_bra",
         "breasts_out",
         "topless_female",
         "ball_bra",
-        "cupless_bra"
+        "cupless_bra",
+        "no_shirt"
       ]
     },
     "bottoms": {
@@ -875,7 +923,12 @@
         "skirt_around_ankles",
         "open_skirt",
         "strapless_bottom",
-        "pearl_thong"
+        "pearl_thong",
+        "bare_legs",
+        "hip_vent",
+        "leg_cutout",
+        "thigh_cutout",
+        "side_slit"
       ],
       "nsfw": [
         "bottomless",
@@ -992,7 +1045,11 @@
         "flats",
         "mary_janes",
         "barefoot",
-        "no_shoes"
+        "no_shoes",
+        "kiltie_loafers",
+        "sports_sandals",
+        "animal_slippers",
+        "uwabaki"
       ],
       "nsfw": []
     },
@@ -1314,7 +1371,12 @@
         "stud_earrings",
         "ear_chain",
         "mask",
-        "anklet"
+        "anklet",
+        "honggaitou",
+        "blindfold",
+        "collar",
+        "cuffs",
+        "handcuffs"
       ],
       "nsfw": []
     }
@@ -1423,7 +1485,8 @@
         "flat_envy",
         "playing_video_games",
         "singing",
-        "pillow_straddling"
+        "pillow_straddling",
+        "pantyshot"
       ],
       "nsfw": [
         "sex",
@@ -1624,7 +1687,16 @@
         "nipple_flick",
         "nipple_press",
         "nipple_rub",
-        "penis_to_breast"
+        "penis_to_breast",
+        "simulated_thigh_sex",
+        "kankaku_shadan",
+        "onahole",
+        "sex_toy",
+        "too_many_sex_toys",
+        "vibrator",
+        "clitoral_suction_vibrator",
+        "egg_vibrator",
+        "public_vibrator"
       ]
     },
     "gestures": {
@@ -1920,7 +1992,16 @@
         "fellatio_gesture",
         "handjob_gesture",
         "penetration_gesture",
-        "groping_motion"
+        "groping_motion",
+        "covering_breasts",
+        "covering_crotch",
+        "covering_one_eye",
+        "covering_own_eyes",
+        "covering_face",
+        "collar_tug",
+        "dress_tug",
+        "shirt_tug",
+        "skirt_tug"
       ],
       "nsfw": [
         "grabbing_own_ass",
@@ -2052,7 +2133,14 @@
         "panties_aside",
         "pants_pull",
         "shorts_aside",
-        "shorts_pull"
+        "shorts_pull",
+        "footjob_with_sandals",
+        "stealth_paizuri",
+        "guided_pectoral_grab",
+        "legjob",
+        "simulated_cunnilingus",
+        "simulated_fingering",
+        "simulated_masturbation"
       ]
     }
   },
@@ -2120,18 +2208,56 @@
         "hotel",
         "pool",
         "aquarium",
-        "love_hotel"
+        "love_hotel",
+        "ballroom",
+        "hotel_room",
+        "messy_room",
+        "otaku_room",
+        "conservatory",
+        "greenhouse",
+        "genkan",
+        "fitness_gym",
+        "dance_studio",
+        "fitting_room",
+        "poolside",
+        "backstage",
+        "studio",
+        "workshop",
+        "laboratory",
+        "casino",
+        "museum",
+        "gazebo",
+        "church",
+        "cathedral",
+        "observatory",
+        "planetarium"
       ],
       "nsfw": [
         "glory_hole",
-        "soapland"
+        "soapland",
+        "sex_shop",
+        "strip_club"
       ]
     },
     "backgrounds": {
       "sfw": [
-        "white_background"
+        "white_background",
+        "halftone_background",
+        "argyle_background",
+        "checkered_background",
+        "cross_background",
+        "dotted_background",
+        "gingham_background",
+        "grid_background",
+        "patterned_background",
+        "plaid_background",
+        "polka_dot_background",
+        "heart_background"
       ],
-      "nsfw": []
+      "nsfw": [],
+      "weights": {
+        "white_background": 8
+      }
     }
   }
 }

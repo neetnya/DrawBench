@@ -207,7 +207,9 @@ public static class GachaEngine
         "smother", "internal_cumshot", "josou_seme", "power_bottom", "futasub", "defloration",
         "hand_milking", "humping", "dry_humping", "penis_measuring", "spanking", "pantsing",
         "simulated_fellatio", "simulated_bukkake", "simulated_facial",
-        "simulated_handjob", "simulated_paizuri", "ass-to-mouth", "licking_cum",
+        "simulated_handjob", "simulated_paizuri",
+        "footjob_with_sandals", "stealth_paizuri", "guided_pectoral_grab", "legjob",
+        "simulated_cunnilingus", "simulated_thigh_sex", "ass-to-mouth", "licking_cum",
     };
 
     private readonly record struct SlotSpec(string Module, string SubCategory, string Label, Func<GachaOptions, string> GetChoice);
@@ -309,6 +311,7 @@ public static class GachaEngine
         var gesturesPools = GetPools(bank, "pose_and_action", "gestures", options);
         var locationsPools = GetPools(bank, "scene_and_composition", "locations", options);
         var backgroundsPools = GetPools(bank, "scene_and_composition", "backgrounds", options);
+        Dictionary<string, int>? backgroundsWeights = bank.TryGetValue("scene_and_composition", out var scMap) && scMap.TryGetValue("backgrounds", out var bgPool) ? bgPool.Weights : null;
 
         bool hasAttire = !string.IsNullOrEmpty(options.AttireMode) &&
                          (outfitsPools.Count > 0 || topsPools.Count > 0 || bottomsPools.Count > 0);
@@ -428,7 +431,7 @@ public static class GachaEngine
                 }
             }
 
-            // 场景下拉：不指定 / 随机 / 地点环境 / 纯白背景
+            // 场景下拉：不指定 / 随机 / 地点环境 / 简单背景
             if (hasScene)
             {
                 string mode = options.SceneMode;
@@ -443,7 +446,7 @@ public static class GachaEngine
                 else if (mode == GachaOptions.BackgroundsChoice && backgroundsPools.Count > 0)
                 {
                     var pool = backgroundsPools[rng.Next(backgroundsPools.Count)];
-                    RecordTag("scene_and_composition", "backgrounds", "纯白背景", DrawRandom(pool, rng));
+                    RecordTag("scene_and_composition", "backgrounds", "简单背景", DrawUniqueInItem(pool, usedRawTags, rng, backgroundsWeights));
                 }
             }
 

@@ -23,7 +23,7 @@ public partial class GachaView : UserControl
         { "short_hair", "medium_hair", "long_hair", "very_long_hair", "absurdly_long_hair" };
 
     private static readonly string[] FallbackBreastsSizes =
-        { "small_breasts", "breasts", "medium_breasts", "large_breasts", "huge_breasts", "gigantic_breasts" };
+        { "small_breasts", "breasts", "large_breasts", "huge_breasts", "gigantic_breasts" };
 
     private static readonly Dictionary<string, string> TagChineseLabels = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -34,7 +34,6 @@ public partial class GachaView : UserControl
         ["absurdly_long_hair"] = "极长发",
         ["small_breasts"] = "贫乳",
         ["breasts"] = "常规",
-        ["medium_breasts"] = "中等胸部",
         ["large_breasts"] = "巨乳",
         ["huge_breasts"] = "爆乳",
         ["gigantic_breasts"] = "超巨乳",
@@ -90,7 +89,7 @@ public partial class GachaView : UserControl
             new(GachaOptions.NoneChoice, "不指定"),
             new(GachaOptions.RandomChoice, "随机"),
             new(GachaOptions.LocationsChoice, "地点环境"),
-            new(GachaOptions.BackgroundsChoice, "纯白背景"),
+            new(GachaOptions.BackgroundsChoice, "简单背景"),
         };
         CmbSceneMode.SelectedValue = GachaOptions.LocationsChoice;
     }
@@ -238,7 +237,7 @@ public partial class GachaView : UserControl
         ApplyOptions(d);
     }
 
-    // 常规全身（按图 1）
+    // 常规全身
     private void OnPresetStandard(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
@@ -261,7 +260,7 @@ public partial class GachaView : UserControl
         });
     }
 
-    // 人设外貌（按图 2）
+    // 人设外貌
     private void OnPresetCharacterOnly(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>
@@ -285,7 +284,7 @@ public partial class GachaView : UserControl
         });
     }
 
-    // 服装展示（按图 3）
+    // 服装展示
     private void OnPresetOutfit(object sender, RoutedEventArgs e)
     {
         ApplyPreset(o =>

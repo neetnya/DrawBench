@@ -75,11 +75,11 @@
                                         Click="OnPresetStandard" />
                                 <Button Content="人设外貌" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
-                                        ToolTip="脸、眼、发、兽耳 + 纯白背景，适合人设立绘"
+                                        ToolTip="脸、眼、发、兽耳 + 简单背景，适合人设立绘"
                                         Click="OnPresetCharacterOnly" />
                                 <Button Content="服装展示" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,6,4"
-                                        ToolTip="服装、鞋袜、配饰、姿势 + 纯白背景"
+                                        ToolTip="服装、鞋袜、配饰、姿势 + 简单背景"
                                         Click="OnPresetOutfit" />
                                 <Button Content="全部清空" Style="{StaticResource SecondaryButton}"
                                         Padding="8,3" MinHeight="24" FontSize="11.5" Margin="0,0,0,4"
