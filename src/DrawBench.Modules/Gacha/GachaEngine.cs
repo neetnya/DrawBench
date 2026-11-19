@@ -189,7 +189,7 @@ public static class GachaEngine
         "handjob", "caressing_testicles", "double_handjob", "cooperative_handjob",
         "nursing_handjob", "cuddling_handjob", "reverse_nursing_handjob",
         "reach-around", "two-handed_handjob", "mutual_masturbation", "tailjob",
-        "oral", "anilingus", "breast_sucking", "cunnilingus", "implied_cunnilingus",
+        "oral", "breast_sucking", "cunnilingus", "implied_cunnilingus",
         "fellatio", "assisted_fellatio", "cum_swap", "deepthroat", "implied_fellatio",
         "irrumatio", "cooperative_fellatio", "upright_69", "hug_and_suck",
         "licking_testicle", "sitting_on_face", "testicle_sucking", "licking_armpit",

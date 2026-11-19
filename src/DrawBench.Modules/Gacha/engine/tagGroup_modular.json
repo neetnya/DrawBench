@@ -19,9 +19,7 @@
         "see-through_hair",
         "gradient_hair",
         "split-color_hair",
-        "two-tone_hair",
         "two-tone_hair, black_hair, white_hair",
-        "two-tone_hair, pink_hair, blue_hair",
         "two-tone_hair, red_hair, black_hair",
         "gradient_hair, blonde_hair, pink_hair",
         "gradient_hair, blue_hair, purple_hair",
@@ -34,7 +32,10 @@
         "gradient_hair, black_hair, red_hair",
         "gradient_hair, white_hair, blue_hair",
         "split-color_hair, black_hair, white_hair"
-      ]
+      ],
+      "weights": {
+        "black_hair": 21
+      }
     },
     "hair_length": {
       "sfw": [
@@ -285,7 +286,6 @@
         "skull-shaped_pupils",
         "slit_pupils",
         "snowflake_pupils",
-        "solid_circle_pupils",
         "star-shaped_pupils",
         "triangle-shaped_pupils",
         "x-shaped_pupils"
@@ -402,7 +402,6 @@
         "0w0",
         "uwu",
         "t_t",
-        "x_mouth",
         ">_<",
         ">3<",
         ">o<",
@@ -418,8 +417,7 @@
         "heart_in_mouth",
         "sexually_suggestive",
         "mole_under_eye",
-        "mole_under_mouth",
-        "sharp_teeth"
+        "mole_under_mouth"
       ],
       "nsfw": [
         "afterglow",
@@ -854,7 +852,6 @@
         "tunic",
         "midriff_sarashi",
         "chest_sarashi",
-        "budget_sarashi",
         "undone_sarashi",
         "capelet",
         "cloak",
@@ -995,7 +992,6 @@
         "skirt_around_ankles",
         "open_skirt",
         "strapless_bottom",
-        "pearl_thong",
         "bare_legs",
         "hip_vent",
         "leg_cutout",
@@ -1854,7 +1850,6 @@
         "fist_pump",
         "paw_pose",
         "power_fist",
-        "raised_fist",
         "stroking_own_chin",
         "air_guitar",
         "bowing",
@@ -2096,7 +2091,6 @@
         "grabbing_another's_ass",
         "grabbing_another's_breast",
         "guided_breast_grab",
-        "nipple_tweak",
         "crotch_grab",
         "grabbing_own_breast",
         "hand_on_own_crotch",
@@ -2154,7 +2148,6 @@
         "mutual_masturbation",
         "stealth_masturbation",
         "oral",
-        "anilingus",
         "breast_sucking",
         "cunnilingus",
         "autocunnilingus",
