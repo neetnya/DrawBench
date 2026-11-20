@@ -13,6 +13,7 @@ namespace DrawBench.Modules.Batch;
 public sealed class BatchModule : IToolModule, IActivatableModule, ITextReceiver
 {
     private readonly SettingsStore _store = SettingsStore.Shared;
+    private readonly object _gate = new();
     private readonly List<(string Text, string Source)> _pending = new();
     private BatchView? _view;
 
@@ -26,15 +27,32 @@ public sealed class BatchModule : IToolModule, IActivatableModule, ITextReceiver
     public string Description => "把提示词队列写进 ComfyUI 工作流并批量排队";
     public string Glyph => "\uE768";   // Play
 
-    public System.Windows.FrameworkElement CreateView()
+    public FrameworkElement CreateView()
     {
-        if (_view != null) return _view;
+        BatchView view;
+        List<(string Text, string Source)>? toFlush = null;
 
-        _view = new BatchView(_store);
-        SharedContext.Current.RegisterSink(ModuleIds.Batch, ReceiveTextInternal);
-        FlushPending();
+        lock (_gate)
+        {
+            if (_view != null) return _view;
 
-        return _view;
+            view = new BatchView(_store);
+            _view = view;
+
+            if (_pending.Count > 0)
+            {
+                toFlush = new List<(string Text, string Source)>(_pending);
+                _pending.Clear();
+            }
+        }
+
+        if (toFlush != null)
+        {
+            foreach (var item in toFlush)
+                ApplyToView(view, item.Text);
+        }
+
+        return view;
     }
 
     public void OnActivated() { }
@@ -52,27 +70,22 @@ public sealed class BatchModule : IToolModule, IActivatableModule, ITextReceiver
     {
         if (string.IsNullOrWhiteSpace(text)) return false;
 
-        if (_view == null)
+        BatchView? view;
+        lock (_gate)
         {
-            _pending.Add((text, source));
-            return true;
+            view = _view;
+            if (view == null)
+            {
+                _pending.Add((text, source));
+                return true;
+            }
         }
 
-        ApplyToView(_view, text);
+        ApplyToView(view, text);
         return true;
     }
 
     private bool ReceiveTextInternal(string text, string source) => ReceiveText(text, source);
-
-    private void FlushPending()
-    {
-        if (_view == null || _pending.Count == 0) return;
-
-        foreach (var item in _pending)
-            ApplyToView(_view, item.Text);
-
-        _pending.Clear();
-    }
 
     private static void ApplyToView(BatchView view, string text)
     {

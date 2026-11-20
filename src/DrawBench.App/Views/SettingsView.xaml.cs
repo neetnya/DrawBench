@@ -1,7 +1,11 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using DrawBench.Core;
+using DrawBench.Core.Logging;
 using DrawBench.Core.Python;
 
 namespace DrawBench.App.Views;
@@ -10,6 +14,7 @@ public partial class SettingsView : UserControl
 {
     private readonly SettingsStore _store;
     private readonly AppSection _section;
+    private CancellationTokenSource? _detectCts;
 
     public SettingsView(SettingsStore store, AppSection section)
     {
@@ -21,17 +26,35 @@ public partial class SettingsView : UserControl
         var current = Current;
         TxtPython.Text = current.PythonPath ?? string.Empty;
         TxtDataDir.Text = AppPaths.Current.AppDir;
-        ShowPython(PythonLocator.Resolve(current.PythonPath));
+
+        Loaded += (_, _) => _ = DetectPythonAsync(forceRefresh: false);
+        Unloaded += (_, _) => CancelDetect();
     }
 
     private AppSection Current => _store.Get<AppSection>("app") ?? _section;
 
-    private void Save(AppSection section)
+    private string? NormalizedManualPath()
     {
+        string text = (TxtPython.Text ?? string.Empty).Trim();
+        return text.Length == 0 ? null : text;
+    }
+
+    private void SaveCurrentPythonPath()
+    {
+        var section = Current;
+        string? path = NormalizedManualPath();
+        if (string.Equals(section.PythonPath, path, StringComparison.Ordinal)) return;
+
+        section.PythonPath = path;
         _store.Set("app", section);
     }
 
     // ==================== Python ====================
+
+    private void TxtPython_LostFocus(object sender, RoutedEventArgs e)
+    {
+        SaveCurrentPythonPath();
+    }
 
     private void BrowsePython_Click(object sender, RoutedEventArgs e)
     {
@@ -43,27 +66,88 @@ public partial class SettingsView : UserControl
         };
 
         if (dialog.ShowDialog(Window.GetWindow(this)) == true)
+        {
             TxtPython.Text = dialog.FileName;
+            SaveCurrentPythonPath();
+            _ = DetectPythonAsync(forceRefresh: true);
+        }
     }
 
     private void Redetect_Click(object sender, RoutedEventArgs e)
     {
-        var section = Current;
-        section.PythonPath = string.IsNullOrWhiteSpace(TxtPython.Text) ? null : TxtPython.Text.Trim();
-        Save(section);
-
-        var python = PythonLocator.Refresh(section.PythonPath);
-        ShowPython(python);
+        SaveCurrentPythonPath();
+        _ = DetectPythonAsync(forceRefresh: true);
     }
 
-    private void ShowPython(PythonInterpreter python)
+    private async Task DetectPythonAsync(bool forceRefresh)
     {
-        TxtPython.Text = python.Found ? python.Exe : string.Empty;
-        TxtPythonHint.Text = python.Found
-            ? "已找到：" + python.Describe()
-            : "未找到 Python。抽卡与拼图功能需要 Python 3.8+，装好并把 python.exe 加进 PATH，或在上面的框里指定路径。";
-        TxtPythonHint.Foreground = (System.Windows.Media.Brush)FindResource(python.Found ? "Muted" : "Danger");
+        CancelDetect();
+        var cts = new CancellationTokenSource();
+        _detectCts = cts;
+
+        string? manualPath = NormalizedManualPath();
+        BtnRedetect.IsEnabled = false;
+        TxtPythonHint.Text = "正在检测 Python…";
+        TxtPythonHint.Foreground = TryGetBrush("Muted");
+
+        try
+        {
+            var python = forceRefresh
+                ? await PythonLocator.RefreshAsync(manualPath, cts.Token)
+                : await PythonLocator.ResolveAsync(manualPath, cts.Token);
+
+            if (!ReferenceEquals(_detectCts, cts)) return;
+            ShowPython(python, manualPath);
+        }
+        catch (OperationCanceledException)
+        {
+            // 页面切换或新一轮检测取代
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("检测 Python 失败", ex);
+            if (ReferenceEquals(_detectCts, cts))
+            {
+                TxtPythonHint.Text = "检测失败：" + ex.Message;
+                TxtPythonHint.Foreground = TryGetBrush("Danger");
+            }
+        }
+        finally
+        {
+            if (ReferenceEquals(_detectCts, cts))
+                BtnRedetect.IsEnabled = true;
+        }
     }
+
+    private void CancelDetect()
+    {
+        var old = _detectCts;
+        _detectCts = null;
+        if (old != null)
+        {
+            try { old.Cancel(); } catch { }
+            old.Dispose();
+        }
+    }
+
+    private void ShowPython(PythonInterpreter python, string? manualPath)
+    {
+        // 不反写 TxtPython.Text，保留用户的原始配置（留空 = 自动探测）
+        if (python.Found)
+        {
+            string mode = string.IsNullOrEmpty(manualPath) ? "自动探测" : "已指定";
+            TxtPythonHint.Text = $"已找到（{mode}）：{python.Describe()}";
+            TxtPythonHint.Foreground = TryGetBrush("Muted");
+        }
+        else
+        {
+            TxtPythonHint.Text = "未找到 Python。拼图等脚本功能需要 Python 3.8+，装好并把 python.exe 加进 PATH，或在上面的框里指定路径。";
+            TxtPythonHint.Foreground = TryGetBrush("Danger");
+        }
+    }
+
+    private Brush TryGetBrush(string key) =>
+        TryFindResource(key) as Brush ?? Brushes.Gray;
 
     // ==================== 目录 ====================
 

@@ -1,5 +1,5 @@
 using System;
-using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -15,7 +15,8 @@ public enum ComfySubmitStatus
     Ok,
     Unreachable,
     Rejected,
-    HttpError
+    HttpError,
+    Cancelled
 }
 
 public sealed class ComfySubmitResult
@@ -36,17 +37,25 @@ public sealed class ComfyQueueStatus
 }
 
 /// <summary>
-/// ComfyUI HTTP 客户端。原 ComfyBatchTool 只做了 /prompt + 一个没接上的 /history，
-/// 这里补齐探测、队列查询和错误体解析，其他模块以后也能直接用。
+/// ComfyUI HTTP 客户端：复用进程级共享 HttpClient 防止 Socket 泄漏，
+/// 并为探活与提交分别设置合理的超时。
 /// </summary>
 public sealed class ComfyClient
 {
-    private readonly HttpClient _http;
+    private static readonly TimeSpan SubmitTimeout = TimeSpan.FromMinutes(5);
+    private static readonly TimeSpan ProbeTimeout = TimeSpan.FromSeconds(8);
+
+    private static readonly HttpClient SharedHttp = new(new SocketsHttpHandler
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10)
+    })
+    {
+        Timeout = Timeout.InfiniteTimeSpan
+    };
 
     public ComfyClient(string baseUrl)
     {
         BaseUrl = Normalize(baseUrl);
-        _http = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
     }
 
     public string BaseUrl { get; }
@@ -54,13 +63,16 @@ public sealed class ComfyClient
     /// <summary>提交一个 API 格式工作流。</summary>
     public async Task<ComfySubmitResult> SubmitAsync(JsonObject workflow, CancellationToken ct = default)
     {
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(SubmitTimeout);
+
         try
         {
             var payload = new { prompt = workflow, client_id = "DrawBench" };
             string json = JsonSerializer.Serialize(payload);
             using var content = new StringContent(json, Encoding.UTF8, "application/json");
-            using var resp = await _http.PostAsync($"{BaseUrl}/prompt", content, ct).ConfigureAwait(false);
-            string body = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            using var resp = await SharedHttp.PostAsync($"{BaseUrl}/prompt", content, timeoutCts.Token).ConfigureAwait(false);
+            string body = await resp.Content.ReadAsStringAsync(timeoutCts.Token).ConfigureAwait(false);
 
             if (!resp.IsSuccessStatusCode)
             {
@@ -97,7 +109,23 @@ public sealed class ComfyClient
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
-            return new ComfySubmitResult { Status = ComfySubmitStatus.HttpError, Message = "已取消" };
+            return new ComfySubmitResult { Status = ComfySubmitStatus.Cancelled, Message = "已取消" };
+        }
+        catch (OperationCanceledException)
+        {
+            return new ComfySubmitResult
+            {
+                Status = ComfySubmitStatus.Unreachable,
+                Message = $"连接 {BaseUrl} 超时"
+            };
+        }
+        catch (Exception ex) when (ex is UriFormatException or InvalidOperationException)
+        {
+            return new ComfySubmitResult
+            {
+                Status = ComfySubmitStatus.Unreachable,
+                Message = $"ComfyUI 地址格式无效（{BaseUrl}）：{ex.Message}"
+            };
         }
         catch (HttpRequestException ex)
         {
@@ -105,14 +133,6 @@ public sealed class ComfyClient
             {
                 Status = ComfySubmitStatus.Unreachable,
                 Message = $"连不上 ComfyUI（{BaseUrl}）：{ex.Message}"
-            };
-        }
-        catch (TaskCanceledException)
-        {
-            return new ComfySubmitResult
-            {
-                Status = ComfySubmitStatus.Unreachable,
-                Message = $"连接 {BaseUrl} 超时"
             };
         }
         catch (JsonException ex)
@@ -128,15 +148,23 @@ public sealed class ComfyClient
     /// <summary>某个 prompt 是否已经跑完（/history 里有记录即完成）。</summary>
     public async Task<bool> IsDoneAsync(string promptId, CancellationToken ct = default)
     {
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(ProbeTimeout);
+
         try
         {
-            using var resp = await _http.GetAsync($"{BaseUrl}/history/{promptId}", ct).ConfigureAwait(false);
+            string escaped = Uri.EscapeDataString(promptId);
+            using var resp = await SharedHttp.GetAsync($"{BaseUrl}/history/{escaped}", timeoutCts.Token).ConfigureAwait(false);
             if (!resp.IsSuccessStatusCode) return false;
 
-            string json = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            string json = await resp.Content.ReadAsStringAsync(timeoutCts.Token).ConfigureAwait(false);
             using var doc = JsonDocument.Parse(json);
             return doc.RootElement.ValueKind == JsonValueKind.Object &&
                    doc.RootElement.TryGetProperty(promptId, out _);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
         }
         catch
         {
@@ -144,15 +172,18 @@ public sealed class ComfyClient
         }
     }
 
-    /// <summary>查询队列长度，用于提交前判断 ComfyUI 是否在线。</summary>
+    /// <summary>查询队列长度，用于提交前判断 ComfyUI 是否在线（短超时 8 秒）。</summary>
     public async Task<ComfyQueueStatus> GetQueueAsync(CancellationToken ct = default)
     {
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(ProbeTimeout);
+
         try
         {
-            using var resp = await _http.GetAsync($"{BaseUrl}/queue", ct).ConfigureAwait(false);
+            using var resp = await SharedHttp.GetAsync($"{BaseUrl}/queue", timeoutCts.Token).ConfigureAwait(false);
             if (!resp.IsSuccessStatusCode) return new ComfyQueueStatus { Reachable = false };
 
-            string json = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            string json = await resp.Content.ReadAsStringAsync(timeoutCts.Token).ConfigureAwait(false);
             using var doc = JsonDocument.Parse(json);
             int Count(string name)
             {
@@ -162,6 +193,10 @@ public sealed class ComfyClient
             }
 
             return new ComfyQueueStatus { Reachable = true, Running = Count("queue_running"), Pending = Count("queue_pending") };
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
         }
         catch
         {
@@ -181,10 +216,6 @@ public sealed class ComfyClient
         return url.TrimEnd('/');
     }
 
-    /// <summary>
-    /// ComfyUI 校验失败时返回的是 {error, node_errors} 结构，
-    /// 把里面最有用的一句挑出来，别把整段 JSON 甩到用户脸上。
-    /// </summary>
     private static string DescribeRejection(string body, int statusCode)
     {
         try
@@ -208,7 +239,6 @@ public sealed class ComfyClient
         }
         catch (JsonException)
         {
-            // 落到下面的通用文案
         }
 
         return $"ComfyUI 返回 HTTP {statusCode}：{Truncate(body, 400)}";

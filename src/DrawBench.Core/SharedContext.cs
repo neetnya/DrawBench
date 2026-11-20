@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace DrawBench.Core;
 
@@ -9,12 +9,12 @@ namespace DrawBench.Core;
 /// </summary>
 public sealed class SharedContext
 {
-    private static SharedContext? _current;
+    private static readonly Lazy<SharedContext> CurrentLazy = new(() => new SharedContext());
 
-    public static SharedContext Current => _current ??= new SharedContext();
+    public static SharedContext Current => CurrentLazy.Value;
 
-    /// <summary>发文本给某个模块：由模块注册投递函数。</summary>
-    private readonly Dictionary<string, Func<string, string, bool>> _sinks = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>发文本给某个模块：由模块注册投递函数（线程安全）。</summary>
+    private readonly ConcurrentDictionary<string, Func<string, string, bool>> _sinks = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>模块请求外壳切换页面；外壳订阅后调用自己的导航。</summary>
     public event Action<string>? ModuleNavigationRequested;
@@ -30,6 +30,12 @@ public sealed class SharedContext
     {
         if (string.IsNullOrWhiteSpace(moduleId) || sink == null) return;
         _sinks[moduleId] = sink;
+    }
+
+    public void UnregisterSink(string moduleId)
+    {
+        if (string.IsNullOrWhiteSpace(moduleId)) return;
+        _sinks.TryRemove(moduleId, out _);
     }
 
     /// <summary>把文本投递给目标模块；返回 false 表示该模块还没注册或不接收文本。</summary>

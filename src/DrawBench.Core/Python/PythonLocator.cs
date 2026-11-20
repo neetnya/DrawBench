@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DrawBench.Core.Python;
 
@@ -31,57 +35,103 @@ public sealed class PythonInterpreter
 }
 
 /// <summary>
-/// 全应用唯一的 Python 探测：抽卡引擎和拼图脚本共用同一套逻辑。
+/// 全应用唯一的 Python 探测：拼图等需要 Python 的脚本共用同一套逻辑。
 /// 顺序：手动指定 → PATH 里的 python.exe（跳过 WindowsApps 占位）→ py -3 → python3。
 /// </summary>
 public static class PythonLocator
 {
-    private static readonly object Gate = new();
+    private const int ProbeTimeoutMs = 8000;
+
+    private static readonly object CacheLock = new();
     private static PythonInterpreter? _cached;
     private static string? _cachedManualPath;
 
-    /// <summary>探测（结果按 manualPath 缓存，界面上改了解释器路径就重新探）。</summary>
+    /// <summary>同步探测（兼容旧调用；结果按 manualPath 缓存，锁内不执行子进程）。</summary>
     public static PythonInterpreter Resolve(string? manualPath = null)
     {
-        lock (Gate)
+        if (TryGetCached(manualPath, out var cached))
+            return cached;
+
+        var detected = DetectAsync(manualPath, CancellationToken.None).GetAwaiter().GetResult();
+        UpdateCache(manualPath, detected);
+        return detected;
+    }
+
+    /// <summary>异步探测（推荐在 UI 中调用，不阻塞主线程）。</summary>
+    public static async Task<PythonInterpreter> ResolveAsync(string? manualPath = null, CancellationToken ct = default)
+    {
+        if (TryGetCached(manualPath, out var cached))
+            return cached;
+
+        var detected = await Task.Run(() => DetectAsync(manualPath, ct), ct).ConfigureAwait(false);
+        UpdateCache(manualPath, detected);
+        return detected;
+    }
+
+    /// <summary>强制重新探测（同步版）。</summary>
+    public static PythonInterpreter Refresh(string? manualPath = null)
+    {
+        ClearCache();
+        return Resolve(manualPath);
+    }
+
+    /// <summary>强制重新探测（异步版）。</summary>
+    public static Task<PythonInterpreter> RefreshAsync(string? manualPath = null, CancellationToken ct = default)
+    {
+        ClearCache();
+        return ResolveAsync(manualPath, ct);
+    }
+
+    private static bool TryGetCached(string? manualPath, out PythonInterpreter interpreter)
+    {
+        lock (CacheLock)
         {
             if (_cached != null && string.Equals(_cachedManualPath, manualPath, StringComparison.OrdinalIgnoreCase))
-                return _cached;
+            {
+                interpreter = _cached;
+                return true;
+            }
+        }
+        interpreter = null!;
+        return false;
+    }
 
+    private static void UpdateCache(string? manualPath, PythonInterpreter detected)
+    {
+        lock (CacheLock)
+        {
             _cachedManualPath = manualPath;
-            _cached = Detect(manualPath);
-            return _cached;
+            _cached = detected;
         }
     }
 
-    /// <summary>强制重新探测（用户在设置里点了「重新检测」）。</summary>
-    public static PythonInterpreter Refresh(string? manualPath = null)
+    private static void ClearCache()
     {
-        lock (Gate)
+        lock (CacheLock)
         {
             _cached = null;
             _cachedManualPath = null;
         }
-        return Resolve(manualPath);
     }
 
-    private static PythonInterpreter Detect(string? manualPath)
+    private static async Task<PythonInterpreter> DetectAsync(string? manualPath, CancellationToken ct)
     {
         // 1) 用户手填的路径：可以是 python.exe，也可以是整个目录
         if (!string.IsNullOrWhiteSpace(manualPath))
         {
-            var manual = TryManual(manualPath.Trim().Trim('"'));
+            var manual = await TryManualAsync(manualPath.Trim().Trim('"'), ct).ConfigureAwait(false);
             if (manual.Found) return manual;
         }
 
         // 2) PATH 里的 python.exe（Microsoft Store 的 WindowsApps 占位不算）
         foreach (string dir in PathDirectories())
         {
+            ct.ThrowIfCancellationRequested();
             if (dir.Contains("WindowsApps", StringComparison.OrdinalIgnoreCase)) continue;
             string candidate = Path.Combine(dir, "python.exe");
             if (!File.Exists(candidate)) continue;
 
-            var found = Probe(candidate);
+            var found = await ProbeAsync(candidate, null, ct).ConfigureAwait(false);
             if (found.Found) return found;
         }
 
@@ -89,30 +139,36 @@ public static class PythonLocator
         string py = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "py.exe");
         if (File.Exists(py))
         {
-            var found = Probe(py, new[] { "-3" });
+            var found = await ProbeAsync(py, new[] { "-3" }, ct).ConfigureAwait(false);
             if (found.Found) return found;
         }
 
-        // 4) 个别环境里只有 python3.exe
+        // 4) 个别环境里只有 python3.exe（同样跳过 WindowsApps 占位）
         foreach (string dir in PathDirectories())
         {
+            ct.ThrowIfCancellationRequested();
+            if (dir.Contains("WindowsApps", StringComparison.OrdinalIgnoreCase)) continue;
             string candidate = Path.Combine(dir, "python3.exe");
             if (!File.Exists(candidate)) continue;
 
-            var found = Probe(candidate);
+            var found = await ProbeAsync(candidate, null, ct).ConfigureAwait(false);
             if (found.Found) return found;
         }
 
         return new PythonInterpreter(string.Empty);
     }
 
-    private static PythonInterpreter TryManual(string path)
+    private static async Task<PythonInterpreter> TryManualAsync(string path, CancellationToken ct)
     {
         try
         {
             if (Directory.Exists(path)) path = Path.Combine(path, "python.exe");
             if (!File.Exists(path)) return new PythonInterpreter(string.Empty);
-            return Probe(path);
+            return await ProbeAsync(path, null, ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch
         {
@@ -120,37 +176,54 @@ public static class PythonLocator
         }
     }
 
-    /// <summary>跑一次 python -V，拿到版本号才算可用（避免探测到失效的 stub）。</summary>
-    private static PythonInterpreter Probe(string exe, IReadOnlyList<string>? prefix = null)
+    /// <summary>跑一次 python -V，并发读双流 + 真实 8 秒超时，避免管道死锁与挂起。</summary>
+    private static async Task<PythonInterpreter> ProbeAsync(string exe, IReadOnlyList<string>? prefix, CancellationToken ct)
     {
         try
         {
-            var psi = new System.Diagnostics.ProcessStartInfo
+            var psi = new ProcessStartInfo
             {
                 FileName = exe,
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
-                StandardErrorEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8
             };
             foreach (string p in prefix ?? Array.Empty<string>()) psi.ArgumentList.Add(p);
             psi.ArgumentList.Add("-V");
 
-            using var process = System.Diagnostics.Process.Start(psi);
+            using var process = Process.Start(psi);
             if (process == null) return new PythonInterpreter(string.Empty);
 
-            string output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
-            if (!process.WaitForExit(8000))
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeoutCts.CancelAfter(ProbeTimeoutMs);
+
+            var outTask = process.StandardOutput.ReadToEndAsync(timeoutCts.Token);
+            var errTask = process.StandardError.ReadToEndAsync(timeoutCts.Token);
+
+            try
             {
-                try { process.Kill(true); } catch { }
+                await process.WaitForExitAsync(timeoutCts.Token).ConfigureAwait(false);
+                await Task.WhenAll(outTask, errTask).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                try { process.Kill(entireProcessTree: true); } catch { }
+                if (ct.IsCancellationRequested) throw;
                 return new PythonInterpreter(string.Empty);
             }
+
             if (process.ExitCode != 0) return new PythonInterpreter(string.Empty);
 
+            string output = (outTask.Result ?? "") + (errTask.Result ?? "");
             var match = Regex.Match(output, @"Python\s+([\d.]+)", RegexOptions.IgnoreCase);
             return new PythonInterpreter(exe, prefix, match.Success ? "Python " + match.Groups[1].Value : output.Trim());
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
         }
         catch
         {

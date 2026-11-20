@@ -32,7 +32,13 @@ public partial class BatchView : UserControl
 
     private readonly SettingsStore _store;
     private BatchSettings _settings;
-    private static Encoding? _gbEncoding;
+    private static readonly Lazy<Encoding> Gb18030Lazy = new(() =>
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        return Encoding.GetEncoding(54936);
+    });
+    private static readonly char[] InvalidDateSuffixChars = { ':', '*', '?', '"', '<', '>', '|' };
+    private bool _isRunning;
 
     /// <summary>重建列表期间不要回写勾选状态，否则会拿半截列表覆盖已保存的勾选。</summary>
     private bool _suppressSelectionSave;
@@ -115,6 +121,8 @@ public partial class BatchView : UserControl
 
     private void LoadWorkflows()
     {
+        foreach (var old in _workflows)
+            old.PropertyChanged -= Workflow_PropertyChanged;
         _workflows.Clear();
         string targetDir = WorkflowDirectory;
 
@@ -220,13 +228,11 @@ public partial class BatchView : UserControl
     private void ChkGlobalLockSeed_Changed(object sender, RoutedEventArgs e)
     {
         UpdateSeedControls();
-        Persist();
     }
 
     private void TxtSeed_TextChanged(object sender, TextChangedEventArgs e)
     {
         UpdateSeedControls();
-        Persist();
     }
 
     private void TxtCount_TextChanged(object sender, TextChangedEventArgs e)
@@ -258,7 +264,7 @@ public partial class BatchView : UserControl
 
     private void UpdateBatchPreview()
     {
-        if (TxtPromptQueue is null || TxtCount is null || TxtStatus is null) return;
+        if (_isRunning || TxtPromptQueue is null || TxtCount is null || TxtStatus is null) return;
 
         int prompts = ParsePromptLines(TxtPromptQueue.Text).Count();
         int workflows = _workflows.Count(w => w.IsEnabled);
@@ -295,16 +301,16 @@ public partial class BatchView : UserControl
     private static bool IsSeedFixed(string? text)
     {
         if (string.IsNullOrWhiteSpace(text)) return false;
-        return long.TryParse(text.Trim(), out long seed) && seed != -1;
+        return long.TryParse(text.Trim(), out long seed) && seed >= 0;
     }
 
     private static bool TryParseSeed(string? text, out long? fixedSeed)
     {
         fixedSeed = null;
         if (string.IsNullOrWhiteSpace(text)) return true;
-        if (!long.TryParse(text.Trim(), out long seed)) return false;
+        if (!long.TryParse(text.Trim(), out long seed) || seed < -1) return false;
 
-        if (seed != -1) fixedSeed = seed;
+        if (seed >= 0) fixedSeed = seed;
         return true;
     }
 
@@ -397,10 +403,18 @@ public partial class BatchView : UserControl
 
         if (added.Count > 0)
         {
-            ReloadWorkflows();
-            // 刚加进来的默认勾选
-            foreach (var wf in _workflows.Where(w => added.Contains(w.FileName, StringComparer.OrdinalIgnoreCase)))
-                wf.IsEnabled = true;
+            _suppressSelectionSave = true;
+            try
+            {
+                LoadWorkflows();
+                // 刚加进来的默认勾选
+                foreach (var wf in _workflows.Where(w => added.Contains(w.FileName, StringComparer.OrdinalIgnoreCase)))
+                    wf.IsEnabled = true;
+            }
+            finally
+            {
+                _suppressSelectionSave = false;
+            }
             SaveSelection();
         }
 
@@ -451,10 +465,15 @@ public partial class BatchView : UserControl
             SetError("日期后缀不能为空，请填写后再开始。");
             return;
         }
+        if (dateSuffix.IndexOfAny(InvalidDateSuffixChars) >= 0 || dateSuffix.IndexOfAny(Path.GetInvalidPathChars()) >= 0)
+        {
+            SetError("日期后缀包含非法文件名字符（不能含 : * ? \" < > |）。");
+            return;
+        }
 
         if (!TryParseSeed(TxtSeed.Text, out long? fixedSeed))
         {
-            SetError("种子必须是整数（-1 表示保持原来的随机逻辑）。");
+            SetError("种子必须是非负整数，或填 -1 表示随机。");
             return;
         }
 
@@ -474,9 +493,11 @@ public partial class BatchView : UserControl
 
         var client = new ComfyClient(TxtBaseUrl.Text);
 
+        _isRunning = true;
         BtnRun.IsEnabled = false;
         TxtLog.Text = string.Empty;
-        SetStatus("正在提交…");
+        long totalTasks = (long)promptLines.Count * selected.Count * perPromptCount;
+        SetStatus($"正在提交 0/{totalTasks}…");
         AppendLog($"本次提交使用 {selected.Count} 个工作流：{string.Join("、", selected.Select(w => w.DisplayName))}");
 
         try
@@ -492,10 +513,11 @@ public partial class BatchView : UserControl
 
             int done = 0;
             int failed = 0;
+            bool disconnected = false;
+            var warnedWorkflows = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            async System.Threading.Tasks.Task SubmitOne(JsonObject clone, long? seed)
+            async System.Threading.Tasks.Task<bool> SubmitOne(WorkflowItem wf, JsonObject clone, long? seed)
             {
-                // seed 为 null 表示不锁定：每个工作流里的种子节点各自随机（与旧版行为一致）
                 if (seed.HasValue) ApplySeed(clone, seed.Value);
                 else RandomizeSeed(clone);
 
@@ -507,21 +529,40 @@ public partial class BatchView : UserControl
                 else
                 {
                     failed++;
-                    AppendLog($"✗ {result.Message}");
+                    AppendLog($"✗ [{wf.DisplayName}] {result.Message}");
+                    if (result.Status == ComfySubmitStatus.Unreachable)
+                    {
+                        disconnected = true;
+                        AppendLog("✗ ComfyUI 连接已中断，已中止剩余任务。");
+                        return false;
+                    }
                 }
+                SetStatus($"正在提交 {done + failed}/{totalTasks}…");
+                return true;
+            }
+
+            JsonObject PrepareClone(WorkflowItem wf, string prompt)
+            {
+                var clone = Clone(wf, prompt, negativePrompt, dateSuffix, out bool posMatched, out bool negMatched);
+                if (!posMatched && warnedWorkflows.Add(wf.FileName + ":pos"))
+                    AppendLog($"⚠ [{wf.DisplayName}] 未找到可写入的正向提示词节点，请检查节点标题或占位符。");
+                if (negativePrompt.Length > 0 && !negMatched && warnedWorkflows.Add(wf.FileName + ":neg"))
+                    AppendLog($"⚠ [{wf.DisplayName}] 未找到可写入的负向提示词节点，负向提示词未生效。");
+                return clone;
             }
 
             if (batchSeeds.Count > 0)
             {
-                // 全局锁定：外层是「轮」，轮内所有提示词、所有工作流共用一个 seed
                 foreach (long roundSeed in batchSeeds)
                 {
+                    if (disconnected) break;
                     foreach (var prompt in promptLines)
                     {
+                        if (disconnected) break;
                         foreach (var wf in selected)
                         {
-                            var clone = Clone(wf, prompt, negativePrompt, dateSuffix);
-                            await SubmitOne(clone, roundSeed);
+                            var clone = PrepareClone(wf, prompt);
+                            if (!await SubmitOne(wf, clone, roundSeed)) break;
                         }
                     }
                 }
@@ -530,26 +571,28 @@ public partial class BatchView : UserControl
             {
                 foreach (var prompt in promptLines)
                 {
+                    if (disconnected) break;
                     for (int i = 0; i < perPromptCount; i++)
                     {
-                        // 填了固定 seed 时所有图都用它；勾选「锁定 seed」时同一组提示词的所有工作流
-                        // 共用一个随机 seed；两者都不生效时传 null，让每个工作流各自随机。
+                        if (disconnected) break;
                         long? sharedSeed = fixedSeed ?? (lockSeed ? NextSeed() : null);
 
                         foreach (var wf in selected)
                         {
-                            var clone = Clone(wf, prompt, negativePrompt, dateSuffix);
-                            await SubmitOne(clone, sharedSeed);
+                            var clone = PrepareClone(wf, prompt);
+                            if (!await SubmitOne(wf, clone, sharedSeed)) break;
                         }
                     }
                 }
             }
 
             ShowSubmitted(done, failed, batchSeeds, fixedSeed);
-            SetStatus(failed == 0 ? "排队完成" : $"排队完成，{failed} 个失败");
+            SetStatus(disconnected ? "连接中断，已中止" : (failed == 0 ? "排队完成" : $"排队完成，{failed} 个失败"));
             AppLog.Info($"批量提交：成功 {done} 个，失败 {failed} 个");
 
-            if (failed > 0)
+            if (disconnected)
+                UiHost.Warn("提交中途与 ComfyUI 断开连接，已中止剩余任务。", "连接中断");
+            else if (failed > 0)
                 UiHost.Warn($"{failed} 个任务提交失败，原因见右侧运行日志。", "部分任务失败");
         }
         catch (Exception ex)
@@ -560,22 +603,24 @@ public partial class BatchView : UserControl
         }
         finally
         {
+            _isRunning = false;
             BtnRun.IsEnabled = true;
         }
     }
 
-    private static JsonObject Clone(WorkflowItem workflow, string prompt, string negativePrompt, string dateSuffix)
+    private static JsonObject Clone(WorkflowItem workflow, string prompt, string negativePrompt, string dateSuffix, out bool positiveMatched, out bool negativeMatched)
     {
-        var clone = JsonNode.Parse(workflow.Root.ToJsonString())!.AsObject();
-        SetPrompt(clone, prompt, PositiveNodeKeyword, PositivePlaceholder);
-        if (negativePrompt.Length > 0) SetPrompt(clone, negativePrompt, NegativeNodeKeyword, NegativePlaceholder);
+        var clone = workflow.Root.DeepClone().AsObject();
+        positiveMatched = SetPrompt(clone, prompt, PositiveNodeKeyword, PositivePlaceholder);
+        negativeMatched = negativePrompt.Length == 0 || SetPrompt(clone, negativePrompt, NegativeNodeKeyword, NegativePlaceholder);
         AppendDateToFilenamePrefix(clone, dateSuffix);
         return clone;
     }
 
     private void AppendLog(string line)
     {
-        TxtLog.Text = TxtLog.Text.Length == 0 ? line : TxtLog.Text + Environment.NewLine + line;
+        if (TxtLog.Text.Length > 0) TxtLog.AppendText(Environment.NewLine);
+        TxtLog.AppendText(line);
         TxtLog.ScrollToEnd();
     }
 
@@ -595,9 +640,9 @@ public partial class BatchView : UserControl
     /// 1. 文本里带占位符时：只替换占位那一段，模板原有的质量词保留；
     /// 2. 没有占位符时：拼接到模板提示词后面。
     /// </summary>
-    private static void SetPrompt(JsonObject root, string prompt, string nodeKeyword, string placeholder)
+    private static bool SetPrompt(JsonObject root, string prompt, string nodeKeyword, string placeholder)
     {
-        if (TrySetPromptNode(root, prompt, nodeKeyword, placeholder)) return;
+        if (TrySetPromptNode(root, prompt, nodeKeyword, placeholder)) return true;
 
         // 兜底：标题里没写关键字，但文本里写了占位符的节点（工作流被改过名时不至于漏掉）
         foreach (var kv in root)
@@ -606,8 +651,9 @@ public partial class BatchView : UserControl
             if (node["inputs"] is not JsonObject inputs ||
                 inputs["text"] is not JsonNode textNode) continue;
 
-            if (TryReplacePlaceholder(textNode, placeholder, prompt)) return;
+            if (TryReplacePlaceholder(textNode, placeholder, prompt)) return true;
         }
+        return false;
     }
 
     private static bool TrySetPromptNode(JsonObject root, string prompt, string nodeKeyword, string placeholder)
@@ -629,7 +675,7 @@ public partial class BatchView : UserControl
             }
             catch (Exception)
             {
-                return false; // text 不是字符串（比如被连成了节点）就不碰
+                continue; // text 不是字符串（比如被连成了节点）继续找下一个候选节点
             }
 
             originalText = originalText.Trim().TrimEnd(',', '，').TrimEnd();
@@ -744,7 +790,10 @@ public partial class BatchView : UserControl
 
     private void Prompt_PreviewDragOver(object sender, DragEventArgs e)
     {
-        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        bool hasTxt = e.Data.GetDataPresent(DataFormats.FileDrop)
+            && e.Data.GetData(DataFormats.FileDrop) is string[] paths
+            && paths.Any(p => File.Exists(p) && string.Equals(Path.GetExtension(p), ".txt", StringComparison.OrdinalIgnoreCase));
+        e.Effects = hasTxt ? DragDropEffects.Copy : DragDropEffects.None;
         e.Handled = true;
     }
 
@@ -811,53 +860,69 @@ public partial class BatchView : UserControl
     /// <summary>正向队列当前内容（供自检核对投递结果）。</summary>
     public string PromptQueueText => TxtPromptQueue.Text;
 
+    private void RunOnUi(Action action)
+    {
+        if (Dispatcher.CheckAccess()) action();
+        else Dispatcher.Invoke(action);
+    }
+
     /// <summary>外部（其他模块）送来的提示词覆盖正向队列（先清空再写入）。</summary>
     public void SetPositive(string text)
     {
         if (string.IsNullOrWhiteSpace(text)) return;
-
-        var lines = ParsePromptLines(text).ToList();
-        TxtPromptQueue.Text = string.Join(Environment.NewLine, lines);
-        TxtPromptQueue.CaretIndex = TxtPromptQueue.Text.Length;
-        TxtPromptQueue.ScrollToEnd();
-        SetStatus("已清空原队列并填入外部提示词。");
+        RunOnUi(() =>
+        {
+            var lines = ParsePromptLines(text).ToList();
+            TxtPromptQueue.Text = string.Join(Environment.NewLine, lines);
+            TxtPromptQueue.CaretIndex = TxtPromptQueue.Text.Length;
+            TxtPromptQueue.ScrollToEnd();
+            SetStatus("已清空原队列并填入外部提示词。");
+        });
     }
 
     /// <summary>外部（其他模块）送来的提示词追加到正向队列。</summary>
     public void AppendPositive(string text)
     {
         if (string.IsNullOrWhiteSpace(text)) return;
-
-        foreach (string line in ParsePromptLines(text))
+        RunOnUi(() =>
         {
+            var lines = ParsePromptLines(text).ToList();
+            if (lines.Count == 0) return;
             var existing = TxtPromptQueue.Text.TrimEnd();
-            TxtPromptQueue.Text = existing.Length == 0 ? line : existing + Environment.NewLine + line;
-        }
-        TxtPromptQueue.CaretIndex = TxtPromptQueue.Text.Length;
-        TxtPromptQueue.ScrollToEnd();
-        SetStatus("已追加外部提示词到队列。");
+            var addition = string.Join(Environment.NewLine, lines);
+            TxtPromptQueue.Text = existing.Length == 0 ? addition : existing + Environment.NewLine + addition;
+            TxtPromptQueue.CaretIndex = TxtPromptQueue.Text.Length;
+            TxtPromptQueue.ScrollToEnd();
+            SetStatus("已追加外部提示词到队列。");
+        });
     }
 
     /// <summary>外部送来的负向提示词覆盖负向框。</summary>
     public void SetNegative(string text)
     {
         if (string.IsNullOrWhiteSpace(text)) return;
-        TxtNegativePrompt.Text = text.Trim();
-        TxtNegativePrompt.CaretIndex = TxtNegativePrompt.Text.Length;
-        TxtNegativePrompt.ScrollToEnd();
-        SetStatus("已填入负向提示词。");
+        RunOnUi(() =>
+        {
+            TxtNegativePrompt.Text = text.Trim();
+            TxtNegativePrompt.CaretIndex = TxtNegativePrompt.Text.Length;
+            TxtNegativePrompt.ScrollToEnd();
+            SetStatus("已填入负向提示词。");
+        });
     }
 
     /// <summary>外部送来的负向提示词追加到负向框末尾。</summary>
     public void AppendNegative(string text)
     {
         if (string.IsNullOrWhiteSpace(text)) return;
-        var existing = TxtNegativePrompt.Text.TrimEnd();
-        var addition = text.Trim();
-        TxtNegativePrompt.Text = existing.Length == 0 ? addition : existing + Environment.NewLine + addition;
-        TxtNegativePrompt.CaretIndex = TxtNegativePrompt.Text.Length;
-        TxtNegativePrompt.ScrollToEnd();
-        SetStatus("已追加负向提示词。");
+        RunOnUi(() =>
+        {
+            var existing = TxtNegativePrompt.Text.TrimEnd();
+            var addition = text.Trim();
+            TxtNegativePrompt.Text = existing.Length == 0 ? addition : existing + Environment.NewLine + addition;
+            TxtNegativePrompt.CaretIndex = TxtNegativePrompt.Text.Length;
+            TxtNegativePrompt.ScrollToEnd();
+            SetStatus("已追加负向提示词。");
+        });
     }
 
     private static IEnumerable<string> ParsePromptLines(string text)
@@ -889,16 +954,7 @@ public partial class BatchView : UserControl
         }
     }
 
-    private static Encoding Gb18030
-    {
-        get
-        {
-            if (_gbEncoding != null) return _gbEncoding;
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            _gbEncoding = Encoding.GetEncoding(54936);
-            return _gbEncoding;
-        }
-    }
+    private static Encoding Gb18030 => Gb18030Lazy.Value;
 
     // ==================== 状态与日志 ====================
 

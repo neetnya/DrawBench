@@ -1,5 +1,6 @@
 using System;
 using DrawBench.Core;
+using DrawBench.Core.Logging;
 
 namespace DrawBench.Modules;
 
@@ -21,22 +22,28 @@ public static class AiBridge
 {
     /// <summary>清空批量提交模块的正向队列，并填入新的正向提示词。</summary>
     public static bool SendToBatchQueue(string text, string source)
-        => Deliver(ModuleIds.Batch, "replace:" + text, source);
+        => DeliverPrefixed(ModuleIds.Batch, "replace:", text, source);
 
     /// <summary>把正向提示词追加到批量提交模块的正向队列末尾。</summary>
     public static bool AppendToBatchQueue(string text, string source)
-        => Deliver(ModuleIds.Batch, "append:" + text, source);
+        => DeliverPrefixed(ModuleIds.Batch, "append:", text, source);
 
     /// <summary>替换批量提交模块的负向提示词。</summary>
     public static bool SendToBatchNegative(string text, string source)
-        => Deliver(ModuleIds.Batch, "negative:" + text, source);
+        => DeliverPrefixed(ModuleIds.Batch, "negative:", text, source);
 
     /// <summary>把负向提示词追加到批量提交模块的负向提示词末尾。</summary>
     public static bool AppendToBatchNegative(string text, string source)
-        => Deliver(ModuleIds.Batch, "negative-append:" + text, source);
+        => DeliverPrefixed(ModuleIds.Batch, "negative-append:", text, source);
 
     public static bool Send(string targetModuleId, string text, string source)
         => Deliver(targetModuleId, text, source);
+
+    private static bool DeliverPrefixed(string moduleId, string prefix, string text, string source)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return false;
+        return Deliver(moduleId, prefix + text, source);
+    }
 
     private static bool Deliver(string moduleId, string text, string source)
     {
@@ -45,8 +52,9 @@ public static class AiBridge
         {
             return SharedContext.Current.Deliver(moduleId, text, source);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            AppLog.Error($"模块投递失败（{source} -> {moduleId}）", ex);
             return false;
         }
     }

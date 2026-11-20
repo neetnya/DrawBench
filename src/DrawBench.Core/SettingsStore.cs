@@ -1,33 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using DrawBench.Core.Logging;
 
 namespace DrawBench.Core;
 
 /// <summary>
-/// 统一的 settings.json（位于 data\ 下）。各模块各占一个段，互不覆盖：
-///
-/// <code>
-/// {
-///   "app":     { "pythonPath": "" },
-///   "batch":   { ... },
-///   "collage": { ... },
-///   "tagger":  { ... },
-///   "gacha":   { ... }
-/// }
-/// </code>
-///
-/// 用「段 → JSON 原文」的方式存，模块读写自己的强类型对象，Core 不关心各模块长什么样。
+/// 统一的 settings.json（位于 data\ 下）。各模块各占一个段，互不覆盖。
+/// 写盘采用临时文件原子替换，避免中途崩溃损坏原有配置。
 /// </summary>
 public sealed class SettingsStore
 {
-    private static SettingsStore? _shared;
+    private static readonly Lazy<SettingsStore> SharedLazy = new(() => new SettingsStore());
 
-    /// <summary>
-    /// 全进程唯一实例。模块和外壳必须共用它——各自 new 一份会各自缓存文件内容，
-    /// 任一方写盘时会把别家刚写进去的段覆盖掉。
-    /// </summary>
-    public static SettingsStore Shared => _shared ??= new SettingsStore();
+    /// <summary>全进程唯一实例。</summary>
+    public static SettingsStore Shared => SharedLazy.Value;
 
     private readonly object _gate = new();
     private readonly Dictionary<string, string> _sections = new(StringComparer.OrdinalIgnoreCase);
@@ -51,14 +39,15 @@ public sealed class SettingsStore
             {
                 return JsonSerializer.Deserialize<T>(json, SettingsJson.Options);
             }
-            catch
+            catch (Exception ex)
             {
+                AppLog.Error($"解析配置段 [{section}] 失败", ex);
                 return null;
             }
         }
     }
 
-    /// <summary>写入某段并立即落盘。</summary>
+    /// <summary>写入某段并立即原子落盘。</summary>
     public void Set<T>(string section, T value)
     {
         lock (_gate)
@@ -67,8 +56,9 @@ public sealed class SettingsStore
             {
                 _sections[section] = JsonSerializer.Serialize(value, SettingsJson.Options);
             }
-            catch
+            catch (Exception ex)
             {
+                AppLog.Error($"序列化配置段 [{section}] 失败", ex);
                 return;
             }
             Save();
@@ -86,32 +76,49 @@ public sealed class SettingsStore
             foreach (var prop in doc.RootElement.EnumerateObject())
                 _sections[prop.Name] = prop.Value.GetRawText();
         }
-        catch
+        catch (Exception ex)
         {
-            // 配置损坏按首次运行处理，不影响启动
+            AppLog.Error($"读取配置文件失败（{_path}）", ex);
         }
     }
 
     private void Save()
     {
+        string? tmpPath = null;
         try
         {
-            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(_path)!);
+            string? dir = Path.GetDirectoryName(_path);
+            if (!string.IsNullOrEmpty(dir))
+                Directory.CreateDirectory(dir);
 
-            using var stream = File.Create(_path);
-            using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
-
-            writer.WriteStartObject();
-            foreach (var kv in _sections)
+            tmpPath = $"{_path}.{Guid.NewGuid():N}.tmp";
+            using (var stream = new FileStream(tmpPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true }))
             {
-                writer.WritePropertyName(kv.Key);
-                writer.WriteRawValue(kv.Value, skipInputValidation: true);
+                writer.WriteStartObject();
+                foreach (var kv in _sections)
+                {
+                    writer.WritePropertyName(kv.Key);
+                    writer.WriteRawValue(kv.Value, skipInputValidation: true);
+                }
+                writer.WriteEndObject();
+                writer.Flush();
+                stream.Flush(flushToDisk: true);
             }
-            writer.WriteEndObject();
+
+            File.Move(tmpPath, _path, overwrite: true);
+            tmpPath = null;
         }
-        catch
+        catch (Exception ex)
         {
-            // 目录只读等情况忽略：配置丢了不影响本次使用
+            AppLog.Error($"保存配置文件失败（{_path}）", ex);
+        }
+        finally
+        {
+            if (tmpPath != null)
+            {
+                try { File.Delete(tmpPath); } catch { }
+            }
         }
     }
 }

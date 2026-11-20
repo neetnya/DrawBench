@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using DrawBench.Core;
@@ -11,11 +11,24 @@ namespace DrawBench.App;
 
 public partial class App : Application
 {
+    private int _handlingUnhandledException;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         var paths = AppPaths.Current;
         paths.EnsureCreated();
         StartupTasks.Run();
+
+        // 尽早注册后台线程与未观察任务异常钩子，确保 CLI / SelfTest 模式崩溃也有日志
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            if (args.ExceptionObject is Exception ex) AppLog.Error("后台线程异常", ex);
+        };
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            AppLog.Error("任务异常", args.Exception);
+            args.SetObserved();
+        };
 
         // 开发期自检：--selftest <图片目录> 直接跑解析逻辑后退出
         string? selfTestDir = SelfTest.TargetDir(e.Args);
@@ -26,7 +39,7 @@ public partial class App : Application
             return;
         }
 
-        // 无界面模式：DrawBench.exe tagger --cli <目录> …（兼容旧的 WD14Tagger.exe --cli 写法）
+        // 无界面模式：DrawBench.exe tagger --cli <目录> …
         if (CliDispatcher.WantsCli(e.Args))
         {
             CliDispatcher.AttachConsole();
@@ -40,24 +53,25 @@ public partial class App : Application
         var store = SettingsStore.Shared;
         var appSection = store.Get<AppSection>("app") ?? new AppSection();
 
-        UiHost.OwnerProvider = () => Current.MainWindow;
+        UiHost.OwnerProvider = () => Current?.MainWindow;
 
-        // 统一日志：把异常留下痕迹，别让用户只看到窗口闪一下
+        // UI 线程未处理异常：防重入，避免渲染循环异常造成无限弹窗死循环
         DispatcherUnhandledException += (_, args) =>
         {
             AppLog.Error("未处理异常", args.Exception);
-            UiHost.Error("出了点问题：" + args.Exception.Message +
-                         "\n\n详情已写入日志：\n" + AppLog.FilePath);
+            if (Interlocked.Exchange(ref _handlingUnhandledException, 1) == 0)
+            {
+                try
+                {
+                    UiHost.Error("出了点问题：" + args.Exception.Message +
+                                 "\n\n详情已写入日志：\n" + AppLog.FilePath);
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _handlingUnhandledException, 0);
+                }
+            }
             args.Handled = true;
-        };
-        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
-        {
-            if (args.ExceptionObject is Exception ex) AppLog.Error("后台线程异常", ex);
-        };
-        TaskScheduler.UnobservedTaskException += (_, args) =>
-        {
-            AppLog.Error("任务异常", args.Exception);
-            args.SetObserved();
         };
 
         var window = new MainWindow(store, appSection);

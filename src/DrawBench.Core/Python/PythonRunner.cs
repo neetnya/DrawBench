@@ -5,13 +5,16 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DrawBench.Core.Logging;
 
 namespace DrawBench.Core.Python;
 
 /// <summary>一次 Python 调用的结果。</summary>
 public sealed class PythonResult
 {
-    public bool Ok => Failure == null && ExitCode == 0;
+    public bool Ok => Failure == null && !IsCancelled && ExitCode == 0;
+
+    public bool IsCancelled { get; init; }
 
     public int ExitCode { get; init; }
 
@@ -22,11 +25,12 @@ public sealed class PythonResult
     public string StdErr { get; init; } = string.Empty;
 
     public static PythonResult Fail(string message) => new() { Failure = message, ExitCode = -1 };
+
+    public static PythonResult Cancelled() => new() { IsCancelled = true, Failure = "已取消", ExitCode = -1 };
 }
 
 /// <summary>
 /// 起一个 Python 子进程跑脚本，逐行回传输出，支持取消。
-/// 抽卡（读 JSON）和拼图（读进度标记）都走这里，只是回调不同。
 /// </summary>
 public static class PythonRunner
 {
@@ -73,21 +77,31 @@ public static class PythonRunner
 
         var stdout = new StringBuilder();
         var stderr = new StringBuilder();
+        var outEof = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var errEof = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         try
         {
             using var process = new Process { StartInfo = psi };
             process.OutputDataReceived += (_, e) =>
             {
-                if (e.Data == null) return;
+                if (e.Data == null)
+                {
+                    outEof.TrySetResult();
+                    return;
+                }
                 lock (stdout) stdout.AppendLine(e.Data);
-                onLine?.Invoke(e.Data, false);
+                InvokeSafe(onLine, e.Data, isError: false);
             };
             process.ErrorDataReceived += (_, e) =>
             {
-                if (e.Data == null) return;
+                if (e.Data == null)
+                {
+                    errEof.TrySetResult();
+                    return;
+                }
                 lock (stderr) stderr.AppendLine(e.Data);
-                onLine?.Invoke(e.Data, true);
+                InvokeSafe(onLine, e.Data, isError: true);
             };
 
             if (!process.Start())
@@ -103,7 +117,26 @@ public static class PythonRunner
             catch (OperationCanceledException)
             {
                 try { process.Kill(entireProcessTree: true); } catch { }
-                return PythonResult.Fail("已取消");
+                try
+                {
+                    using var killWait = new CancellationTokenSource(2000);
+                    await process.WaitForExitAsync(killWait.Token).ConfigureAwait(false);
+                }
+                catch { }
+                return PythonResult.Cancelled();
+            }
+
+            // 等待异步输出管道真正收到 EOF，避免丢失退出瞬间的尾部日志
+            using (var drainCts = new CancellationTokenSource(3000))
+            {
+                try
+                {
+                    await Task.WhenAll(outEof.Task, errEof.Task).WaitAsync(drainCts.Token).ConfigureAwait(false);
+                }
+                catch (TimeoutException)
+                {
+                    // 极端情况下子进程孙进程占用句柄，超时后继续返回已有内容
+                }
             }
 
             string outText, errText;
@@ -119,7 +152,7 @@ public static class PythonRunner
         }
         catch (OperationCanceledException)
         {
-            return PythonResult.Fail("已取消");
+            return PythonResult.Cancelled();
         }
         catch (Exception ex)
         {
@@ -127,4 +160,16 @@ public static class PythonRunner
         }
     }
 
+    private static void InvokeSafe(Action<string, bool>? onLine, string line, bool isError)
+    {
+        if (onLine == null) return;
+        try
+        {
+            onLine(line, isError);
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("Python 输出回调异常", ex);
+        }
+    }
 }

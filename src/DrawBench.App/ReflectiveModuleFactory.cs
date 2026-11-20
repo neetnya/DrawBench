@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using DrawBench.Core;
 using DrawBench.Core.Logging;
 
@@ -7,7 +9,6 @@ namespace DrawBench.App;
 
 /// <summary>
 /// 通过反射创建 Modules 程序集里所有 <see cref="IToolModule"/> 实现。
-/// 这样外壳不需要逐个引用模块，加模块也只是往 Modules 里扔一个类。
 /// </summary>
 internal static class ReflectiveModuleFactory
 {
@@ -19,6 +20,11 @@ internal static class ReflectiveModuleFactory
         try
         {
             types = typeof(DrawBench.Modules.ModuleAssemblyMarker).Assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            AppLog.Error("部分模块类型加载失败，将继续加载可用模块", ex);
+            types = ex.Types.Where(t => t != null).ToArray()!;
         }
         catch (Exception ex)
         {
@@ -45,13 +51,12 @@ internal static class ReflectiveModuleFactory
             if (module != null) result.Add(module);
         }
 
-        // 导航顺序按 Order 约定：模块类里不用写，按标题手工排一下
         result.Sort((a, b) => ModuleOrder(a.Id).CompareTo(ModuleOrder(b.Id)));
         return result;
     }
 
     /// <summary>导航顺序：批量提交打头，其后是抽卡 → 回读 → 反推 → 对比。</summary>
-    private static int ModuleOrder(string id) => id.ToLowerInvariant() switch
+    private static int ModuleOrder(string? id) => (id ?? string.Empty).ToLowerInvariant() switch
     {
         "batch" => 0,
         "gacha" => 1,

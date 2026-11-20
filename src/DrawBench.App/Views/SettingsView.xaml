@@ -20,7 +20,7 @@
                 <GroupBox Header="Python 解释器" Padding="14,12" Margin="0,0,0,10">
                     <StackPanel>
                         <TextBlock Style="{StaticResource SubText}" Margin="0,0,0,8"
-                                   Text="抽卡与拼图两个功能需要本机 Python。留空则自动探测（PATH → py -3 → python3）。" />
+                                   Text="拼图等脚本功能需要本机 Python。留空则自动探测（PATH → py -3 → python3）。" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -28,7 +28,8 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="TxtPython" Grid.Column="0"
-                                     ToolTip="可填 python.exe 的完整路径，也可以填它所在的目录" />
+                                     LostFocus="TxtPython_LostFocus"
+                                     ToolTip="可填 python.exe 的完整路径，也可以填它所在的目录；留空表示自动探测" />
                             <Button x:Name="BtnBrowsePython" Grid.Column="1" Content="浏览…"
                                     Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
                                     Click="BrowsePython_Click" />

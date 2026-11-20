@@ -1,26 +1,19 @@
 using System;
+using System.Diagnostics;
 using System.IO;
+using DrawBench.Core.Logging;
 
 namespace DrawBench.Core;
 
 /// <summary>
 /// 便携目录约定：所有数据都在 exe 同级，删掉目录即恢复出厂。
-///
-/// <code>
-/// DrawBench.exe
-/// api\         ComfyUI 工作流 JSON（批量提交模块）
-/// engine\      抽卡引擎 Python 脚本
-/// scripts\     拼图脚本 gen_sheets_cli.py
-/// models\      反推模型 onnx + csv
-/// data\        全部配置与结果（settings.json / results.csv / 日志）
-/// </code>
 /// </summary>
 public sealed class AppPaths
 {
-    private static AppPaths? _current;
+    private static readonly Lazy<AppPaths> CurrentLazy = new(() => new AppPaths());
 
     /// <summary>进程内唯一的路径实例。</summary>
-    public static AppPaths Current => _current ??= new AppPaths();
+    public static AppPaths Current => CurrentLazy.Value;
 
     public AppPaths(string? appDir = null)
     {
@@ -61,21 +54,29 @@ public sealed class AppPaths
     /// <summary>在资源管理器中打开目录（不存在则先创建）。</summary>
     public static void OpenInExplorer(string dir)
     {
+        if (string.IsNullOrWhiteSpace(dir)) return;
+
         try
         {
             Directory.CreateDirectory(dir);
         }
-        catch
+        catch (Exception ex)
         {
-            // 创建失败也继续尝试打开，交给 explorer 报错
+            AppLog.Error($"创建目录失败（{dir}）", ex);
         }
 
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        try
         {
-            FileName = "explorer.exe",
-            Arguments = $"\"{dir}\"",
-            UseShellExecute = true
-        });
+            using var _ = Process.Start(new ProcessStartInfo
+            {
+                FileName = dir,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error($"打开资源管理器失败（{dir}）", ex);
+        }
     }
 
     /// <summary>exe 所在目录；找不到时退回当前 AppContext 目录。</summary>
