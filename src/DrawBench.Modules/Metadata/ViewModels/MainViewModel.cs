@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -74,8 +75,27 @@ public sealed class MainViewModel : ObservableObject
         get => _selected;
         set
         {
+            var previous = _selected;
             if (!Set(ref _selected, value)) return;
+            if (previous is not null) previous.Preview = null;
             _ = LoadPreviewAsync(value);
+        }
+    }
+
+    public void CancelPendingWork()
+    {
+        ReplaceCts(ref _scanCts, null);
+        ReplaceCts(ref _previewCts, null);
+    }
+
+    private static void ReplaceCts(ref CancellationTokenSource? field, CancellationTokenSource? next)
+    {
+        var old = field;
+        field = next;
+        if (old is not null)
+        {
+            try { old.Cancel(); } catch { }
+            old.Dispose();
         }
     }
 
@@ -94,27 +114,37 @@ public sealed class MainViewModel : ObservableObject
             return;
         }
 
-        _scanCts?.Cancel();
-        _previewCts?.Cancel();
-
         var cts = new CancellationTokenSource();
-        _scanCts = cts;
+        ReplaceCts(ref _scanCts, cts);
+        ReplaceCts(ref _previewCts, null);
 
         FolderPath = folder;
         Images.Clear();
         Selected = null;
+        OnPropertyChanged(nameof(HasImages));
         IsBusy = true;
         StatusText = "正在解析图片元数据…";
 
         List<string> files;
         try
         {
-            var option = IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            files = await Task.Run(() => Directory
-                .EnumerateFiles(folder, "*", option)
-                .Where(f => SupportedExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
-                .OrderBy(f => Path.GetFileName(f), StringComparer.OrdinalIgnoreCase)
-                .ToList(), cts.Token);
+            var enumOptions = new EnumerationOptions
+            {
+                RecurseSubdirectories = IncludeSubFolders,
+                IgnoreInaccessible = true
+            };
+            files = await Task.Run(() =>
+            {
+                var matched = new List<string>();
+                foreach (var f in Directory.EnumerateFiles(folder, "*", enumOptions))
+                {
+                    cts.Token.ThrowIfCancellationRequested();
+                    if (SupportedExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
+                        matched.Add(f);
+                }
+                matched.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(Path.GetFileName(a), Path.GetFileName(b)));
+                return matched;
+            }, cts.Token);
         }
         catch (OperationCanceledException)
         {
@@ -122,12 +152,13 @@ public sealed class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            if (!ReferenceEquals(_scanCts, cts)) return;
             IsBusy = false;
             StatusText = "读取文件夹失败：" + ex.Message;
             return;
         }
 
-        if (cts.IsCancellationRequested) return;
+        if (cts.IsCancellationRequested || !ReferenceEquals(_scanCts, cts)) return;
 
         if (files.Count == 0)
         {
@@ -139,7 +170,16 @@ public sealed class MainViewModel : ObservableObject
         List<ImageTagInfo> items;
         try
         {
-            items = await Task.Run(() => files.Select(ImageTagInfo.Load).ToList(), cts.Token);
+            items = await Task.Run(() =>
+            {
+                var list = new List<ImageTagInfo>(files.Count);
+                foreach (var f in files)
+                {
+                    cts.Token.ThrowIfCancellationRequested();
+                    list.Add(ImageTagInfo.Load(f));
+                }
+                return list;
+            }, cts.Token);
         }
         catch (OperationCanceledException)
         {
@@ -149,6 +189,7 @@ public sealed class MainViewModel : ObservableObject
         if (cts.IsCancellationRequested) return;
 
         foreach (var item in items) Images.Add(item);
+        OnPropertyChanged(nameof(HasImages));
 
         _parsedCount = items.Count(i => i.HasParameters);
         IsBusy = false;
@@ -182,9 +223,8 @@ public sealed class MainViewModel : ObservableObject
 
     private async Task LoadPreviewAsync(ImageTagInfo? item)
     {
-        _previewCts?.Cancel();
         var cts = new CancellationTokenSource();
-        _previewCts = cts;
+        ReplaceCts(ref _previewCts, cts);
 
         if (item is null || item.Preview is not null) return;
 
@@ -197,6 +237,10 @@ public sealed class MainViewModel : ObservableObject
         catch (OperationCanceledException)
         {
             // 快速切换选择时忽略
+        }
+        catch
+        {
+            // 预览加载失败不影响元数据展示
         }
     }
 
@@ -283,11 +327,11 @@ public sealed class MainViewModel : ObservableObject
                 Csv(p.Sampler),
                 Csv(p.Scheduler),
                 Csv(p.Steps?.ToString()),
-                Csv(p.CfgScale?.ToString("0.##")),
-                Csv(p.Seed?.ToString()),
-                Csv(p.Width?.ToString()),
-                Csv(p.Height?.ToString()),
-                Csv(p.Denoise?.ToString("0.##")),
+                Csv(p.CfgScale?.ToString("0.##", CultureInfo.InvariantCulture)),
+                Csv(p.Seed?.ToString(CultureInfo.InvariantCulture)),
+                Csv(p.Width?.ToString(CultureInfo.InvariantCulture)),
+                Csv(p.Height?.ToString(CultureInfo.InvariantCulture)),
+                Csv(p.Denoise?.ToString("0.##", CultureInfo.InvariantCulture)),
                 Csv(p.ClipSkip),
                 Csv(p.PositivePrompt),
                 Csv(p.NegativePrompt),

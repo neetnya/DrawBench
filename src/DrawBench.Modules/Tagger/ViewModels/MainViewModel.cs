@@ -149,6 +149,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         private set => Set(ref _detailImage, value);
     }
 
+    private bool _updatingSelectedTags;
     private string _selectedTagsText = "";
     /// <summary>文本框内容 = 实际复制/发送出去的内容（支持用户直接在框内手动增删编辑）。</summary>
     public string SelectedTagsText
@@ -157,9 +158,21 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         set
         {
             if (!Set(ref _selectedTagsText, value)) return;
-            if (_selectedItem != null) _selectedItem.Tags = value;
+            if (_selectedItem != null)
+            {
+                _selectedItem.Tags = value;
+                // 用户手动编辑后清除原始 Hits，避免切换复制格式时覆盖手工修改
+                if (!_updatingSelectedTags) _selectedItem.Hits = null;
+            }
             RefreshCommands();
         }
+    }
+
+    private void SetSelectedTagsTextProgrammatically(string value)
+    {
+        _updatingSelectedTags = true;
+        try { SelectedTagsText = value; }
+        finally { _updatingSelectedTags = false; }
     }
 
     private string _selectedRating = "";
@@ -509,7 +522,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         var item = SelectedItem;
         DetailImage = null;
         SelectedRating = item?.Rating ?? "";
-        SelectedTagsText = item?.Tags ?? "";
+        SetSelectedTagsTextProgrammatically(item?.Tags ?? "");
 
         RefreshCommands();
         if (item == null) return;
@@ -535,7 +548,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
 
         if (SelectedItem?.Hits != null)
-            SelectedTagsText = TagVocabulary.FormatCopy(SelectedItem.Hits, opts);
+            SetSelectedTagsTextProgrammatically(TagVocabulary.FormatCopy(SelectedItem.Hits, opts));
 
         RefreshCommands();
     }
@@ -608,14 +621,17 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             }
             _writer ??= new ResultWriter(_paths.TaggerCsvPath);
 
-            await Task.Run(() => tagger.Warmup());
+            _cts.Token.ThrowIfCancellationRequested();
+            await Task.Run(() => tagger.Warmup(), _cts.Token);
+            _cts.Token.ThrowIfCancellationRequested();
 
             StatusText = "正在反推…";
             var itemProgress = new Progress<ItemUpdate>(ApplyUpdate);
             var batchProgress = new Progress<BatchProgress>(ApplyProgress);
 
-            await _engine.RunAsync(targets, vocab, opts, _writer, tagger, _pause,
-                itemProgress, batchProgress, _cts.Token);
+            var token = _cts.Token;
+            await Task.Run(() => _engine.RunAsync(targets, vocab, opts, _writer, tagger, _pause,
+                itemProgress, batchProgress, token), token);
         }
         catch (OperationCanceledException)
         {
@@ -669,7 +685,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Items.Clear();
         SelectedItem = null;
         DetailImage = null;
-        SelectedTagsText = "";
+        SetSelectedTagsTextProgrammatically("");
         SelectedRating = "";
         OnPropertyChanged(nameof(HasItems));
         OnPropertyChanged(nameof(QueueSummary));
@@ -735,7 +751,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             writer.Clear();
             if (SelectedItem is { } sel)
             {
-                SelectedTagsText = sel.Tags;
+                SetSelectedTagsTextProgrammatically(sel.Tags);
                 SelectedRating = sel.Rating;
             }
 
@@ -812,7 +828,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (ReferenceEquals(item, SelectedItem))
         {
-            SelectedTagsText = item.Tags;
+            SetSelectedTagsTextProgrammatically(item.Tags);
             SelectedRating = item.Rating;
         }
     }

@@ -10,7 +10,7 @@ namespace DrawBench.Modules.Tagger;
 /// 反推模块：WD14 本地 ONNX 推理，把图片反推成标签。
 /// 同时提供命令行入口（DrawBench.exe tagger --cli …），兼容旧的 WD14Tagger.exe --cli 用法。
 /// </summary>
-public sealed class TaggerModule : IToolModule, IActivatableModule
+public sealed class TaggerModule : IToolModule, IActivatableModule, IDisposable
 {
     private TaggerView? _view;
 
@@ -31,6 +31,11 @@ public sealed class TaggerModule : IToolModule, IActivatableModule
     public void OnDeactivated()
     {
         if (_view?.DataContext is MainViewModel vm) vm.SaveConfig();
+    }
+
+    public void Dispose()
+    {
+        if (_view?.DataContext is MainViewModel vm) vm.Dispose();
     }
 
     /// <summary>命令行：tagger --cli &lt;路径...&gt;</summary>

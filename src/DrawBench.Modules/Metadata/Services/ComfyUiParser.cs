@@ -117,13 +117,16 @@ public static class ComfyUiParser
         {
             var ckpt = JsonUtil.Str(Input(node, "ckpt_name"));
             if (!string.IsNullOrWhiteSpace(ckpt))
-            {
                 p.Model ??= ckpt;
-                continue;
-            }
 
-            var unet = JsonUtil.Str(Input(node, "unet_name")) ?? JsonUtil.Str(Input(node, "model_name"));
-            if (!string.IsNullOrWhiteSpace(unet)) p.Model ??= unet;
+            var unet = JsonUtil.Str(Input(node, "unet_name"));
+            if (!string.IsNullOrWhiteSpace(unet))
+                p.Model ??= unet;
+            else if (p.Model is null && IsDiffusionModelNode(ClassName(node)))
+            {
+                var modelName = JsonUtil.Str(Input(node, "model_name"));
+                if (!string.IsNullOrWhiteSpace(modelName)) p.Model = modelName;
+            }
 
             var vae = JsonUtil.Str(Input(node, "vae_name"));
             if (!string.IsNullOrWhiteSpace(vae)) p.Vae ??= vae;
@@ -169,6 +172,13 @@ public static class ComfyUiParser
     private static string ClassName(JsonObject node)
         => JsonUtil.Str(node["class_type"]) ?? "";
 
+    private static bool IsDiffusionModelNode(string cls)
+        => !cls.Contains("Upscale", StringComparison.OrdinalIgnoreCase)
+           && !cls.Contains("SAM", StringComparison.OrdinalIgnoreCase)
+           && !cls.Contains("ControlNet", StringComparison.OrdinalIgnoreCase)
+           && !cls.Contains("Detailer", StringComparison.OrdinalIgnoreCase)
+           && !cls.Contains("Ultralytics", StringComparison.OrdinalIgnoreCase);
+
     private static JsonObject? Inputs(JsonObject node)
         => node["inputs"] as JsonObject;
 
@@ -192,7 +202,8 @@ public static class ComfyUiParser
         if (!nodes.TryGetValue(id, out var node)) return;
         if (Inputs(node) is not JsonObject inputs) return;
 
-        // 文本叶子节点（text / SDXL 的 text_g、text_l）
+        // 文本叶子节点（text / SDXL 的 text_g、text_l，全部收集后再返回）
+        bool foundLeafText = false;
         foreach (var key in new[] { "text", "text_g", "text_l", "prompt" })
         {
             if (!inputs.TryGetPropertyValue(key, out var textNode)) continue;
@@ -200,9 +211,10 @@ public static class ComfyUiParser
             if (!string.IsNullOrWhiteSpace(text) && textNode is JsonValue)
             {
                 output.Add(text);
-                return;
+                foundLeafText = true;
             }
         }
+        if (foundLeafText) return;
 
         // 其他字符串型“文本”节点（有些自定义节点用 string / value 作为输入名）
         if (inputs.TryGetPropertyValue("string", out var stringNode) &&

@@ -148,7 +148,7 @@ internal static class Lanczos
         return result;
     }
 
-    private static double Kernel(double x) => Sinc(x) * Sinc(x / Support);
+    private static double Kernel(double x) => Math.Abs(x) >= Support ? 0.0 : Sinc(x) * Sinc(x / Support);
 
     private static double Sinc(double x)
     {

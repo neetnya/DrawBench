@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DrawBench.Core.Logging;
 
 namespace DrawBench.Modules.Tagger.Core;
 
@@ -21,8 +22,10 @@ public sealed class ResultWriter
     private readonly List<string> _lines = new();
     private readonly Dictionary<string, int> _index = new(StringComparer.OrdinalIgnoreCase);
     private bool _loaded;
+    private bool _loadFailed;
+    private bool _dirty;
 
-    public ResultWriter(string csvPath) => _csvPath = csvPath;
+    public ResultWriter(string csvPath) => _csvPath = Path.GetFullPath(csvPath);
 
     /// <summary>CSV 里存下的一条结果（原始值）。</summary>
     public readonly record struct SavedRecord(
@@ -118,11 +121,13 @@ public sealed class ResultWriter
         }
     }
 
-    public void Write(string imagePath, TagResult result, TaggerOptions options)
+    public void Write(string imagePath, TagResult result, TaggerOptions options, bool flush = true)
     {
         lock (_sync)
         {
             EnsureLoaded();
+            if (_loadFailed)
+                throw new IOException($"无法读取原有结果文件（可能正被 Excel 等程序占用），已中止写入以避免覆盖历史数据：{_csvPath}");
 
             string file = Path.GetFileName(imagePath);
             string dir = Path.GetDirectoryName(imagePath) ?? "";
@@ -144,6 +149,16 @@ public sealed class ResultWriter
                 _lines.Add(line);
             }
 
+            _dirty = true;
+            if (flush) Save();
+        }
+    }
+
+    public void Flush()
+    {
+        lock (_sync)
+        {
+            if (!_dirty || _loadFailed) return;
             Save();
         }
     }
@@ -208,23 +223,37 @@ public sealed class ResultWriter
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // 读坏了就从空表开始，别让软件起不来
+            _loadFailed = true;
+            AppLog.Error($"读取打标结果 CSV 失败（{_csvPath}）", ex);
         }
     }
 
     private void Save()
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(_csvPath)!);
+        string? dir = Path.GetDirectoryName(_csvPath);
+        if (!string.IsNullOrEmpty(dir))
+            Directory.CreateDirectory(dir);
 
         var sb = new StringBuilder(64 + _lines.Count * 128);
         sb.AppendLine(Header);
         foreach (string line in _lines) sb.AppendLine(line);
 
-        string tmp = _csvPath + ".tmp";
-        File.WriteAllText(tmp, sb.ToString(), new UTF8Encoding(true));
-        File.Move(tmp, _csvPath, overwrite: true);
+        string tmp = $"{_csvPath}.{Guid.NewGuid():N}.tmp";
+        try
+        {
+            File.WriteAllText(tmp, sb.ToString(), new UTF8Encoding(true));
+            File.Move(tmp, _csvPath, overwrite: true);
+            _dirty = false;
+        }
+        finally
+        {
+            if (File.Exists(tmp))
+            {
+                try { File.Delete(tmp); } catch { }
+            }
+        }
     }
 
     private static string Csv(string? value)

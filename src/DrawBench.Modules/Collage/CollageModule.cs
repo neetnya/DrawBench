@@ -3,7 +3,7 @@ using DrawBench.Core;
 
 namespace DrawBench.Modules.Collage;
 
-/// <summary>对比图模块的设置，存在统一 settings.json 的 "collage" 段（原在 %APPDATA%\ComfyCollage）。</summary>
+/// <summary>对比图模块的设置，存在统一 settings.json 的 "collage" 段。</summary>
 public sealed class CollageSettings
 {
     public string? LastDirectory { get; set; }
@@ -24,7 +24,7 @@ public sealed class CollageSettings
 }
 
 /// <summary>对比图模块：把各模型出图横向拼成对比图。</summary>
-public sealed class CollageModule : IToolModule, IActivatableModule
+public sealed class CollageModule : IToolModule, IActivatableModule, IDisposable
 {
     private readonly SettingsStore _store = SettingsStore.Shared;
     private Views.CollageView? _view;
@@ -41,8 +41,12 @@ public sealed class CollageModule : IToolModule, IActivatableModule
 
     public void OnActivated()
     {
-        // 进模块时不做额外动作：目录与模型列表在 View 的 Loaded 里恢复
     }
 
     public void OnDeactivated() => _view?.SaveSettings();
+
+    public void Dispose()
+    {
+        _view?.CancelRunning();
+    }
 }

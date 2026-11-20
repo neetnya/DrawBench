@@ -54,7 +54,8 @@ public static class ParameterParser
 
             if (trimmed.StartsWith('{') && NovelAiParser.TryParse(trimmed, p)) return Finish(p);
 
-            if (value.Contains("Negative prompt:", StringComparison.Ordinal) &&
+            if ((value.Contains("Negative prompt:", StringComparison.Ordinal) ||
+                 value.Contains("Steps:", StringComparison.Ordinal)) &&
                 WebUiParameterParser.TryParse(value, p))
             {
                 return Finish(p);

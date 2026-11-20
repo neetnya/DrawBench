@@ -98,8 +98,8 @@ public static class WebUiParameterParser
                     var m = SizeRegex.Match(value);
                     if (m.Success)
                     {
-                        p.Width = int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
-                        p.Height = int.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture);
+                        p.Width = ParseInt(m.Groups[1].Value);
+                        p.Height = ParseInt(m.Groups[2].Value);
                     }
                     break;
                 }

@@ -2,12 +2,6 @@
 """ComfyCollage 对比图生成脚本。
 
 支持从命令行直接使用，也支持被 WPF 界面以参数方式调用。
-所有排版参数均可配置，默认值与旧版本保持一致。
-
-示例：
-    python gen_sheets_cli.py "D:\\图片"
-    python gen_sheets_cli.py "D:\\图片" --tile 640 --rows 4 --fit cover
-    python gen_sheets_cli.py "D:\\图片" --models "wai17,zuki,boleromix" --only-common
 """
 
 from __future__ import annotations
@@ -27,7 +21,7 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace", line_buffering=True, write_through=True)
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps  # noqa: E402  (必须在编码设置之后)
+from PIL import Image, ImageDraw, ImageFont, ImageOps  # noqa: E402
 
 IMAGE_EXTENSIONS = {
     ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif", ".tif", ".tiff"
@@ -46,6 +40,7 @@ LABEL_TEXT = (25, 25, 25)
 OPTIMIZE_PIXEL_LIMIT = 40_000_000
 
 FORMAT_EXTENSIONS = {"png": ".png", "jpg": ".jpg", "webp": ".webp"}
+FORMAT_MAX_DIM = {"webp": 16383, "jpg": 65535}
 
 
 def natural_key(value: str):
@@ -74,7 +69,8 @@ def load_font(size: int, bold: bool):
         if bold
         else ["msyh.ttc", "segoeui.ttf", "arial.ttf"]
     )
-    fonts_dir = Path(r"C:\Windows\Fonts")
+    windir = Path(os.environ.get("WINDIR", r"C:\Windows"))
+    fonts_dir = windir / "Fonts"
     for name in names:
         candidate = fonts_dir / name
         if not candidate.is_file():
@@ -83,47 +79,71 @@ def load_font(size: int, bold: bool):
             return ImageFont.truetype(str(candidate), size)
         except OSError:
             continue
-    return ImageFont.load_default()
+    try:
+        return ImageFont.load_default(size=size)
+    except TypeError:
+        return ImageFont.load_default()
 
 
 def flatten(image: Image.Image, background) -> Image.Image:
-    """把带透明通道的图片合成到单元格底色上，避免出现黑边。"""
-    if image.mode in ("RGBA", "LA") or (image.mode == "P" and "transparency" in image.info):
+    """把带透明通道的图片合成到单元格底色上，避免出现黑边；显式释放中间对象。"""
+    has_alpha = (
+        getattr(image, "has_transparency_data", False)
+        or image.mode in ("RGBA", "LA", "PA", "RGBa", "La")
+        or (image.mode == "P" and "transparency" in image.info)
+    )
+    if has_alpha:
         rgba = image.convert("RGBA")
         base = Image.new("RGBA", rgba.size, tuple(background) + (255,))
-        base.alpha_composite(rgba)
-        return base.convert("RGB")
+        try:
+            base.alpha_composite(rgba)
+            return base.convert("RGB")
+        finally:
+            rgba.close()
+            base.close()
+    if image.mode.startswith("I;16"):
+        # 16-bit 灰度图先归一化到 8-bit
+        l8 = image.point(lambda p: p >> 8).convert("L")
+        try:
+            return l8.convert("RGB")
+        finally:
+            l8.close()
     return image.convert("RGB")
 
 
 def prepare_tile(path: Path, tile: int, fit: str) -> Image.Image:
-    """读取并排版单张图片，返回 tile × tile 的方块。"""
+    """读取并排版单张图片，返回 tile × tile 的方块（显式释放全部中间图）。"""
     with Image.open(path) as source:
-        image = ImageOps.exif_transpose(source)
-        image = flatten(image, TILE_BACKGROUND)
-        if image.width <= 0 or image.height <= 0:
-            raise ValueError("图片尺寸无效")
+        transposed = ImageOps.exif_transpose(source)
+        rgb = None
+        resized = None
+        try:
+            rgb = flatten(transposed, TILE_BACKGROUND)
+            if rgb.width <= 0 or rgb.height <= 0:
+                raise ValueError("图片尺寸无效")
 
-        cover = fit == "cover"
-        if cover:
-            scale = max(tile / image.width, tile / image.height)
-        else:
-            # 保持旧行为：只缩小不放大，避免小图被插值放大后糊掉。
-            scale = min(tile / image.width, tile / image.height, 1.0)
+            if fit == "cover":
+                return ImageOps.fit(rgb, (tile, tile), method=Image.Resampling.LANCZOS)
 
-        new_w = max(1, int(round(image.width * scale)))
-        new_h = max(1, int(round(image.height * scale)))
-        if (new_w, new_h) != (image.width, image.height):
-            image = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
+            # contain 模式：只缩小不放大，避免小图被插值放大后糊掉。
+            scale = min(tile / rgb.width, tile / rgb.height, 1.0)
+            new_w = max(1, int(round(rgb.width * scale)))
+            new_h = max(1, int(round(rgb.height * scale)))
+            target = rgb
+            if (new_w, new_h) != (rgb.width, rgb.height):
+                resized = rgb.resize((new_w, new_h), Image.Resampling.LANCZOS)
+                target = resized
 
-        if cover:
-            left = max(0, (new_w - tile) // 2)
-            top = max(0, (new_h - tile) // 2)
-            return image.crop((left, top, left + min(tile, new_w), top + min(tile, new_h)))
-
-        canvas = Image.new("RGB", (tile, tile), TILE_BACKGROUND)
-        canvas.paste(image, ((tile - new_w) // 2, (tile - new_h) // 2))
-        return canvas
+            canvas = Image.new("RGB", (tile, tile), TILE_BACKGROUND)
+            canvas.paste(target, ((tile - new_w) // 2, (tile - new_h) // 2))
+            return canvas
+        finally:
+            if resized is not None:
+                resized.close()
+            if rgb is not None:
+                rgb.close()
+            if transposed is not source:
+                transposed.close()
 
 
 def draw_centered(draw: ImageDraw.ImageDraw, text: str, font, box, fill) -> None:
@@ -163,8 +183,9 @@ def model_color(index: int, total: int):
 
 
 def build_index(models, match: str):
-    """建立 文件名 -> {模型名: 路径} 的索引。"""
+    """建立 文件名 -> {模型名: 路径} 的索引（按大小写不敏感归并，保留首个显示名）。"""
     entries = {}
+    display_names = {}
     for model in models:
         try:
             items = sorted(model.iterdir(), key=lambda p: natural_key(p.name))
@@ -174,18 +195,25 @@ def build_index(models, match: str):
         for item in items:
             if not item.is_file() or item.suffix.casefold() not in IMAGE_EXTENSIONS:
                 continue
-            key = item.stem if match == "stem" else item.name
-            bucket = entries.setdefault(key, {})
+            raw_key = item.stem if match == "stem" else item.name
+            norm_key = raw_key.casefold()
+            display_key = display_names.setdefault(norm_key, raw_key)
+            bucket = entries.setdefault(display_key, {})
             if model.name not in bucket:
                 bucket[model.name] = item
+            else:
+                print(f"[WARN] 模型 {model.name} 中存在同名文件，已忽略：{item.name}")
     return entries
 
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(add_help=True, description="生成多模型对比拼图")
-    parser.add_argument("base", nargs="?", default="", help="图片根目录")
+    parser.add_argument("base", nargs="?", default="", help="图片根目录（位置参数，兼容旧调用）")
+    parser.add_argument("--base", dest="base_opt", default="", help="图片根目录（推荐，避免以 - 开头被误判）")
+    parser.add_argument("--model", dest="model_list", action="append", default=[],
+                        help="可重复传入的模型文件夹名（推荐，支持目录名含逗号或空格）")
     parser.add_argument("--models", default="",
-                        help="模型文件夹名，逗号分隔；顺序即列顺序；留空表示自动扫描")
+                        help="模型文件夹名，逗号分隔（兼容旧调用）；留空表示自动扫描")
     parser.add_argument("--tile", type=int, default=500, help="单元格边长（默认 500）")
     parser.add_argument("--rows", type=int, default=3,
                         help="每张拼图的行数（默认 3；0 表示全部放一张）")
@@ -220,7 +248,8 @@ def resolve_output(base: Path, out_arg: str) -> Path:
 def main(argv=None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
 
-    base = Path(args.base).expanduser() if args.base.strip() else None
+    base_raw = args.base_opt if args.base_opt.strip() else args.base
+    base = Path(base_raw).expanduser() if base_raw.strip() else None
     if base is None:
         print("[ERROR] 未提供图片根目录。")
         return 1
@@ -237,8 +266,11 @@ def main(argv=None) -> int:
     prefix = re.sub(r"[^\w\-.]", "_", args.prefix.strip()) or "sheet"
 
     # ---------- 模型列表 ----------
-    if args.models.strip():
+    wanted = list(args.model_list)
+    if not wanted and args.models.strip():
         wanted = [name.strip() for name in args.models.split(",") if name.strip()]
+
+    if wanted:
         models = []
         seen = set()
         for name in wanted:
@@ -285,7 +317,6 @@ def main(argv=None) -> int:
             print("[ERROR] 没有任何文件名同时存在于所有模型文件夹中。")
             return 1
 
-    # 只存在于一个模型的图片没有可对比对象，默认整行跳过（仅一个模型时无意义，不启用）。
     if not args.keep_single and len(models) > 1:
         comparable = [key for key in keys if len(entries[key]) > 1]
         skipped = len(keys) - len(comparable)
@@ -313,7 +344,7 @@ def main(argv=None) -> int:
             return 1
         print(f"[INFO] 输出目录：{output_dir}")
 
-    # ---------- 版面尺寸 ----------
+    # ---------- 版面尺寸与格式上限前置校验 ----------
     title_size = max(11, int(round(tile * 0.045)))
     label_size = max(10, int(round(tile * 0.032)))
     title_font = load_font(title_size, True)
@@ -329,9 +360,19 @@ def main(argv=None) -> int:
     else:
         groups = [keys[i:i + rows_per_sheet] for i in range(0, len(keys), rows_per_sheet)]
 
+    max_dim = FORMAT_MAX_DIM.get(args.format)
+    if max_dim is not None and not args.dry_run:
+        max_height = max(header_height + len(g) * (label_height + tile + gap) + gap for g in groups)
+        if width > max_dim or max_height > max_dim:
+            print(f"[ERROR] 目标格式 {args.format.upper()} 单边上限为 {max_dim} px，"
+                  f"当前拼图尺寸为 {width}×{max_height} px。")
+            print("[HINT] 请调小「每张行数」或「单元格边长」，或改用 PNG 格式。")
+            return 1
+
     colors = {model.name: model_color(i, len(models)) for i, model in enumerate(models)}
 
     extension = FORMAT_EXTENSIONS[args.format]
+    pad_width = max(2, len(str(len(groups))))
     generated = set()
     missing_count = 0
     error_count = 0
@@ -341,9 +382,9 @@ def main(argv=None) -> int:
 
     for group_index, group in enumerate(groups, start=1):
         height = header_height + len(group) * (label_height + tile + gap) + gap
+        sheet_name = f"{prefix}_{group_index:0{pad_width}d}{extension}"
 
         if args.dry_run:
-            sheet_name = f"{prefix}_{group_index:02d}{extension}"
             print(f"[PROGRESS] {group_index-1}/{len(groups)}")
             print(f"[PLAN] 第 {group_index}/{len(groups)} 张 → {sheet_name}"
                   f"（{len(group)} 行 × {len(models)} 列，{width}×{height}）")
@@ -360,60 +401,68 @@ def main(argv=None) -> int:
         print(f"[PROCESS] 正在生成第 {group_index}/{len(groups)} 张对比图……")
 
         sheet = Image.new("RGB", (width, height), BACKGROUND)
-        draw = ImageDraw.Draw(sheet)
-
-        # 模型标题
-        if show_header:
-            for column, model in enumerate(models):
-                x = gap + column * (tile + gap)
-                color = colors[model.name]
-                draw.rectangle((x, 0, x + tile, 4), fill=color)
-                draw.text((x + 6, 7), fit_text(draw, model.name, title_font, tile - 12),
-                          font=title_font, fill=color)
-
-        y = header_height
-        for key in group:
-            if show_labels:
-                draw.text((gap + 2, y + 3),
-                          fit_text(draw, key, label_font, width - 2 * gap - 4),
-                          font=label_font, fill=LABEL_TEXT)
-                y += label_height
-
-            for column, model in enumerate(models):
-                x = gap + column * (tile + gap)
-                image_path = entries[key].get(model.name)
-
-                if image_path is not None:
-                    try:
-                        sheet.paste(prepare_tile(image_path, tile, args.fit), (x, y))
-                    except Exception as exc:  # noqa: BLE001  (单张失败不影响整体)
-                        error_count += 1
-                        draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=ERROR_COLOR)
-                        draw_centered(draw, "Error", title_font,
-                                      (x, y, x + tile, y + tile), ERROR_TEXT)
-                        print(f"[WARN] 图片读取失败：{image_path}：{exc}")
-                else:
-                    missing_count += 1
-                    draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=MISSING_COLOR)
-                    draw_centered(draw, "Missing", title_font,
-                                  (x, y, x + tile, y + tile), MISSING_TEXT)
-
-                draw.rectangle((x, y, x + tile - 1, y + tile - 1), outline=BORDER_COLOR)
-
-            y += tile + gap
-
-        output_path = output_dir / f"{prefix}_{group_index:02d}{extension}"
         try:
-            if args.format == "png":
-                sheet.save(output_path, format="PNG",
-                           optimize=width * height <= OPTIMIZE_PIXEL_LIMIT)
-            elif args.format == "jpg":
-                sheet.save(output_path, format="JPEG", quality=quality, subsampling=0)
-            else:
-                sheet.save(output_path, format="WEBP", quality=quality, method=4)
-        except OSError as exc:
-            print(f"[ERROR] 保存失败：{output_path}（{exc}）")
-            return 1
+            draw = ImageDraw.Draw(sheet)
+
+            # 模型标题
+            if show_header:
+                for column, model in enumerate(models):
+                    x = gap + column * (tile + gap)
+                    color = colors[model.name]
+                    draw.rectangle((x, 0, x + tile - 1, 4), fill=color)
+                    draw.text((x + 6, 7), fit_text(draw, model.name, title_font, tile - 12),
+                              font=title_font, fill=color)
+
+            y = header_height
+            for key in group:
+                if show_labels:
+                    draw.text((gap + 2, y + 3),
+                              fit_text(draw, key, label_font, width - 2 * gap - 4),
+                              font=label_font, fill=LABEL_TEXT)
+                    y += label_height
+
+                for column, model in enumerate(models):
+                    x = gap + column * (tile + gap)
+                    image_path = entries[key].get(model.name)
+
+                    if image_path is not None:
+                        tile_img = None
+                        try:
+                            tile_img = prepare_tile(image_path, tile, args.fit)
+                            sheet.paste(tile_img, (x, y))
+                        except Exception as exc:  # noqa: BLE001
+                            error_count += 1
+                            draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=ERROR_COLOR)
+                            draw_centered(draw, "Error", title_font,
+                                          (x, y, x + tile, y + tile), ERROR_TEXT)
+                            print(f"[WARN] 图片读取失败：{image_path}：{exc}")
+                        finally:
+                            if tile_img is not None:
+                                tile_img.close()
+                    else:
+                        missing_count += 1
+                        draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=MISSING_COLOR)
+                        draw_centered(draw, "Missing", title_font,
+                                      (x, y, x + tile, y + tile), MISSING_TEXT)
+
+                    draw.rectangle((x, y, x + tile - 1, y + tile - 1), outline=BORDER_COLOR)
+
+                y += tile + gap
+
+            output_path = output_dir / sheet_name
+            try:
+                if args.format == "png":
+                    sheet.save(output_path, format="PNG",
+                               optimize=width * height <= OPTIMIZE_PIXEL_LIMIT)
+                elif args.format == "jpg":
+                    sheet.save(output_path, format="JPEG", quality=quality, subsampling=0)
+                else:
+                    sheet.save(output_path, format="WEBP", quality=quality, method=4)
+            except (OSError, ValueError) as exc:
+                print(f"[ERROR] 保存失败：{output_path}（{exc}）")
+                return 1
+        finally:
+            sheet.close()
 
         generated.add(output_path.resolve())
         print(f"[SUCCESS] 已保存：{output_path}")

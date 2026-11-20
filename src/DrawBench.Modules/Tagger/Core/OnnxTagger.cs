@@ -22,7 +22,7 @@ public sealed class OnnxTagger : IDisposable
         ModelPath = onnxPath;
         ThreadCount = Math.Max(1, threads);
 
-        var options = new SessionOptions
+        using var options = new SessionOptions
         {
             IntraOpNumThreads = ThreadCount,
             InterOpNumThreads = 1,
@@ -44,6 +44,7 @@ public sealed class OnnxTagger : IDisposable
     /// <summary>把预处理好的 BGR NHWC 数据送进模型，返回 10861 维概率。</summary>
     public float[] Run(ReadOnlySpan<float> data)
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
         if (data.Length != _buffer.Length)
             throw new ArgumentException($"输入数据长度 {data.Length} 与模型输入 {_buffer.Length} 不一致");
 
@@ -57,6 +58,7 @@ public sealed class OnnxTagger : IDisposable
     /// <summary>预热：第一次推理会触发算子初始化，避免首张图计时/卡顿。</summary>
     public void Warmup()
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
         Array.Clear(_buffer);
         Run(_buffer);
     }

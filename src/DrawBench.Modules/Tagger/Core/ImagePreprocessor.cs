@@ -16,12 +16,26 @@ public static class ImagePreprocessor
     {
         BitmapSource frame = LoadBitmap(path, out sourceWidth, out sourceHeight);
 
-        byte[] bgra = new byte[sourceWidth * sourceHeight * 4];
+        byte[] bgra = new byte[checked(sourceWidth * sourceHeight * 4)];
         frame.CopyPixels(bgra, sourceWidth * 4, 0);
 
+        // 透明底图片按白底做 Alpha 混合，符合 WD14 模型输入约定
+        for (int i = 0; i < bgra.Length; i += 4)
+        {
+            int a = bgra[i + 3];
+            if (a < 255)
+            {
+                int inv = 255 - a;
+                bgra[i] = (byte)((bgra[i] * a + 255 * inv + 127) / 255);
+                bgra[i + 1] = (byte)((bgra[i + 1] * a + 255 * inv + 127) / 255);
+                bgra[i + 2] = (byte)((bgra[i + 2] * a + 255 * inv + 127) / 255);
+                bgra[i + 3] = 255;
+            }
+        }
+
         double ratio = (double)size / Math.Max(sourceWidth, sourceHeight);
-        int newW = Math.Max(1, (int)(sourceWidth * ratio));
-        int newH = Math.Max(1, (int)(sourceHeight * ratio));
+        int newW = Math.Clamp((int)Math.Round(sourceWidth * ratio, MidpointRounding.AwayFromZero), 1, size);
+        int newH = Math.Clamp((int)Math.Round(sourceHeight * ratio, MidpointRounding.AwayFromZero), 1, size);
 
         int canvasW = size, canvasH = size;
         byte[] canvas = new byte[canvasW * canvasH * 3];
@@ -54,14 +68,14 @@ public static class ImagePreprocessor
 
     private static BitmapSource LoadBitmap(string path, out int width, out int height)
     {
-        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 16);
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1 << 16);
         var decoder = BitmapDecoder.Create(fs,
             BitmapCreateOptions.PreservePixelFormat | BitmapCreateOptions.IgnoreColorProfile,
             BitmapCacheOption.OnLoad);
         if (decoder.Frames.Count == 0) throw new InvalidOperationException("图片格式无法识别（无可用帧）");
 
         BitmapSource frame = decoder.Frames[0];
-        frame = ApplyExifOrientation(frame, decoder.Metadata as BitmapMetadata);
+        frame = ApplyExifOrientation(frame, frame.Metadata as BitmapMetadata ?? decoder.Metadata as BitmapMetadata);
 
         BitmapSource bgra = frame;
         if (bgra.Format != PixelFormats.Bgra32)

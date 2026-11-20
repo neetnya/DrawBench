@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -17,8 +18,6 @@ namespace DrawBench.Modules.Collage.Views;
 
 /// <summary>
 /// 对比图模块：按模型文件夹横向拼图，排版交给 gen_sheets_cli.py（Pillow）。
-/// 与旧版的区别：Python 探测走统一的 PythonLocator，参数存进统一 settings.json，
-/// 脚本从 scripts\ 找（原先在 exe 同级）。
 /// </summary>
 public partial class CollageView : UserControl
 {
@@ -27,7 +26,7 @@ public partial class CollageView : UserControl
 
     private readonly SettingsStore _store;
     private CollageSettings _settings;
-    private readonly List<ModelInfo> _models = new();
+    private readonly ObservableCollection<ModelInfo> _models = new();
 
     private CancellationTokenSource? _cts;
     private bool _isRunning;
@@ -38,6 +37,7 @@ public partial class CollageView : UserControl
         _settings = store.Get<CollageSettings>(ModuleIds.Collage) ?? new CollageSettings();
 
         InitializeComponent();
+        LstModels.ItemsSource = _models;
     }
 
     // ==================== 生命周期 ====================
@@ -53,7 +53,7 @@ public partial class CollageView : UserControl
             RefreshModels();
     }
 
-    /// <summary>应用退出时调用，把当前参数存盘。</summary>
+    /// <summary>应用退出或切走时调用，把当前参数存盘。</summary>
     public void SaveSettings()
     {
         try
@@ -61,10 +61,16 @@ public partial class CollageView : UserControl
             _settings = CollectSettings();
             _store.Set(ModuleIds.Collage, _settings);
         }
-        catch
+        catch (Exception ex)
         {
-            // 保存失败不阻塞
+            AppLog.Error("保存对比图设置失败", ex);
         }
+    }
+
+    /// <summary>宿主关闭时终止运行中的 Python 子进程，避免孤儿进程残留。</summary>
+    public void CancelRunning()
+    {
+        try { _cts?.Cancel(); } catch { }
     }
 
     // ==================== 目录与模型 ====================
@@ -98,7 +104,8 @@ public partial class CollageView : UserControl
 
     private void View_DragOver(object sender, DragEventArgs e)
     {
-        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        bool allow = !_isRunning && e.Data.GetDataPresent(DataFormats.FileDrop);
+        e.Effects = allow ? DragDropEffects.Copy : DragDropEffects.None;
         e.Handled = true;
     }
 
@@ -150,8 +157,6 @@ public partial class CollageView : UserControl
         ordered.AddRange(newcomers);
 
         _models.Clear();
-        LstModels.ItemsSource = null;
-
         foreach (var name in ordered)
         {
             var info = new ModelInfo(name) { IsSelected = !hadPrevious || previousSelected.Contains(name) };
@@ -159,7 +164,6 @@ public partial class CollageView : UserControl
             _models.Add(info);
         }
 
-        LstModels.ItemsSource = _models;
         UpdateModelCount();
     }
 
@@ -192,17 +196,17 @@ public partial class CollageView : UserControl
 
     private void MoveSelected(int delta)
     {
+        if (_isRunning) return;
+
         int index = LstModels.SelectedIndex;
         if (index < 0) return;
 
         int target = index + delta;
         if (target < 0 || target >= _models.Count) return;
 
-        var item = _models[index];
-        _models.RemoveAt(index);
-        _models.Insert(target, item);
+        _models.Move(index, target);
         LstModels.SelectedIndex = target;
-        LstModels.ScrollIntoView(item);
+        LstModels.ScrollIntoView(_models[target]);
     }
 
     private void UpdateModelCount()
@@ -225,7 +229,13 @@ public partial class CollageView : UserControl
             return;
         }
 
-        if (_models.Count > 0 && _models.All(m => !m.IsSelected))
+        if (_models.Count == 0)
+        {
+            UiHost.Warn("当前根目录下没有找到模型文件夹（以 . 或 _ 开头的文件夹会被忽略）。");
+            return;
+        }
+
+        if (_models.All(m => !m.IsSelected))
         {
             UiHost.Warn("请至少勾选一个模型。");
             return;
@@ -243,28 +253,31 @@ public partial class CollageView : UserControl
             return;
         }
 
-        var python = PythonLocator.Resolve(CurrentPythonOverride());
-        if (!python.Found)
-        {
-            UiHost.Error("找不到 Python。\n请安装 Python 3.8 以上版本并把 python.exe 加入 PATH，或在「设置」里手动指定。", "Python 未找到");
-            return;
-        }
-
-        var args = BuildArguments(basePath, tile, rows, gap, quality);
+        // 启动前快照参数与开关，避免运行中途修改界面导致前后不一致
+        bool isPreview = ChkPreview.IsChecked == true;
+        bool openAfter = ChkOpenAfter.IsChecked == true;
+        string outputDir = ResolveOutputDirectory();
+        var args = BuildArguments(basePath, tile, rows, gap, quality, isPreview);
 
         SaveSettings();
         SetRunning(true);
         TxtLog.Clear();
         ResetProgress();
-        AppendLog($"[INFO] Python：{python.Describe()}");
-        AppendLog($"[INFO] 脚本：{scriptPath}");
-        AppendLog($"[INFO] 参数：{string.Join(" ", args.Select(QuoteIfNeeded))}");
 
         _cts = new CancellationTokenSource();
 
         try
         {
-            string outputDir = ResolveOutputDirectory();
+            var python = await PythonLocator.ResolveAsync(CurrentPythonOverride(), _cts.Token);
+            if (!python.Found)
+            {
+                UiHost.Error("找不到 Python。\n请安装 Python 3.8 以上版本并把 python.exe 加入 PATH，或在「设置」里手动指定。", "Python 未找到");
+                return;
+            }
+
+            AppendLog($"[INFO] Python：{python.Describe()}");
+            AppendLog($"[INFO] 脚本：{scriptPath}");
+            AppendLog($"[INFO] 参数：{string.Join(" ", args.Select(QuoteIfNeeded))}");
 
             var result = await PythonRunner.RunAsync(
                 python,
@@ -273,6 +286,12 @@ public partial class CollageView : UserControl
                 onLine: HandleOutputLine,
                 workingDirectory: Path.GetDirectoryName(scriptPath),
                 ct: _cts.Token);
+
+            if (result.IsCancelled)
+            {
+                AppendLog("[INFO] 任务已取消。");
+                return;
+            }
 
             if (result.Failure != null)
             {
@@ -283,7 +302,7 @@ public partial class CollageView : UserControl
 
             if (result.ExitCode == 0)
             {
-                if (ChkPreview.IsChecked == true)
+                if (isPreview)
                 {
                     AppendLog("[SUCCESS] 预览完成，没有写入任何文件。");
                     return;
@@ -292,16 +311,24 @@ public partial class CollageView : UserControl
                 AppendLog("[SUCCESS] 处理完成。");
                 AppendLog($"[INFO] 输出目录：{outputDir}");
 
-                if (ChkOpenAfter.IsChecked == true && Directory.Exists(outputDir))
+                if (openAfter && Directory.Exists(outputDir))
                     AppPaths.OpenInExplorer(outputDir);
             }
             else
             {
                 AppendLog($"[ERROR] Python 进程异常退出，代码：{result.ExitCode}");
-                if (!string.IsNullOrWhiteSpace(result.StdErr))
-                    AppendLog(result.StdErr.TrimEnd());
                 UiHost.Warn($"生成失败，退出代码：{result.ExitCode}\n请查看下方日志。", "生成失败");
             }
+        }
+        catch (OperationCanceledException)
+        {
+            AppendLog("[INFO] 任务已取消。");
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("拼图生成异常", ex);
+            AppendLog("[ERROR] " + ex.Message);
+            UiHost.Error("生成过程发生异常：" + ex.Message, "生成失败");
         }
         finally
         {
@@ -319,7 +346,7 @@ public partial class CollageView : UserControl
         return app?.PythonPath;
     }
 
-    private List<string> BuildArguments(string basePath, int tile, int rows, int gap, int quality)
+    private List<string> BuildArguments(string basePath, int tile, int rows, int gap, int quality, bool isPreview)
     {
         string fit = CmbFit.SelectedIndex == 1 ? "cover" : "contain";
         string format = CmbFormat.SelectedIndex switch
@@ -332,7 +359,7 @@ public partial class CollageView : UserControl
 
         var args = new List<string>
         {
-            basePath,
+            "--base", basePath,
             "--tile", tile.ToString(),
             "--rows", rows.ToString(),
             "--gap", gap.ToString(),
@@ -343,11 +370,10 @@ public partial class CollageView : UserControl
             "--out", TxtOutDir.Text.Trim()
         };
 
-        var selected = _models.Where(m => m.IsSelected).Select(m => m.Name).ToList();
-        if (selected.Count > 0)
+        foreach (string name in _models.Where(m => m.IsSelected).Select(m => m.Name))
         {
-            args.Add("--models");
-            args.Add(string.Join(",", selected));
+            args.Add("--model");
+            args.Add(name);
         }
 
         if (ChkOnlyCommon.IsChecked == true) args.Add("--only-common");
@@ -355,7 +381,7 @@ public partial class CollageView : UserControl
         if (ChkHeader.IsChecked != true) args.Add("--no-header");
         if (ChkLabel.IsChecked != true) args.Add("--no-label");
         if (ChkClean.IsChecked == true) args.Add("--clean");
-        if (ChkPreview.IsChecked == true) args.Add("--dry-run");
+        if (isPreview) args.Add("--dry-run");
 
         return args;
     }
@@ -389,12 +415,20 @@ public partial class CollageView : UserControl
     private void BtnCancel_Click(object sender, RoutedEventArgs e)
     {
         if (!_isRunning || _cts == null) return;
+        BtnCancel.IsEnabled = false;
         AppendLog("[INFO] 正在取消任务……");
         _cts.Cancel();
     }
 
     private void BtnOpenOutput_Click(object sender, RoutedEventArgs e)
     {
+        string folder = TxtOutDir.Text.Trim();
+        if (string.IsNullOrWhiteSpace(TxtBase.Text) && !Path.IsPathRooted(folder))
+        {
+            UiHost.Warn("请先选择图片根目录。");
+            return;
+        }
+
         string outputDir = ResolveOutputDirectory();
         if (!Directory.Exists(outputDir))
         {

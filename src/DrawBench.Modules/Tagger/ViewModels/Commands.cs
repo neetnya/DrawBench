@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using DrawBench.Core.Logging;
+using DrawBench.Core.Ui;
 
 namespace DrawBench.Modules.Tagger.ViewModels;
 
@@ -70,6 +72,14 @@ public sealed class AsyncRelayCommand : ICommand
         try
         {
             await _execute();
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("异步命令执行失败", ex);
+            UiHost.Error("操作失败：" + ex.Message);
         }
         finally
         {

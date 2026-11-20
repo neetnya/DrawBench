@@ -15,22 +15,26 @@ public sealed class BatchEngine : IDisposable
 {
     private const int Lookahead = 2;
 
+    private readonly object _taggerLock = new();
     private OnnxTagger? _tagger;
     private string? _taggerKey;
 
     public OnnxTagger GetTagger(string onnxPath, int threads)
     {
-        string key = $"{onnxPath}|{threads}";
-        if (_tagger != null && _taggerKey == key) return _tagger;
+        lock (_taggerLock)
+        {
+            string key = $"{onnxPath}|{threads}";
+            if (_tagger != null && _taggerKey == key) return _tagger;
 
-        _tagger?.Dispose();
-        _tagger = null;
-        _taggerKey = null;
+            _tagger?.Dispose();
+            _tagger = null;
+            _taggerKey = null;
 
-        var tagger = new OnnxTagger(onnxPath, threads);
-        _tagger = tagger;
-        _taggerKey = key;
-        return tagger;
+            var tagger = new OnnxTagger(onnxPath, threads);
+            _tagger = tagger;
+            _taggerKey = key;
+            return tagger;
+        }
     }
 
     public async Task RunAsync(
@@ -83,9 +87,8 @@ public sealed class BatchEngine : IDisposable
                 var result = vocabulary.Evaluate(probs, options);
 
                 itemSw.Stop();
-                writer.Write(item.FilePath, result, options);
-
                 done++;
+                writer.Write(item.FilePath, result, options, flush: done % 10 == 0);
                 itemProgress?.Report(new ItemUpdate(item, ItemState.Done, result.CopyText,
                     options.OutputRating ? result.Rating : "", result.Tags.Count, null, itemSw.ElapsedMilliseconds, result.Tags));
                 Report(item.FileName, result.CopyText);
@@ -129,24 +132,32 @@ public sealed class BatchEngine : IDisposable
 
             while (pending.Count > 0)
             {
+                await pause.WaitIfPausedAsync(ct).ConfigureAwait(false);
+                ct.ThrowIfCancellationRequested();
                 var entry = pending.Dequeue();
                 await ProcessAsync(entry).ConfigureAwait(false);
             }
         }
         finally
         {
-            foreach (var entry in pending)
+            while (pending.Count > 0)
             {
-                if (entry.Prep.Exception != null) { /* 已捕获 */ }
+                var entry = pending.Dequeue();
+                itemProgress?.Report(new ItemUpdate(entry.Item, ItemState.Canceled, null, null, 0, null, 0));
+                _ = entry.Prep.ContinueWith(t => _ = t.Exception, TaskContinuationOptions.OnlyOnFaulted);
             }
+            try { writer.Flush(); } catch { }
             Report();
         }
     }
 
     public void Dispose()
     {
-        _tagger?.Dispose();
-        _tagger = null;
-        _taggerKey = null;
+        lock (_taggerLock)
+        {
+            _tagger?.Dispose();
+            _tagger = null;
+            _taggerKey = null;
+        }
     }
 }

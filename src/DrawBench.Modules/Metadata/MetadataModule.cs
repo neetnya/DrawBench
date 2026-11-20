@@ -12,7 +12,7 @@ public sealed class MetadataSettings
 }
 
 /// <summary>参数读取模块：读 ComfyUI / WebUI / NovelAI 图片里的提示词与生成参数。</summary>
-public sealed class MetadataModule : IToolModule, IActivatableModule
+public sealed class MetadataModule : IToolModule, IActivatableModule, IDisposable
 {
     private ImageView? _view;
 
@@ -25,5 +25,14 @@ public sealed class MetadataModule : IToolModule, IActivatableModule
 
     public void OnActivated() { }
 
-    public void OnDeactivated() => _view?.SaveSettings();
+    public void OnDeactivated()
+    {
+        _view?.SaveSettings();
+        (_view?.DataContext as ViewModels.MainViewModel)?.CancelPendingWork();
+    }
+
+    public void Dispose()
+    {
+        (_view?.DataContext as ViewModels.MainViewModel)?.CancelPendingWork();
+    }
 }

@@ -56,30 +56,42 @@ public partial class TaggerView : UserControl
 
     private void OnDragOver(object sender, DragEventArgs e)
     {
-        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        bool allow = Vm.IsIdle && e.Data.GetDataPresent(DataFormats.FileDrop);
+        e.Effects = allow ? DragDropEffects.Copy : DragDropEffects.None;
         e.Handled = true;
     }
 
     private async void OnDrop(object sender, DragEventArgs e)
     {
+        if (!Vm.IsIdle) return;
         if (e.Data.GetData(DataFormats.FileDrop) is not string[] paths) return;
-        foreach (var path in paths)
+        try
         {
-            if (File.Exists(path) || Directory.Exists(path))
-                await Vm.AddPathAsync(path);
+            foreach (var path in paths)
+            {
+                if (File.Exists(path) || Directory.Exists(path))
+                    await Vm.AddPathAsync(path);
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("拖入文件失败", ex);
+            UiHost.Warn("添加拖入文件失败：" + ex.Message, "反推");
         }
     }
 
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Delete && Keyboard.FocusedElement is not System.Windows.Controls.TextBox)
+        if (e.Key == Key.Delete && Keyboard.FocusedElement is not TextBox)
         {
-            Vm.RemoveSelectedCommand.Execute(null);
+            if (Vm.RemoveSelectedCommand.CanExecute(null))
+                Vm.RemoveSelectedCommand.Execute(null);
             e.Handled = true;
         }
         else if (e.Key == Key.F5)
         {
-            Vm.StartCommand.Execute(null);
+            if (Vm.StartCommand.CanExecute(null))
+                Vm.StartCommand.Execute(null);
             e.Handled = true;
         }
     }
