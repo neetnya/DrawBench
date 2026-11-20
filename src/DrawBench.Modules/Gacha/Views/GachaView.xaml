@@ -161,8 +161,7 @@
                             <CheckBox Content="发色" IsChecked="{Binding HairColor}" Margin="0,0,6,5" />
                             <CheckBox Content="发型" IsChecked="{Binding HairStyles}" Margin="0,0,6,5" />
                             <CheckBox Content="发饰" IsChecked="{Binding HairAccessories}" Margin="0,0,6,5" />
-                            <CheckBox Content="瞳色(30%)" IsChecked="{Binding EyeColor}" Margin="0,0,6,5" ToolTip="勾选后仅 30% 概率触发抽取" />
-                            <CheckBox Content="眼型/瞳型(30%)" IsChecked="{Binding Eyes}" Margin="0,0,6,5" ToolTip="勾选后仅 30% 概率触发抽取" />
+                            <CheckBox Content="瞳色/眼型(30%)" IsChecked="{Binding Eyes}" Margin="0,0,6,5" ToolTip="勾选后仅 30% 概率触发抽取" />
                             <CheckBox Content="表情" IsChecked="{Binding FaceAndExpression}" Margin="0,0,6,5" />
                             <CheckBox Content="细节" IsChecked="{Binding BodyDetails}" Margin="0,0,6,5"
                                       ToolTip="包含胸部细节、脚部及体型尾巴等细节，启用时每次抽取 2~3 个" />

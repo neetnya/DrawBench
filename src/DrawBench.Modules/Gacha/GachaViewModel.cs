@@ -62,7 +62,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
     private string _selectedHairLength = GachaOptions.RandomChoice;
     private bool _hairStyles = true;
     private bool _hairAccessories;
-    private bool _eyeColor = true;
     private bool _eyes = true;
     private bool _faceAndExpression = true;
     private string _earsMode = GachaOptions.EarsRareChoice;
@@ -196,12 +195,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         set => SetField(ref _hairAccessories, value);
     }
 
-    public bool EyeColor
-    {
-        get => _eyeColor;
-        set => SetField(ref _eyeColor, value);
-    }
-
     public bool Eyes
     {
         get => _eyes;
@@ -328,7 +321,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         HairStyles = o.HairStyles;
         HairAccessories = o.HairAccessories;
 
-        EyeColor = o.EyeColor;
         Eyes = o.Eyes;
         FaceAndExpression = o.FaceAndExpression;
         EarsMode = o.EarsMode;
@@ -359,7 +351,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         HairStyles = HairStyles,
         HairAccessories = HairAccessories,
 
-        EyeColor = EyeColor,
         Eyes = Eyes,
         FaceAndExpression = FaceAndExpression,
         EarsMode = EarsMode,
@@ -389,7 +380,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
 
         o.HairColor = true;
         o.HairStyles = true;
-        o.EyeColor = true;
         o.Eyes = true;
         o.FaceAndExpression = true;
 
@@ -409,7 +399,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         o.HairColor = true;
         o.HairStyles = true;
         o.HairAccessories = true;
-        o.EyeColor = true;
         o.Eyes = true;
         o.FaceAndExpression = true;
 
@@ -458,7 +447,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             SelectedHairLength = GachaOptions.NoneChoice,
             HairStyles = false,
             HairAccessories = false,
-            EyeColor = false,
             Eyes = false,
             FaceAndExpression = false,
             EarsMode = GachaOptions.NoneChoice,

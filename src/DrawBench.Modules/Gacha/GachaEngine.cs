@@ -34,7 +34,6 @@ public sealed class GachaOptions
     public string SelectedHairLength { get; set; } = RandomChoice;
     public bool HairStyles { get; set; } = true;
     public bool HairAccessories { get; set; } = false;
-    public bool EyeColor { get; set; } = true;
     public bool Eyes { get; set; } = true;
     public bool FaceAndExpression { get; set; } = true;
 
@@ -273,8 +272,7 @@ public static class GachaEngine
         new("hair", "hair_accessories", "发饰", o => BoolChoice(o.HairAccessories)),
 
         // 2. 面部与五官
-        new("face_and_eyes", "eye_color", "瞳色", o => BoolChoice(o.EyeColor)),
-        new("face_and_eyes", "eyes", "眼型/瞳型", o => BoolChoice(o.Eyes)),
+        new("face_and_eyes", "eyes", "瞳色/眼型", o => BoolChoice(o.Eyes)),
         new("face_and_eyes", "face_and_expression", "表情", o => BoolChoice(o.FaceAndExpression)),
         new("face_and_eyes", "ears", "兽耳",
             o => string.IsNullOrEmpty(o.EarsMode) ? GachaOptions.NoneChoice : GachaOptions.RandomChoice,
