@@ -7,7 +7,7 @@ using DrawBench.Modules.Batch.Views;
 namespace DrawBench.Modules.Batch;
 
 /// <summary>
-/// 批量提交模块：把提示词队列依次写进 api\ 下的 API 格式工作流并送进 ComfyUI 队列。
+/// 批量提交模块：按配置的工作流 API 参数动态生成 ComfyUI 请求并批量排队。
 /// 同时接收其他模块投递过来的提示词（支持覆盖发送与末尾追加）。
 /// </summary>
 public sealed class BatchModule : IToolModule, IActivatableModule, ITextReceiver
@@ -24,7 +24,7 @@ public sealed class BatchModule : IToolModule, IActivatableModule, ITextReceiver
 
     public string Id => ModuleIds.Batch;
     public string Title => "批量提交";
-    public string Description => "把提示词队列写进 ComfyUI 工作流并批量排队";
+    public string Description => "按配置的工作流 API 参数批量排队提交给 ComfyUI";
     public string Glyph => "\uE768";   // Play
 
     public FrameworkElement CreateView()

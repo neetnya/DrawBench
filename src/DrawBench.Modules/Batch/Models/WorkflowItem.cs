@@ -1,30 +1,28 @@
 using System.ComponentModel;
-using System.IO;
-using System.Text.Json.Nodes;
 
 namespace DrawBench.Modules.Batch.Models;
 
 /// <summary>
-/// api 目录中的一个工作流 JSON，带一个「是否启用」的勾选状态。
+/// 主界面左侧工作流列表中的一条配置项，带「是否启用」勾选状态。
 /// </summary>
 public class WorkflowItem : INotifyPropertyChanged
 {
     private bool _isEnabled = true;
 
-    public WorkflowItem(string path, JsonObject root)
+    public WorkflowItem(WorkflowApiConfig config)
     {
-        Path = path;
-        Root = root;
+        Config = config;
     }
 
-    public string Path { get; }
+    public WorkflowApiConfig Config { get; }
 
-    public JsonObject Root { get; }
+    public string Id => Config.Id;
 
-    public string FileName => System.IO.Path.GetFileName(Path);
+    /// <summary>界面上显示的名称。</summary>
+    public string DisplayName => string.IsNullOrWhiteSpace(Config.Name) ? "(未命名工作流)" : Config.Name;
 
-    /// <summary>界面上显示的名字，不带 .json 后缀。</summary>
-    public string DisplayName => System.IO.Path.GetFileNameWithoutExtension(Path);
+    /// <summary>鼠标悬停时展示底模、LoRA 与采样参数摘要。</summary>
+    public string Summary => Config.BuildSummary();
 
     public bool IsEnabled
     {

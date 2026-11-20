@@ -154,9 +154,6 @@ public partial class SettingsView : UserControl
     private void OpenData_Click(object sender, RoutedEventArgs e)
         => AppPaths.OpenInExplorer(AppPaths.Current.DataDir);
 
-    private void OpenApi_Click(object sender, RoutedEventArgs e)
-        => AppPaths.OpenInExplorer(AppPaths.Current.ApiDir);
-
     private void OpenModels_Click(object sender, RoutedEventArgs e)
         => AppPaths.OpenInExplorer(AppPaths.Current.ModelsDir);
 }

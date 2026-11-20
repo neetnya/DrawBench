@@ -50,14 +50,12 @@
                         <WrapPanel Margin="0,12,0,0">
                             <Button Content="打开数据目录" Style="{StaticResource SecondaryButton}"
                                     Margin="0,0,8,0" Click="OpenData_Click" />
-                            <Button Content="打开工作流目录 (api)" Style="{StaticResource SecondaryButton}"
-                                    Margin="0,0,8,0" Click="OpenApi_Click" />
                             <Button Content="打开反推模型目录 (models)" Style="{StaticResource SecondaryButton}"
                                     Click="OpenModels_Click" />
                         </WrapPanel>
                         <TextBlock Style="{StaticResource SubText}" Margin="0,10,0,0"
                                    TextWrapping="Wrap"
-                                   Text="api / engine / scripts / models / data 都在程序目录下，整个文件夹复制走即可换机器。" />
+                                   Text="engine / scripts / models / data 都在程序目录下，整个文件夹复制走即可换机器。" />
                     </StackPanel>
                 </GroupBox>
 

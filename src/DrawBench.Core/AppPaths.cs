@@ -19,7 +19,6 @@ public sealed class AppPaths
     {
         AppDir = Path.GetFullPath(appDir ?? ResolveAppDir());
 
-        ApiDir = Path.Combine(AppDir, "api");
         EngineDir = Path.Combine(AppDir, "engine");
         ScriptsDir = Path.Combine(AppDir, "scripts");
         ModelsDir = Path.Combine(AppDir, "models");
@@ -31,7 +30,6 @@ public sealed class AppPaths
     }
 
     public string AppDir { get; }
-    public string ApiDir { get; }
     public string EngineDir { get; }
     public string ScriptsDir { get; }
     public string ModelsDir { get; }
@@ -45,7 +43,7 @@ public sealed class AppPaths
     /// <summary>启动时建好所有目录。单项失败不抛，交给调用方按需处理。</summary>
     public void EnsureCreated()
     {
-        foreach (string dir in new[] { ApiDir, EngineDir, ScriptsDir, ModelsDir, DataDir })
+        foreach (string dir in new[] { EngineDir, ScriptsDir, ModelsDir, DataDir })
         {
             try { Directory.CreateDirectory(dir); } catch { /* 只读介质等情况忽略 */ }
         }

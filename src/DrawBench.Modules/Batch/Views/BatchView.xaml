@@ -50,20 +50,21 @@
                                         Style="{StaticResource SecondaryButton}" Padding="10,3" Margin="0,0,6,0" />
                                 <Button x:Name="BtnSelectNone" Content="全不选" Click="BtnSelectNone_Click"
                                         Style="{StaticResource SecondaryButton}" Padding="10,3" Margin="0,0,6,0" />
-                                <Button x:Name="BtnReloadWorkflows" Content="刷新" Click="BtnReloadWorkflows_Click"
-                                        Style="{StaticResource SecondaryButton}" Padding="10,3" />
+                                <Button x:Name="BtnConfigWorkflows" Content="配置工作流" Click="BtnConfigWorkflows_Click"
+                                        Style="{StaticResource SecondaryButton}" Padding="10,3"
+                                        ToolTip="打开工作流 API 配置菜单，添加或修改模型、LoRA 与采样参数" />
                             </StackPanel>
                         </Border>
 
                         <Border DockPanel.Dock="Bottom" Padding="10,8"
                                 BorderBrush="{StaticResource LineSoft}" BorderThickness="0,1,0,0">
                             <DockPanel LastChildFill="True">
-                                <Button x:Name="BtnOpenWorkflowFolder" DockPanel.Dock="Right" Content="打开目录"
-                                        Click="BtnOpenWorkflowFolder_Click"
+                                <Button x:Name="BtnOpenConfigBottom" DockPanel.Dock="Right" Content="配置菜单"
+                                        Click="BtnConfigWorkflows_Click"
                                         Style="{StaticResource SecondaryButton}" Padding="10,3" MinHeight="26"
                                         FontSize="12" Margin="8,0,0,0"
-                                        ToolTip="在资源管理器中打开 api 工作流目录" />
-                                <TextBlock Text="拖入 .json 可添加" VerticalAlignment="Center"
+                                        ToolTip="打开工作流 API 配置菜单" />
+                                <TextBlock Text="可视化配置工作流 API" VerticalAlignment="Center"
                                            Style="{StaticResource SubText}" FontSize="11.5"
                                            TextTrimming="CharacterEllipsis" />
                             </DockPanel>
@@ -71,14 +72,12 @@
 
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled"
-                                      AllowDrop="True" Padding="6,4"
-                                      PreviewDragOver="WorkflowList_DragOver"
-                                      PreviewDrop="WorkflowList_Drop">
+                                      Padding="6,4">
                             <ItemsControl x:Name="LstWorkflows">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay}"
-                                                  ToolTip="{Binding Path}"
+                                                  ToolTip="{Binding Summary}"
                                                   Padding="6,5" Margin="0,0,0,1" MinHeight="26"
                                                   HorizontalAlignment="Stretch"
                                                   VerticalContentAlignment="Center">
@@ -147,7 +146,7 @@
                              TextChanged="TxtPromptQueue_TextChanged"
                              PreviewDragOver="Prompt_PreviewDragOver"
                              PreviewDrop="Prompt_PreviewDrop"
-                             ToolTip="每行一组提示词，会依次写入标题含 Positive 的正向提示词节点。"/>
+                             ToolTip="每行一组提示词，会依次写入正向提示词模板（支持 Positive Prompt 占位符，并自动拼接已启用的 LoRA 触发词）。"/>
                 </GroupBox>
 
                 <Grid Grid.Column="2">
@@ -173,7 +172,7 @@
                                      Height="96" Padding="5,4" Text="" AllowDrop="True"
                                      PreviewDragOver="Prompt_PreviewDragOver"
                                      PreviewDrop="Prompt_PreviewDrop"
-                                     ToolTip="留空则不修改工作流里的负面提示词。填写后按与正向词相同的规则写入标题含 Negative 的节点（支持「Negative Prompt」占位符，否则追加到模板原文后面）；整个框算一条负面词，不按行分组，本批所有图共用。"/>
+                                     ToolTip="留空则使用各工作流配置里的默认负面提示词。填写后按与正向词相同的规则写入（支持「Negative Prompt」占位符，否则追加到模板原文后面）；整个框算一条负面词，本批所有图共用。"/>
                         </StackPanel>
                     </GroupBox>
 
