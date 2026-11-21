@@ -5,6 +5,7 @@
     <Grid>
         <!-- 外观与 Theme.xaml 中的 ComboBox 完全保持一致 -->
         <ToggleButton x:Name="BtnToggle" Focusable="False" ClickMode="Press" Cursor="Hand"
+                      PreviewMouseLeftButtonDown="BtnToggle_PreviewMouseLeftButtonDown"
                       Checked="BtnToggle_Checked" Unchecked="BtnToggle_Unchecked">
             <ToggleButton.Template>
                 <ControlTemplate TargetType="ToggleButton">
@@ -30,17 +31,18 @@
 
         <TextBlock x:Name="TxtDisplay" IsHitTestVisible="False"
                    Margin="10,0,26,0" VerticalAlignment="Center"
-                   FontFamily="{StaticResource AppFont}" FontSize="12.5"
+                   FontFamily="{StaticResource AppFont}" FontSize="12.5" FontWeight="Normal"
                    Foreground="{StaticResource Ink}"
                    TextTrimming="CharacterEllipsis" />
 
         <Popup x:Name="PopupDropDown" Placement="Bottom" PlacementTarget="{Binding ElementName=BtnToggle}"
                AllowsTransparency="True" PopupAnimation="Fade" StaysOpen="False"
                Opened="PopupDropDown_Opened" Closed="PopupDropDown_Closed">
-            <Border Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1"
+            <Border x:Name="PopupBorder" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1"
                     CornerRadius="8" Margin="0,4,0,0" Padding="6"
                     MinWidth="{Binding ActualWidth, ElementName=BtnToggle}"
-                    MaxWidth="540">
+                    MaxWidth="540"
+                    TextElement.FontWeight="Normal">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="14" ShadowDepth="3" Direction="270"
                                       Opacity="0.14" Color="#1B2440" />

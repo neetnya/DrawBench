@@ -35,7 +35,8 @@
 
             <!-- ==================== 页签 1：工作流 API ==================== -->
             <TabItem Header="工作流 API">
-                <Grid Margin="10">
+                <!-- 重置 FontWeight="Normal"，避免继承 Theme.xaml 中 TabItem 选中态的 SemiBold -->
+                <Grid Margin="10" TextElement.FontWeight="Normal">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="250" MinWidth="210" />
                         <ColumnDefinition Width="10" />
@@ -100,10 +101,10 @@
                                     <GroupBox Header="基本信息" Padding="12,10" Margin="0,0,0,10">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="82" />
+                                                <ColumnDefinition Width="Auto" MinWidth="78" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="16" />
-                                                <ColumnDefinition Width="82" />
+                                                <ColumnDefinition Width="Auto" MinWidth="78" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
@@ -135,7 +136,7 @@
                                             <!-- Checkpoint 模式 -->
                                             <Grid x:Name="PnlCheckpoint">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="82" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="78" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" Text="Checkpoint" Style="{StaticResource FormLabel}" />
@@ -147,10 +148,10 @@
                                             <!-- UNet 分离模式 -->
                                             <Grid x:Name="PnlUnetSplit" Visibility="Collapsed">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="82" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="78" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="16" />
-                                                    <ColumnDefinition Width="74" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="74" />
                                                     <ColumnDefinition Width="160" />
                                                 </Grid.ColumnDefinitions>
                                                 <Grid.RowDefinitions>
@@ -189,21 +190,21 @@
                                     <GroupBox Padding="12,10" Margin="0,0,0,10">
                                         <GroupBox.Header>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Center">
-                                                <TextBlock DockPanel.Dock="Left" Text="LoRA 配置（触发词与别名在「全局 LoRA 管理」统一维护）" VerticalAlignment="Center" />
+                                                <TextBlock DockPanel.Dock="Left" Text="LoRA 配置" VerticalAlignment="Center" />
                                                 <Button DockPanel.Dock="Right" Content="+ 添加 LoRA"
                                                         Click="BtnAddLora_Click"
                                                         Style="{StaticResource SmallButton}" Margin="10,0,0,0" />
                                                 <CheckBox x:Name="ChkAutoFilterLora" DockPanel.Dock="Right"
                                                           IsChecked="True" VerticalAlignment="Center"
                                                           FontWeight="Normal" FontSize="11.5" Margin="0,0,4,0"
-                                                          Content="按架构过滤 (illustrious / anima)"
+                                                          Content="按架构过滤"
                                                           Checked="ChkAutoFilterLora_Changed"
                                                           Unchecked="ChkAutoFilterLora_Changed"
                                                           ToolTip="勾选后：Checkpoint 模式自动筛选 illustrious 目录，UNet 模式自动筛选 anima 目录；取消勾选显示全部 LoRA" />
                                             </DockPanel>
                                         </GroupBox.Header>
                                         <StackPanel>
-                                            <TextBlock x:Name="TxtNoLoraHint" Text="未挂载 LoRA（点击右上角「+ 添加 LoRA」添加，支持加速 LoRA + 风格 LoRA 串联）"
+                                            <TextBlock x:Name="TxtNoLoraHint" Text="未挂载 LoRA，点击右上角「+ 添加 LoRA」添加。"
                                                        Foreground="{StaticResource Muted}" FontSize="12" Margin="0,2" />
 
                                             <ItemsControl x:Name="LstLoras">
@@ -274,13 +275,13 @@
                                         <StackPanel>
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="54" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="12" />
-                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="54" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="12" />
-                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="54" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <Grid.RowDefinitions>
@@ -316,10 +317,10 @@
 
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="54" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="16" />
-                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="54" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
 
@@ -363,7 +364,8 @@
 
             <!-- ==================== 页签 2：全局 LoRA 管理 ==================== -->
             <TabItem Header="全局 LoRA 管理">
-                <Grid Margin="10">
+                <!-- 重置 FontWeight="Normal"，避免继承 TabItem 选中态的 SemiBold -->
+                <Grid Margin="10" TextElement.FontWeight="Normal">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="310" MinWidth="250" />
                         <ColumnDefinition Width="10" />
@@ -460,7 +462,7 @@
                                         <StackPanel>
                                             <Grid Margin="0,0,0,8">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="82" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="104" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" Text="显示别名" Style="{StaticResource FormLabel}" />
@@ -471,10 +473,10 @@
 
                                             <Grid Margin="0,0,0,10">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="82" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="104" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="16" />
-                                                    <ColumnDefinition Width="90" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="104" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" Text="默认模型权重" Style="{StaticResource FormLabel}" />

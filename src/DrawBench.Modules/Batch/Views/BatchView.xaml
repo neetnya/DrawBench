@@ -52,22 +52,8 @@
                                         Style="{StaticResource SecondaryButton}" Padding="10,3" Margin="0,0,6,0" />
                                 <Button x:Name="BtnConfigWorkflows" Content="配置工作流" Click="BtnConfigWorkflows_Click"
                                         Style="{StaticResource SecondaryButton}" Padding="10,3"
-                                        ToolTip="打开工作流 API 配置菜单，添加或修改模型、LoRA 与采样参数" />
+                                        ToolTip="打开工作流 API 与全局 LoRA 配置窗口" />
                             </StackPanel>
-                        </Border>
-
-                        <Border DockPanel.Dock="Bottom" Padding="10,8"
-                                BorderBrush="{StaticResource LineSoft}" BorderThickness="0,1,0,0">
-                            <DockPanel LastChildFill="True">
-                                <Button x:Name="BtnOpenConfigBottom" DockPanel.Dock="Right" Content="配置菜单"
-                                        Click="BtnConfigWorkflows_Click"
-                                        Style="{StaticResource SecondaryButton}" Padding="10,3" MinHeight="26"
-                                        FontSize="12" Margin="8,0,0,0"
-                                        ToolTip="打开工作流 API 配置菜单" />
-                                <TextBlock Text="可视化配置工作流 API" VerticalAlignment="Center"
-                                           Style="{StaticResource SubText}" FontSize="11.5"
-                                           TextTrimming="CharacterEllipsis" />
-                            </DockPanel>
                         </Border>
 
                         <ScrollViewer VerticalScrollBarVisibility="Auto"

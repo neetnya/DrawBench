@@ -11,6 +11,7 @@ namespace DrawBench.Modules.Batch.Controls;
 
 /// <summary>
 /// 带实时搜索过滤的 LoRA 下拉选择控件，支持按文件路径和全局别名双向搜索。
+/// 点击窗口任意空白区域、失焦或再次点击下拉按钮均自动收起。
 /// </summary>
 public partial class LoraPicker : UserControl
 {
@@ -41,11 +42,14 @@ public partial class LoraPicker : UserControl
             new PropertyMetadata(null, OnAliasMapChanged));
 
     private INotifyCollectionChanged? _subscribedCollection;
+    private Window? _hookedWindow;
+    private MouseButtonEventHandler? _windowMouseDownHandler;
 
     public LoraPicker()
     {
         InitializeComponent();
         UpdateDisplayText();
+        Unloaded += (_, _) => UnhookOwnerWindow();
     }
 
     public IEnumerable<string>? ItemsSource
@@ -126,6 +130,17 @@ public partial class LoraPicker : UserControl
         }
     }
 
+    private void BtnToggle_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        // 已经展开时再次点击按钮直接收起，避免 StaysOpen=False 关闭后又立刻被 ToggleButton 弹开
+        if (PopupDropDown.IsOpen)
+        {
+            PopupDropDown.IsOpen = false;
+            BtnToggle.IsChecked = false;
+            e.Handled = true;
+        }
+    }
+
     private void BtnToggle_Checked(object sender, RoutedEventArgs e)
     {
         PopupDropDown.IsOpen = true;
@@ -138,6 +153,7 @@ public partial class LoraPicker : UserControl
 
     private void PopupDropDown_Opened(object? sender, EventArgs e)
     {
+        HookOwnerWindow();
         TxtFilter.Text = string.Empty;
         RefreshFilterList();
         TxtFilter.Focus();
@@ -145,7 +161,68 @@ public partial class LoraPicker : UserControl
 
     private void PopupDropDown_Closed(object? sender, EventArgs e)
     {
+        UnhookOwnerWindow();
         BtnToggle.IsChecked = false;
+    }
+
+    private void HookOwnerWindow()
+    {
+        UnhookOwnerWindow();
+        var win = Window.GetWindow(this);
+        if (win is null) return;
+
+        _hookedWindow = win;
+        _windowMouseDownHandler = OnOwnerWindowPreviewMouseDown;
+        win.AddHandler(UIElement.PreviewMouseDownEvent, _windowMouseDownHandler, handledEventsToo: true);
+        win.Deactivated += OnOwnerWindowClosePopup;
+        win.LocationChanged += OnOwnerWindowClosePopup;
+        win.SizeChanged += OnOwnerWindowClosePopup;
+    }
+
+    private void UnhookOwnerWindow()
+    {
+        if (_hookedWindow is null) return;
+
+        if (_windowMouseDownHandler is not null)
+            _hookedWindow.RemoveHandler(UIElement.PreviewMouseDownEvent, _windowMouseDownHandler);
+        _hookedWindow.Deactivated -= OnOwnerWindowClosePopup;
+        _hookedWindow.LocationChanged -= OnOwnerWindowClosePopup;
+        _hookedWindow.SizeChanged -= OnOwnerWindowClosePopup;
+
+        _hookedWindow = null;
+        _windowMouseDownHandler = null;
+    }
+
+    private void OnOwnerWindowPreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (!PopupDropDown.IsOpen) return;
+
+        // 点击落在下拉框内部或触发按钮本身时不关闭；点击窗口其他任何空白/控件立即收起
+        if (e.OriginalSource is DependencyObject src)
+        {
+            if (IsDescendantOf(src, PopupBorder) || IsDescendantOf(src, BtnToggle))
+                return;
+        }
+
+        PopupDropDown.IsOpen = false;
+    }
+
+    private void OnOwnerWindowClosePopup(object? sender, EventArgs e)
+    {
+        if (PopupDropDown.IsOpen)
+            PopupDropDown.IsOpen = false;
+    }
+
+    private static bool IsDescendantOf(DependencyObject? node, DependencyObject ancestor)
+    {
+        while (node is not null)
+        {
+            if (ReferenceEquals(node, ancestor)) return true;
+            node = node is Visual or System.Windows.Media.Media3D.Visual3D
+                ? VisualTreeHelper.GetParent(node)
+                : LogicalTreeHelper.GetParent(node);
+        }
+        return false;
     }
 
     private void TxtFilter_TextChanged(object sender, TextChangedEventArgs e)
