@@ -55,7 +55,63 @@ public sealed class GachaOptions
     // 场景
     public string SceneMode { get; set; } = LocationsChoice;
 
+    /// <summary>用户自定义的抽卡预设列表（为 null 时首次初始化默认 3 个预设）。</summary>
+    public List<GachaPreset>? Presets { get; set; }
+
+    /// <summary>上次选中的预设 Id。</summary>
+    public string? SelectedPresetId { get; set; }
+
     public GachaOptions Clone() => (GachaOptions)MemberwiseClone();
+
+    /// <summary>仅克隆抽卡参数本身（清空 Presets 避免嵌套序列化）。</summary>
+    public GachaOptions CloneCoreOnly()
+    {
+        var copy = (GachaOptions)MemberwiseClone();
+        copy.Presets = null;
+        copy.SelectedPresetId = null;
+        return copy;
+    }
+}
+
+/// <summary>用户可自定义的抽卡预设。</summary>
+public sealed class GachaPreset : System.ComponentModel.INotifyPropertyChanged
+{
+    private string _id = Guid.NewGuid().ToString("N");
+    private string _name = "新预设";
+    private GachaOptions _options = new();
+
+    public string Id
+    {
+        get => _id;
+        set => _id = string.IsNullOrWhiteSpace(value) ? Guid.NewGuid().ToString("N") : value;
+    }
+
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            string next = value ?? "";
+            if (_name == next) return;
+            _name = next;
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Name)));
+        }
+    }
+
+    public GachaOptions Options
+    {
+        get => _options;
+        set => _options = (value ?? new GachaOptions()).CloneCoreOnly();
+    }
+
+    public GachaPreset Clone() => new()
+    {
+        Id = Id,
+        Name = Name,
+        Options = Options.CloneCoreOnly()
+    };
+
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 }
 
 /// <summary>子组内的两档词池与可选元数据（JSON 中缺省字段使用默认值）。</summary>

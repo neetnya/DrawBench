@@ -32,6 +32,13 @@ public sealed class BatchSettings
     public bool IsEnabled(string idOrName) =>
         EnabledWorkflows.Contains(idOrName, StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>根据 LoRA 路径判断默认权重：illustrious 默认 0.8，其他默认 1.0。</summary>
+    public static double GetDefaultLoraStrength(string? loraName) =>
+        !string.IsNullOrWhiteSpace(loraName) &&
+        loraName.Contains("illustrious", StringComparison.OrdinalIgnoreCase)
+            ? 0.8
+            : 1.0;
+
     /// <summary>确保集合非空，并将旧版 LoraTriggerWords 自动迁移到 LoraProfiles。</summary>
     public void Normalize()
     {
@@ -51,10 +58,13 @@ public sealed class BatchSettings
                 string.Equals(p.LoraName.Trim(), key, StringComparison.OrdinalIgnoreCase));
             if (existing is null)
             {
+                double defStrength = GetDefaultLoraStrength(key);
                 LoraProfiles.Add(new LoraProfile
                 {
                     LoraName = key,
-                    TriggerWords = (kv.Value ?? string.Empty).Trim()
+                    TriggerWords = (kv.Value ?? string.Empty).Trim(),
+                    DefaultStrengthModel = defStrength,
+                    DefaultStrengthClip = defStrength
                 });
             }
             else if (string.IsNullOrWhiteSpace(existing.TriggerWords) && !string.IsNullOrWhiteSpace(kv.Value))

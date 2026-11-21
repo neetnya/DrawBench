@@ -3,19 +3,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DrawBench.Core;
 using DrawBench.Core.Logging;
 using DrawBench.Core.Ui;
+using DrawBench.Modules.Batch.Views;
 
 namespace DrawBench.Modules.Gacha.Views;
 
 /// <summary>
 /// 模块化抽卡界面：读取 engine\tagGroup_modular.json，按模块开关抽取提示词，
-/// 并通过 AiBridge / SharedContext 与「批量提交」模块互通。
+/// 支持用户自定义抽卡预设（新建、改名保存、删除），并通过 AiBridge 与「批量提交」互通。
 /// </summary>
 public partial class GachaView : UserControl
 {
@@ -95,13 +95,39 @@ public partial class GachaView : UserControl
 
     private void OnRepeatLostFocus(object sender, RoutedEventArgs e) => _vm.NormalizeRepeat();
 
-    // ==================== 快捷方案 ====================
+    // ==================== 自定义预设 ====================
 
-    private void OnPresetStandard(object sender, RoutedEventArgs e) => _vm.ApplyPresetStandard();
+    private void OnPresetNew(object sender, RoutedEventArgs e)
+    {
+        _vm.CreateNewPreset();
+        SaveSettings();
+        TxtPresetName.Focus();
+        TxtPresetName.SelectAll();
+    }
 
-    private void OnPresetCharacterOnly(object sender, RoutedEventArgs e) => _vm.ApplyPresetCharacterOnly();
+    private void OnPresetSave(object sender, RoutedEventArgs e)
+    {
+        if (!_vm.SaveCurrentPreset(out string msg))
+        {
+            ConfirmDialog.Warn(Window.GetWindow(this), msg, "无法保存预设");
+            TxtPresetName.Focus();
+            return;
+        }
+        SaveSettings();
+    }
 
-    private void OnPresetOutfit(object sender, RoutedEventArgs e) => _vm.ApplyPresetOutfit();
+    private void OnPresetDelete(object sender, RoutedEventArgs e)
+    {
+        if (_vm.SelectedPreset is null) return;
+        bool ok = ConfirmDialog.ConfirmDelete(
+            Window.GetWindow(this),
+            $"确定删除抽卡预设「{_vm.SelectedPreset.Name}」吗？",
+            "删除预设");
+        if (!ok) return;
+
+        _vm.DeleteCurrentPreset();
+        SaveSettings();
+    }
 
     private void OnPresetClear(object sender, RoutedEventArgs e) => _vm.ClearSelections();
 
@@ -231,7 +257,7 @@ public partial class GachaView : UserControl
             }
             catch (COMException) when (attempt < maxAttempts)
             {
-                Thread.Sleep(20);
+                System.Threading.Thread.Sleep(20);
             }
         }
     }

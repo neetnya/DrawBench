@@ -443,12 +443,13 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         string defaultLora = FilteredLoraOptions.FirstOrDefault() ?? string.Empty;
         var profile = FindGlobalProfile(defaultLora);
 
+        double fallbackStrength = GetDefaultLoraStrength(defaultLora, _current.LoaderMode);
         var item = new LoraConfigItem
         {
             Enabled = true,
             LoraName = defaultLora,
-            StrengthModel = profile?.DefaultStrengthModel ?? 1.0,
-            StrengthClip = profile?.DefaultStrengthClip ?? 1.0
+            StrengthModel = profile?.DefaultStrengthModel ?? fallbackStrength,
+            StrengthClip = profile?.DefaultStrengthClip ?? fallbackStrength
         };
         if (!string.IsNullOrWhiteSpace(defaultLora))
             EnsureGlobalProfile(defaultLora, item.StrengthModel, item.StrengthClip);
@@ -488,7 +489,10 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
                 }
                 else
                 {
-                    EnsureGlobalProfile(key, item.StrengthModel, item.StrengthClip);
+                    double defStrength = GetDefaultLoraStrength(key, _current?.LoaderMode);
+                    item.StrengthModel = defStrength;
+                    item.StrengthClip = defStrength;
+                    EnsureGlobalProfile(key, defStrength, defStrength);
                 }
             }
             LoadTriggerIntoItem(item);
@@ -549,17 +553,25 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
             string.Equals(p.LoraName.Trim(), key, StringComparison.OrdinalIgnoreCase));
     }
 
-    private LoraProfile EnsureGlobalProfile(string loraName, double defaultModel = 1.0, double defaultClip = 1.0)
+    private static double GetDefaultLoraStrength(string? loraName, WorkflowLoaderMode? mode = null)
+    {
+        if (!string.IsNullOrWhiteSpace(loraName))
+            return BatchSettings.GetDefaultLoraStrength(loraName);
+        return mode == WorkflowLoaderMode.Checkpoint ? 0.8 : 1.0;
+    }
+
+    private LoraProfile EnsureGlobalProfile(string loraName, double? defaultModel = null, double? defaultClip = null)
     {
         string key = loraName.Trim();
         var existing = FindGlobalProfile(key);
         if (existing is not null) return existing;
 
+        double fallback = GetDefaultLoraStrength(key);
         var profile = new LoraProfile
         {
             LoraName = key,
-            DefaultStrengthModel = defaultModel,
-            DefaultStrengthClip = defaultClip
+            DefaultStrengthModel = defaultModel ?? fallback,
+            DefaultStrengthClip = defaultClip ?? fallback
         };
         profile.PropertyChanged += GlobalProfile_PropertyChanged;
         _globalLoras.Add(profile);

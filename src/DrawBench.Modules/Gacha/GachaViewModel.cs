@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -28,7 +30,7 @@ internal sealed class RelayCommand : ICommand
     public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }
 
-/// <summary>抽卡视图模型：统一管理选项绑定、下拉列表、快捷方案与输出状态。</summary>
+/// <summary>抽卡视图模型：统一管理选项绑定、下拉列表、自定义预设与输出状态。</summary>
 public sealed class GachaViewModel : INotifyPropertyChanged
 {
     private static readonly string[] FallbackHairLengths =
@@ -76,6 +78,10 @@ public sealed class GachaViewModel : INotifyPropertyChanged
     private string _actionMode = GachaOptions.RandomChoice;
     private string _sceneMode = GachaOptions.LocationsChoice;
 
+    private GachaPreset? _selectedPreset;
+    private string _presetNameText = "";
+    private bool _suppressPresetApply;
+
     private string _resultText = "";
     private string _logText = "";
     private string _metaText = "";
@@ -89,6 +95,8 @@ public sealed class GachaViewModel : INotifyPropertyChanged
     public IReadOnlyList<ComboOption> ActionModeOptions { get; }
     public IReadOnlyList<ComboOption> SceneModeOptions { get; }
     public IReadOnlyList<ComboOption> EarsModeOptions { get; }
+
+    public ObservableCollection<GachaPreset> Presets { get; } = new();
 
     public ICommand RollCommand { get; }
 
@@ -129,6 +137,32 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             new(GachaOptions.EarsRareChoice, "15% 概率"),
             new(GachaOptions.EarsAlwaysChoice, "100% 必出"),
         };
+    }
+
+    // ==================== 自定义预设 ====================
+
+    public GachaPreset? SelectedPreset
+    {
+        get => _selectedPreset;
+        set
+        {
+            if (!SetField(ref _selectedPreset, value)) return;
+            OnPropertyChanged(nameof(HasSelectedPreset));
+            PresetNameText = value?.Name ?? "";
+            if (!_suppressPresetApply && value is not null)
+            {
+                LoadCoreOptions(value.Options);
+                StatusText = $"已应用预设「{value.Name}」";
+            }
+        }
+    }
+
+    public bool HasSelectedPreset => _selectedPreset is not null;
+
+    public string PresetNameText
+    {
+        get => _presetNameText;
+        set => SetField(ref _presetNameText, value ?? "");
     }
 
     // ==================== 通用设置 ====================
@@ -309,6 +343,29 @@ public sealed class GachaViewModel : INotifyPropertyChanged
 
     public void LoadOptions(GachaOptions o)
     {
+        LoadCoreOptions(o);
+
+        Presets.Clear();
+        var presetSource = o.Presets ?? CreateDefaultPresets();
+        foreach (var p in presetSource)
+            Presets.Add(p.Clone());
+
+        _suppressPresetApply = true;
+        try
+        {
+            GachaPreset? match = null;
+            if (!string.IsNullOrWhiteSpace(o.SelectedPresetId))
+                match = Presets.FirstOrDefault(p => string.Equals(p.Id, o.SelectedPresetId, StringComparison.OrdinalIgnoreCase));
+            SelectedPreset = match ?? Presets.FirstOrDefault();
+        }
+        finally
+        {
+            _suppressPresetApply = false;
+        }
+    }
+
+    private void LoadCoreOptions(GachaOptions o)
+    {
         RepeatText = Math.Clamp(o.Repeat, 1, 99).ToString();
         ReplaceUnderscoreWithSpace = o.ReplaceUnderscoreWithSpace;
         IncludeNsfw = o.IncludeNsfw;
@@ -337,7 +394,7 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         SceneMode = o.SceneMode;
     }
 
-    public GachaOptions ToOptions() => new()
+    public GachaOptions ToCoreOptions() => new()
     {
         Repeat = NormalizeRepeat(),
         ReplaceUnderscoreWithSpace = ReplaceUnderscoreWithSpace,
@@ -367,73 +424,193 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         SceneMode = SceneMode,
     };
 
-    // ==================== 快捷方案 ====================
-
-    public void ApplyPresetStandard() => ApplyPreset(o =>
+    public GachaOptions ToOptions()
     {
-        o.SelectedHairLength = GachaOptions.RandomChoice;
-        o.SelectedBreastsSize = GachaOptions.NoneChoice;
-        o.AttireMode = GachaOptions.RandomChoice;
-        o.ActionMode = GachaOptions.RandomChoice;
-        o.SceneMode = GachaOptions.LocationsChoice;
-        o.EarsMode = GachaOptions.EarsRareChoice;
-
-        o.HairColor = true;
-        o.HairStyles = true;
-        o.Eyes = true;
-        o.FaceAndExpression = true;
-
-        o.Legwear = true;
-        o.Footwear = true;
-    });
-
-    public void ApplyPresetCharacterOnly() => ApplyPreset(o =>
-    {
-        o.SelectedHairLength = GachaOptions.RandomChoice;
-        o.SelectedBreastsSize = GachaOptions.RandomChoice;
-        o.AttireMode = GachaOptions.TopsBottomsChoice;
-        o.ActionMode = GachaOptions.GesturesChoice;
-        o.SceneMode = GachaOptions.BackgroundsChoice;
-        o.EarsMode = GachaOptions.EarsRareChoice;
-
-        o.HairColor = true;
-        o.HairStyles = true;
-        o.HairAccessories = true;
-        o.Eyes = true;
-        o.FaceAndExpression = true;
-
-        o.Legwear = true;
-        o.Footwear = true;
-    });
-
-    public void ApplyPresetOutfit() => ApplyPreset(o =>
-    {
-        o.SelectedHairLength = GachaOptions.NoneChoice;
-        o.SelectedBreastsSize = GachaOptions.NoneChoice;
-        o.AttireMode = GachaOptions.RandomChoice;
-        o.ActionMode = GachaOptions.PostureChoice;
-        o.SceneMode = GachaOptions.RandomChoice;
-        o.EarsMode = GachaOptions.EarsRareChoice;
-
-        o.HairColor = true;
-        o.HairStyles = true;
-
-        o.Accessories = true;
-        o.Legwear = true;
-        o.Footwear = true;
-    });
-
-    public void ClearSelections() => ApplyPreset(_ => { });
-
-    public void ClearOutput()
-    {
-        ResultText = "";
-        LogText = "";
-        MetaText = "";
-        StatusText = "已清空";
+        var opts = ToCoreOptions();
+        opts.Presets = Presets.Select(p => p.Clone()).ToList();
+        opts.SelectedPresetId = SelectedPreset?.Id;
+        return opts;
     }
 
-    private void ApplyPreset(Action<GachaOptions> configure)
+    // ==================== 预设管理（新建 / 保存 / 删除） ====================
+
+    /// <summary>以当前页面配置新建一个预设并选中。</summary>
+    public GachaPreset CreateNewPreset()
+    {
+        string inputName = PresetNameText.Trim();
+        bool useInputName = inputName.Length > 0
+            && (SelectedPreset is null || !string.Equals(inputName, SelectedPreset.Name, StringComparison.OrdinalIgnoreCase))
+            && !Presets.Any(p => string.Equals(p.Name, inputName, StringComparison.OrdinalIgnoreCase));
+
+        string name = useInputName ? inputName : NextAvailablePresetName();
+        var preset = new GachaPreset
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            Name = name,
+            Options = ToCoreOptions()
+        };
+
+        Presets.Add(preset);
+        _suppressPresetApply = true;
+        try
+        {
+            SelectedPreset = preset;
+        }
+        finally
+        {
+            _suppressPresetApply = false;
+        }
+
+        StatusText = $"已新建预设「{preset.Name}」";
+        return preset;
+    }
+
+    /// <summary>将当前页面所有配置与名称保存到当前选中的预设；若当前无预设则自动新建。</summary>
+    public bool SaveCurrentPreset(out string message)
+    {
+        string name = PresetNameText.Trim();
+        if (name.Length == 0)
+        {
+            message = "预设名称不能为空。";
+            return false;
+        }
+
+        if (SelectedPreset is null)
+        {
+            var created = new GachaPreset
+            {
+                Id = Guid.NewGuid().ToString("N"),
+                Name = name,
+                Options = ToCoreOptions()
+            };
+            Presets.Add(created);
+            _suppressPresetApply = true;
+            try
+            {
+                SelectedPreset = created;
+            }
+            finally
+            {
+                _suppressPresetApply = false;
+            }
+            StatusText = $"已新建并保存预设「{created.Name}」";
+            message = StatusText;
+            return true;
+        }
+
+        SelectedPreset.Name = name;
+        SelectedPreset.Options = ToCoreOptions();
+        StatusText = $"已保存预设「{SelectedPreset.Name}」";
+        message = StatusText;
+        return true;
+    }
+
+    /// <summary>删除当前选中的预设。</summary>
+    public void DeleteCurrentPreset()
+    {
+        if (SelectedPreset is null) return;
+        string removedName = SelectedPreset.Name;
+        int idx = Presets.IndexOf(SelectedPreset);
+
+        _suppressPresetApply = true;
+        try
+        {
+            Presets.RemoveAt(idx);
+            SelectedPreset = Presets.Count > 0 ? Presets[Math.Min(idx, Presets.Count - 1)] : null;
+        }
+        finally
+        {
+            _suppressPresetApply = false;
+        }
+
+        StatusText = $"已删除预设「{removedName}」";
+    }
+
+    private string NextAvailablePresetName()
+    {
+        for (int i = 1; i < 1000; i++)
+        {
+            string candidate = $"预设 {i}";
+            if (!Presets.Any(p => string.Equals(p.Name, candidate, StringComparison.OrdinalIgnoreCase)))
+                return candidate;
+        }
+        return "新预设";
+    }
+
+    private static List<GachaPreset> CreateDefaultPresets() => new()
+    {
+        BuildPreset("常规全身", o =>
+        {
+            o.SelectedHairLength = GachaOptions.RandomChoice;
+            o.SelectedBreastsSize = GachaOptions.NoneChoice;
+            o.AttireMode = GachaOptions.RandomChoice;
+            o.ActionMode = GachaOptions.RandomChoice;
+            o.SceneMode = GachaOptions.LocationsChoice;
+            o.EarsMode = GachaOptions.EarsRareChoice;
+            o.HairColor = true;
+            o.HairStyles = true;
+            o.Eyes = true;
+            o.FaceAndExpression = true;
+            o.Legwear = true;
+            o.Footwear = true;
+        }),
+        BuildPreset("人设外貌", o =>
+        {
+            o.SelectedHairLength = GachaOptions.RandomChoice;
+            o.SelectedBreastsSize = GachaOptions.RandomChoice;
+            o.AttireMode = GachaOptions.TopsBottomsChoice;
+            o.ActionMode = GachaOptions.GesturesChoice;
+            o.SceneMode = GachaOptions.BackgroundsChoice;
+            o.EarsMode = GachaOptions.EarsRareChoice;
+            o.HairColor = true;
+            o.HairStyles = true;
+            o.HairAccessories = true;
+            o.Eyes = true;
+            o.FaceAndExpression = true;
+            o.Legwear = true;
+            o.Footwear = true;
+        }),
+        BuildPreset("服装展示", o =>
+        {
+            o.SelectedHairLength = GachaOptions.NoneChoice;
+            o.SelectedBreastsSize = GachaOptions.NoneChoice;
+            o.AttireMode = GachaOptions.RandomChoice;
+            o.ActionMode = GachaOptions.PostureChoice;
+            o.SceneMode = GachaOptions.RandomChoice;
+            o.EarsMode = GachaOptions.EarsRareChoice;
+            o.HairColor = true;
+            o.HairStyles = true;
+            o.Accessories = true;
+            o.Legwear = true;
+            o.Footwear = true;
+        }),
+    };
+
+    private static GachaPreset BuildPreset(string name, Action<GachaOptions> configure)
+    {
+        var opts = new GachaOptions
+        {
+            HairColor = false,
+            SelectedHairLength = GachaOptions.NoneChoice,
+            HairStyles = false,
+            HairAccessories = false,
+            Eyes = false,
+            FaceAndExpression = false,
+            EarsMode = GachaOptions.NoneChoice,
+            SelectedBreastsSize = GachaOptions.NoneChoice,
+            BodyDetails = false,
+            AttireMode = GachaOptions.NoneChoice,
+            Accessories = false,
+            Legwear = false,
+            Footwear = false,
+            ActionMode = GachaOptions.NoneChoice,
+            SceneMode = GachaOptions.NoneChoice,
+        };
+        configure(opts);
+        return new GachaPreset { Name = name, Options = opts };
+    }
+
+    public void ClearSelections()
     {
         var opts = new GachaOptions
         {
@@ -459,8 +636,15 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             ActionMode = GachaOptions.NoneChoice,
             SceneMode = GachaOptions.NoneChoice,
         };
-        configure(opts);
-        LoadOptions(opts);
+        LoadCoreOptions(opts);
+    }
+
+    public void ClearOutput()
+    {
+        ResultText = "";
+        LogText = "";
+        MetaText = "";
+        StatusText = "已清空";
     }
 
     private static List<ComboOption> BuildTagComboOptions(string engineDir, string module, string subCategory, string[] fallback)
