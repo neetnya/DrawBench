@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -18,7 +20,8 @@ using DrawBench.Modules.Batch.Services;
 namespace DrawBench.Modules.Batch.Views;
 
 /// <summary>
-/// 批量提交模块：按配置菜单中维护的工作流 API 参数，动态生成 ComfyUI API JSON 并逐条提交。
+/// 批量提交模块：按配置菜单中维护的工作流 API 参数，动态生成 ComfyUI API JSON 并逐条提交，
+/// 同时通过 ComfyUI WebSocket 实时显示总张数进度与单张采样步数。
 /// </summary>
 public partial class BatchView : UserControl
 {
@@ -32,9 +35,13 @@ public partial class BatchView : UserControl
         return Encoding.GetEncoding(54936);
     });
     private static readonly char[] InvalidDateSuffixChars = { ':', '*', '?', '"', '<', '>', '|' };
+
     private bool _isRunning;
     private bool _suppressSelectionSave;
     private bool _uiReady;
+    private CancellationTokenSource? _runCts;
+    private ComfyClient? _activeClient;
+    private ComfyProgressMonitor? _activeMonitor;
 
     public BatchView(SettingsStore store)
     {
@@ -46,9 +53,10 @@ public partial class BatchView : UserControl
 
         LstWorkflows.ItemsSource = _workflows;
         Loaded += OnViewLoaded;
+        Unloaded += OnViewUnloaded;
     }
 
-    // ==================== 启动 ====================
+    // ==================== 启动与清理 ====================
 
     private void OnViewLoaded(object sender, RoutedEventArgs e)
     {
@@ -65,6 +73,23 @@ public partial class BatchView : UserControl
         ReloadWorkflows();
 
         _uiReady = true;
+    }
+
+    private void OnViewUnloaded(object sender, RoutedEventArgs e)
+    {
+        // 切换模块页时保留运行中的监听，仅在宿主窗口关闭时清理
+        if (Application.Current?.MainWindow is null || !Application.Current.MainWindow.IsLoaded)
+            CleanupMonitor();
+    }
+
+    private void CleanupMonitor()
+    {
+        try { _runCts?.Cancel(); } catch { }
+        try { _activeMonitor?.Dispose(); } catch { }
+        try { _runCts?.Dispose(); } catch { }
+        _activeMonitor = null;
+        _runCts = null;
+        _activeClient = null;
     }
 
     /// <summary>把设置写回并落盘。</summary>
@@ -145,7 +170,6 @@ public partial class BatchView : UserControl
         _settings.LoraProfiles = win.ResultLoraProfiles;
         _settings.LoraTriggerWords = _settings.BuildTriggerLookup();
 
-        // 新增的工作流默认勾选
         if (_settings.HasSavedSelection)
         {
             foreach (var cfg in updated)
@@ -278,7 +302,29 @@ public partial class BatchView : UserControl
         return true;
     }
 
-    // ==================== 提交 ====================
+    // ==================== 提交与实时进度 ====================
+
+    private async void BtnStop_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_isRunning) return;
+
+        BtnStop.IsEnabled = false;
+        SetStatus("正在中止并清理本批未开始的任务…");
+
+        var client = _activeClient;
+        var monitor = _activeMonitor;
+        var pendingIds = monitor?.GetPendingPromptIds() ?? new List<string>();
+
+        try { _runCts?.Cancel(); } catch { }
+
+        if (client is not null)
+        {
+            await client.DeletePendingAsync(pendingIds);
+            await client.InterruptAsync();
+        }
+
+        AppendLog($"⏹ 已请求中止，并尝试从 ComfyUI 队列移除 {pendingIds.Count} 个未开始的任务。");
+    }
 
     private async void BtnRun_Click(object sender, RoutedEventArgs e)
     {
@@ -302,7 +348,7 @@ public partial class BatchView : UserControl
         if (invalidMessages.Count > 0)
         {
             SetError(invalidMessages[0]);
-            UiHost.Warn(string.Join("\n", invalidMessages), "工作流配置不完整");
+            ConfirmDialog.Warn(Window.GetWindow(this), string.Join("\n", invalidMessages), "工作流配置不完整");
             return;
         }
 
@@ -352,30 +398,61 @@ public partial class BatchView : UserControl
         }
 
         var client = new ComfyClient(TxtBaseUrl.Text);
+        var runCts = new CancellationTokenSource();
+        var monitor = new ComfyProgressMonitor(client);
+
+        _activeClient = client;
+        _activeMonitor = monitor;
+        _runCts = runCts;
 
         _isRunning = true;
         BtnRun.IsEnabled = false;
+        BtnStop.Visibility = Visibility.Visible;
+        BtnStop.IsEnabled = true;
+        PbBatch.Visibility = Visibility.Visible;
+        PbBatch.Value = 0;
         TxtLog.Text = string.Empty;
-        long totalTasks = (long)promptLines.Count * selected.Count * perPromptCount;
-        SetStatus($"正在提交 0/{totalTasks}…");
+
+        int totalTasks = (int)Math.Min(int.MaxValue, (long)promptLines.Count * selected.Count * perPromptCount);
+        SetStatus($"正在连接 ComfyUI…");
         AppendLog($"本次提交使用 {selected.Count} 个工作流：{string.Join("、", selected.Select(w => w.DisplayName))}");
+
+        bool submitting = true;
+        monitor.ProgressChanged += snapshot =>
+        {
+            RunOnUi(() =>
+            {
+                if (submitting) return;
+                PbBatch.Value = snapshot.OverallPercent;
+                SetStatus(FormatProgressStatus(snapshot));
+            });
+        };
+        monitor.ExecutionError += (wfName, reason) =>
+        {
+            RunOnUi(() => AppendLog($"✗ [{(string.IsNullOrEmpty(wfName) ? "ComfyUI" : wfName)}] 生成报错：{reason}"));
+        };
 
         try
         {
-            var queue = await client.GetQueueAsync();
+            var queue = await client.GetQueueAsync(runCts.Token);
             if (!queue.Reachable)
             {
                 SetError($"连不上 ComfyUI：{client.BaseUrl}");
-                UiHost.Warn($"连不上 ComfyUI（{client.BaseUrl}）。\n请确认它已经启动，或在顶部改地址。", "ComfyUI 未就绪");
+                ConfirmDialog.Warn(Window.GetWindow(this), $"连不上 ComfyUI（{client.BaseUrl}）。\n请确认它已经启动，或在顶部改地址。", "ComfyUI 未就绪");
                 return;
             }
 
-            int done = 0;
-            int failed = 0;
+            // 先连 WebSocket，避免首张图极快执行时漏掉进度事件
+            await monitor.StartAsync(totalTasks, runCts.Token);
+
+            int queued = 0;
+            int submitFailed = 0;
             bool disconnected = false;
 
-            async System.Threading.Tasks.Task<bool> SubmitOne(WorkflowItem wf, string prompt, long? seed)
+            async Task<bool> SubmitOne(WorkflowItem wf, string prompt, long? seed)
             {
+                if (runCts.IsCancellationRequested) return false;
+
                 long actualSeed = seed ?? NextSeed();
                 JsonObject payload = WorkflowApiBuilder.Build(
                     wf.Config,
@@ -385,14 +462,20 @@ public partial class BatchView : UserControl
                     dateSuffix,
                     actualSeed);
 
-                var result = await client.SubmitAsync(payload);
+                var result = await client.SubmitAsync(payload, runCts.Token);
                 if (result.Ok)
                 {
-                    done++;
+                    queued++;
+                    if (!string.IsNullOrEmpty(result.PromptId))
+                        monitor.TrackPrompt(result.PromptId, wf.DisplayName);
+                }
+                else if (result.Status == ComfySubmitStatus.Cancelled)
+                {
+                    return false;
                 }
                 else
                 {
-                    failed++;
+                    submitFailed++;
                     AppendLog($"✗ [{wf.DisplayName}] {result.Message}");
                     if (result.Status == ComfySubmitStatus.Unreachable)
                     {
@@ -401,7 +484,8 @@ public partial class BatchView : UserControl
                         return false;
                     }
                 }
-                SetStatus($"正在提交 {done + failed}/{totalTasks}…");
+
+                SetStatus($"正在入队 {queued + submitFailed}/{totalTasks}…");
                 return true;
             }
 
@@ -409,10 +493,10 @@ public partial class BatchView : UserControl
             {
                 foreach (long roundSeed in batchSeeds)
                 {
-                    if (disconnected) break;
+                    if (disconnected || runCts.IsCancellationRequested) break;
                     foreach (var prompt in promptLines)
                     {
-                        if (disconnected) break;
+                        if (disconnected || runCts.IsCancellationRequested) break;
                         foreach (var wf in selected)
                         {
                             if (!await SubmitOne(wf, prompt, roundSeed)) break;
@@ -424,10 +508,10 @@ public partial class BatchView : UserControl
             {
                 foreach (var prompt in promptLines)
                 {
-                    if (disconnected) break;
+                    if (disconnected || runCts.IsCancellationRequested) break;
                     for (int i = 0; i < perPromptCount; i++)
                     {
-                        if (disconnected) break;
+                        if (disconnected || runCts.IsCancellationRequested) break;
                         long? sharedSeed = fixedSeed ?? (lockSeed ? NextSeed() : null);
 
                         foreach (var wf in selected)
@@ -438,26 +522,71 @@ public partial class BatchView : UserControl
                 }
             }
 
-            ShowSubmitted(done, failed, batchSeeds, fixedSeed);
-            SetStatus(disconnected ? "连接中断，已中止" : (failed == 0 ? "排队完成" : $"排队完成，{failed} 个失败"));
-            AppLog.Info($"批量提交：成功 {done} 个，失败 {failed} 个");
+            submitting = false;
+            monitor.CompleteSubmission();
+            ShowSubmitted(queued, submitFailed, batchSeeds, fixedSeed);
 
-            if (disconnected)
-                UiHost.Warn("提交中途与 ComfyUI 断开连接，已中止剩余任务。", "连接中断");
-            else if (failed > 0)
-                UiHost.Warn($"{failed} 个任务提交失败，原因见右侧运行日志。", "部分任务失败");
+            if (disconnected || runCts.IsCancellationRequested || queued == 0)
+            {
+                SetStatus(runCts.IsCancellationRequested
+                    ? "已中止"
+                    : (disconnected ? "连接中断，已中止" : $"提交失败（{submitFailed} 个）"));
+                return;
+            }
+
+            // 等待 ComfyUI 执行完本批所有任务并实时刷新进度条
+            AppendLog(monitor.IsWebSocketConnected
+                ? "已连接实时进度监听，等待 ComfyUI 生成完成…"
+                : "实时进度通道未连上，已切换为队列轮询跟踪完成进度…");
+
+            var finalSnapshot = await monitor.WaitForCompletionAsync(runCts.Token);
+            PbBatch.Value = 100;
+
+            int totalErrors = submitFailed + finalSnapshot.Failed;
+            if (totalErrors == 0)
+            {
+                SetStatus($"全部生成完成（{finalSnapshot.Completed}/{finalSnapshot.Total} 张）");
+                AppendLog($"✓ 全部生成完成，共 {finalSnapshot.Completed} 张。");
+            }
+            else
+            {
+                SetStatus($"生成完成：{finalSnapshot.Completed} 成功，{totalErrors} 失败");
+                AppendLog($"生成结束：成功 {finalSnapshot.Completed} 张，失败 {totalErrors} 张。");
+            }
+
+            AppLog.Info($"批量生成完成：入队 {queued}，成功 {finalSnapshot.Completed}，失败 {totalErrors}");
+        }
+        catch (OperationCanceledException)
+        {
+            SetStatus("已中止");
         }
         catch (Exception ex)
         {
             SetError($"出错: {ex.Message}");
             AppLog.Error("批量提交出错", ex);
-            UiHost.Error(ex.Message, "提交任务出错");
+            ConfirmDialog.Warn(Window.GetWindow(this), ex.Message, "提交任务出错");
         }
         finally
         {
+            CleanupMonitor();
             _isRunning = false;
             BtnRun.IsEnabled = true;
+            BtnStop.Visibility = Visibility.Collapsed;
+            PbBatch.Visibility = Visibility.Collapsed;
         }
+    }
+
+    private static string FormatProgressStatus(BatchProgressSnapshot s)
+    {
+        var sb = new StringBuilder();
+        sb.Append($"正在生成：{s.Finished}/{s.Total} 张（{s.OverallPercent:0}%）");
+        if (!string.IsNullOrEmpty(s.CurrentWorkflow))
+            sb.Append($" · [{s.CurrentWorkflow}]");
+        if (s.MaxStep > 0)
+            sb.Append($" 采样 {s.CurrentStep}/{s.MaxStep} 步");
+        if (s.Failed > 0)
+            sb.Append($" · 失败 {s.Failed}");
+        return sb.ToString();
     }
 
     private void AppendLog(string line)
@@ -536,7 +665,7 @@ public partial class BatchView : UserControl
         else
         {
             SetError($"读取失败 {failed.Count} 个文件");
-            UiHost.Warn(string.Join("\n", failed), "部分文件读取失败");
+            ConfirmDialog.Warn(Window.GetWindow(this), string.Join("\n", failed), "部分文件读取失败");
         }
     }
 
@@ -649,14 +778,12 @@ public partial class BatchView : UserControl
 
     private void ShowSubmitted(int done, int failed, IReadOnlyList<long> batchSeeds, long? fixedSeed)
     {
-        string fixedText = fixedSeed is not null ? $"seed 固定为 {fixedSeed}" : "";
-        string failText = failed > 0 ? $"，失败 {failed} 个" : "";
+        string fixedText = fixedSeed is not null ? $"，seed 固定为 {fixedSeed}" : "";
+        string failText = failed > 0 ? $"，入队失败 {failed} 个" : "";
 
         if (batchSeeds.Count == 0)
         {
-            AppendLog(fixedText.Length == 0
-                ? $"全部任务已提交，共 {done} 个{failText}。"
-                : $"全部任务已提交，共 {done} 个{failText}，{fixedText}。");
+            AppendLog($"任务已入队，共 {done} 个{failText}{fixedText}。");
             return;
         }
 
@@ -664,6 +791,6 @@ public partial class BatchView : UserControl
             ? string.Join(", ", batchSeeds)
             : string.Join(", ", batchSeeds.Take(10)) + " …";
 
-        AppendLog($"全部任务已提交，共 {done} 个{failText}。共 {batchSeeds.Count} 轮，每轮全局 seed: {seedText}");
+        AppendLog($"任务已入队，共 {done} 个{failText}。共 {batchSeeds.Count} 轮，每轮全局 seed: {seedText}");
     }
 }

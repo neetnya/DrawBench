@@ -233,19 +233,31 @@
             </Grid>
         </Grid>
 
-        <!-- ============ 底栏 ============ -->
+        <!-- ============ 底栏：主操作 + 实时进度 ============ -->
         <Border Grid.Row="1" Margin="12,12,12,12" Padding="12" Style="{StaticResource PanelCard}">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <Button x:Name="BtnRun" Grid.Column="0" Content="开始批量排队" Click="BtnRun_Click"
                         Style="{StaticResource PrimaryButton}" Padding="24,7" MinWidth="140" />
-                <TextBlock x:Name="TxtStatus" Grid.Column="1" Text="就绪" VerticalAlignment="Center"
-                           Margin="16,0,4,0" Foreground="{StaticResource Muted}" FontSize="12"
-                           TextTrimming="CharacterEllipsis" />
+
+                <Button x:Name="BtnStop" Grid.Column="1" Content="中止" Click="BtnStop_Click"
+                        Style="{StaticResource DangerButton}" Padding="16,7" Margin="8,0,0,0"
+                        Visibility="Collapsed"
+                        ToolTip="中止当前正在生成的图片，并清理本批尚未开始的队列任务" />
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="16,0,4,0">
+                    <TextBlock x:Name="TxtStatus" Text="就绪"
+                               Foreground="{StaticResource Muted}" FontSize="12"
+                               TextTrimming="CharacterEllipsis" />
+                    <ProgressBar x:Name="PbBatch" Style="{StaticResource SlimProgress}"
+                                 Minimum="0" Maximum="100" Value="0"
+                                 Margin="0,6,0,0" Visibility="Collapsed" />
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

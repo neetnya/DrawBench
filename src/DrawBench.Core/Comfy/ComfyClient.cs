@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -38,10 +39,12 @@ public sealed class ComfyQueueStatus
 
 /// <summary>
 /// ComfyUI HTTP 客户端：复用进程级共享 HttpClient 防止 Socket 泄漏，
-/// 并为探活与提交分别设置合理的超时。
+/// 并为探活、提交、队列控制与 WebSocket 进度监听提供统一入口。
 /// </summary>
 public sealed class ComfyClient
 {
+    public const string DefaultClientId = "DrawBench";
+
     private static readonly TimeSpan SubmitTimeout = TimeSpan.FromMinutes(5);
     private static readonly TimeSpan ProbeTimeout = TimeSpan.FromSeconds(8);
 
@@ -53,12 +56,28 @@ public sealed class ComfyClient
         Timeout = Timeout.InfiniteTimeSpan
     };
 
-    public ComfyClient(string baseUrl)
+    public ComfyClient(string baseUrl, string? clientId = null)
     {
         BaseUrl = Normalize(baseUrl);
+        ClientId = string.IsNullOrWhiteSpace(clientId) ? DefaultClientId : clientId.Trim();
     }
 
     public string BaseUrl { get; }
+
+    public string ClientId { get; }
+
+    /// <summary>构造对应的 WebSocket 监听地址（ws://.../ws?clientId=...）。</summary>
+    public Uri BuildWebSocketUri()
+    {
+        var httpUri = new Uri(BaseUrl);
+        var builder = new UriBuilder(httpUri)
+        {
+            Scheme = string.Equals(httpUri.Scheme, "https", StringComparison.OrdinalIgnoreCase) ? "wss" : "ws",
+            Path = httpUri.AbsolutePath.TrimEnd('/') + "/ws",
+            Query = $"clientId={Uri.EscapeDataString(ClientId)}"
+        };
+        return builder.Uri;
+    }
 
     /// <summary>提交一个 API 格式工作流。</summary>
     public async Task<ComfySubmitResult> SubmitAsync(JsonObject workflow, CancellationToken ct = default)
@@ -68,7 +87,7 @@ public sealed class ComfyClient
 
         try
         {
-            var payload = new { prompt = workflow, client_id = "DrawBench" };
+            var payload = new { prompt = workflow, client_id = ClientId };
             string json = JsonSerializer.Serialize(payload);
             using var content = new StringContent(json, Encoding.UTF8, "application/json");
             using var resp = await SharedHttp.PostAsync($"{BaseUrl}/prompt", content, timeoutCts.Token).ConfigureAwait(false);
@@ -142,6 +161,43 @@ public sealed class ComfyClient
                 Status = ComfySubmitStatus.HttpError,
                 Message = "ComfyUI 返回的不是 JSON：" + ex.Message
             };
+        }
+    }
+
+    /// <summary>中断 ComfyUI 当前正在生成的任务（POST /interrupt）。</summary>
+    public async Task<bool> InterruptAsync(CancellationToken ct = default)
+    {
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(ProbeTimeout);
+        try
+        {
+            using var resp = await SharedHttp.PostAsync($"{BaseUrl}/interrupt", null, timeoutCts.Token).ConfigureAwait(false);
+            return resp.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>从 ComfyUI 待执行队列中移除指定的 prompt_id（不影响其他客户端提交的任务）。</summary>
+    public async Task<bool> DeletePendingAsync(IEnumerable<string> promptIds, CancellationToken ct = default)
+    {
+        var list = promptIds.Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.Ordinal).ToList();
+        if (list.Count == 0) return true;
+
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(ProbeTimeout);
+        try
+        {
+            string json = JsonSerializer.Serialize(new { delete = list });
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+            using var resp = await SharedHttp.PostAsync($"{BaseUrl}/queue", content, timeoutCts.Token).ConfigureAwait(false);
+            return resp.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
         }
     }
 
