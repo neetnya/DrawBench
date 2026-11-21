@@ -15,7 +15,97 @@ public enum WorkflowLoaderMode
     UnetSplit
 }
 
-/// <summary>单条 LoRA 挂载项（仅保存引用与权重；触发词按 LoraName 存在全局触发词库中）。</summary>
+/// <summary>
+/// 全局 LoRA 配置项：按 ComfyUI 相对路径唯一标识，集中保存别名、默认权重与全局触发词。
+/// 所有工作流共享同一份 LoRA 元数据；支持改名/重指向时一键同步到所有工作流。
+/// </summary>
+public sealed class LoraProfile : INotifyPropertyChanged
+{
+    private string _loraName = string.Empty;
+    private string _alias = string.Empty;
+    private string _triggerWords = string.Empty;
+    private double _defaultStrengthModel = 1.0;
+    private double _defaultStrengthClip = 1.0;
+    private string _statusBadge = string.Empty;
+
+    public string LoraName
+    {
+        get => _loraName;
+        set
+        {
+            if (SetField(ref _loraName, value ?? string.Empty))
+                OnPropertyChanged(nameof(DisplayTitle));
+        }
+    }
+
+    /// <summary>可选别名（如「油皮质感」），下拉搜索时同时匹配别名和文件路径。</summary>
+    public string Alias
+    {
+        get => _alias;
+        set
+        {
+            if (SetField(ref _alias, value ?? string.Empty))
+                OnPropertyChanged(nameof(DisplayTitle));
+        }
+    }
+
+    /// <summary>全局触发词，所有引用此 LoRA 的工作流自动生效。</summary>
+    public string TriggerWords
+    {
+        get => _triggerWords;
+        set => SetField(ref _triggerWords, value ?? string.Empty);
+    }
+
+    public double DefaultStrengthModel
+    {
+        get => _defaultStrengthModel;
+        set => SetField(ref _defaultStrengthModel, value);
+    }
+
+    public double DefaultStrengthClip
+    {
+        get => _defaultStrengthClip;
+        set => SetField(ref _defaultStrengthClip, value);
+    }
+
+    [JsonIgnore]
+    public string DisplayTitle =>
+        string.IsNullOrWhiteSpace(Alias)
+            ? (string.IsNullOrWhiteSpace(LoraName) ? "(未选择 LoRA)" : LoraName)
+            : $"{Alias}  ({System.IO.Path.GetFileNameWithoutExtension(LoraName)})";
+
+    /// <summary>界面展示用的引用数与文件存在状态摘要。</summary>
+    [JsonIgnore]
+    public string StatusBadge
+    {
+        get => _statusBadge;
+        set => SetField(ref _statusBadge, value ?? string.Empty);
+    }
+
+    public LoraProfile Clone() => new()
+    {
+        LoraName = LoraName,
+        Alias = Alias,
+        TriggerWords = TriggerWords,
+        DefaultStrengthModel = DefaultStrengthModel,
+        DefaultStrengthClip = DefaultStrengthClip
+    };
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private bool SetField<T>(ref T field, T value, [CallerMemberName] string? name = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(name);
+        return true;
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? name = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+
+/// <summary>单条 LoRA 挂载项（仅保存引用与权重；触发词按 LoraName 存在全局 LoraProfiles 中）。</summary>
 public sealed class LoraConfigItem : INotifyPropertyChanged
 {
     private bool _enabled = true;
@@ -53,7 +143,7 @@ public sealed class LoraConfigItem : INotifyPropertyChanged
         set => SetField(ref _strengthClip, value);
     }
 
-    /// <summary>界面编辑用的触发词视图属性（不随单个工作流落盘，读写同步到全局 BatchSettings.LoraTriggerWords）。</summary>
+    /// <summary>界面编辑用的触发词视图属性（不随单个工作流落盘，读写同步到全局 LoraProfiles）。</summary>
     [JsonIgnore]
     public string TriggerWords
     {

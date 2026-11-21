@@ -40,7 +40,7 @@
             <Border Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1"
                     CornerRadius="8" Margin="0,4,0,0" Padding="6"
                     MinWidth="{Binding ActualWidth, ElementName=BtnToggle}"
-                    MaxWidth="520">
+                    MaxWidth="540">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="14" ShadowDepth="3" Direction="270"
                                       Opacity="0.14" Color="#1B2440" />
@@ -58,7 +58,7 @@
                                  TextChanged="TxtFilter_TextChanged"
                                  PreviewKeyDown="TxtFilter_PreviewKeyDown" />
                         <TextBlock x:Name="TxtFilterPlaceholder"
-                                   Text="输入关键字过滤 LoRA（空格分隔多词）…"
+                                   Text="输入路径或别名过滤 LoRA（空格分隔多词）…"
                                    IsHitTestVisible="False" VerticalAlignment="Center"
                                    Margin="8,0,0,0" FontSize="12" Foreground="{StaticResource Muted}" />
                     </Grid>
@@ -75,8 +75,8 @@
                              PreviewKeyDown="LstFiltered_PreviewKeyDown">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"
-                                           ToolTip="{Binding}" />
+                                <TextBlock Text="{Binding Display}" TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Value}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

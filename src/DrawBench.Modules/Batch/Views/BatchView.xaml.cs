@@ -40,10 +40,7 @@ public partial class BatchView : UserControl
     {
         _store = store;
         _settings = store.Get<BatchSettings>(ModuleIds.Batch) ?? new BatchSettings();
-        _settings.Workflows ??= new List<WorkflowApiConfig>();
-        _settings.LoraTriggerWords = _settings.LoraTriggerWords is null
-            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            : new Dictionary<string, string>(_settings.LoraTriggerWords, StringComparer.OrdinalIgnoreCase);
+        _settings.Normalize();
 
         InitializeComponent();
 
@@ -136,7 +133,7 @@ public partial class BatchView : UserControl
         string baseUrl = ComfyClient.Normalize(TxtBaseUrl.Text);
         var existingIds = new HashSet<string>(_settings.Workflows.Select(w => w.Id), StringComparer.OrdinalIgnoreCase);
 
-        var win = new WorkflowConfigWindow(_settings.Workflows, _settings.LoraTriggerWords, baseUrl)
+        var win = new WorkflowConfigWindow(_settings.Workflows, _settings.LoraProfiles, baseUrl)
         {
             Owner = Window.GetWindow(this)
         };
@@ -145,7 +142,8 @@ public partial class BatchView : UserControl
 
         var updated = win.ResultWorkflows;
         _settings.Workflows = updated;
-        _settings.LoraTriggerWords = win.ResultLoraTriggers;
+        _settings.LoraProfiles = win.ResultLoraProfiles;
+        _settings.LoraTriggerWords = _settings.BuildTriggerLookup();
 
         // 新增的工作流默认勾选
         if (_settings.HasSavedSelection)
@@ -159,7 +157,7 @@ public partial class BatchView : UserControl
 
         _store.Set(ModuleIds.Batch, _settings);
         ReloadWorkflows();
-        SetStatus($"已保存 {updated.Count} 个工作流 API 配置");
+        SetStatus($"已保存 {updated.Count} 个工作流 API · {_settings.LoraProfiles.Count} 条全局 LoRA 配置");
     }
 
     private void Workflow_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -344,6 +342,7 @@ public partial class BatchView : UserControl
         string negativePrompt = TxtNegativePrompt.Text.Trim();
         bool lockSeed = ChkLockSeed.IsChecked == true;
         bool globalLockSeed = ChkGlobalLockSeed.IsChecked == true;
+        var triggerLookup = _settings.BuildTriggerLookup();
 
         var batchSeeds = new List<long>();
         if (globalLockSeed && fixedSeed is null)
@@ -380,7 +379,7 @@ public partial class BatchView : UserControl
                 long actualSeed = seed ?? NextSeed();
                 JsonObject payload = WorkflowApiBuilder.Build(
                     wf.Config,
-                    _settings.LoraTriggerWords,
+                    triggerLookup,
                     prompt,
                     negativePrompt,
                     dateSuffix,
@@ -541,7 +540,6 @@ public partial class BatchView : UserControl
         }
     }
 
-    /// <summary>正向队列当前内容（供自检核对投递结果）。</summary>
     public string PromptQueueText => TxtPromptQueue.Text;
 
     private void RunOnUi(Action action)
