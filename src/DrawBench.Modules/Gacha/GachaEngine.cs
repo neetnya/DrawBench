@@ -33,7 +33,6 @@ public sealed class GachaOptions
     public bool HairColor { get; set; } = true;
     public string SelectedHairLength { get; set; } = RandomChoice;
     public bool HairStyles { get; set; } = true;
-    public bool HairAccessories { get; set; } = false;
     public bool Eyes { get; set; } = true;
     public bool FaceAndExpression { get; set; } = true;
 
@@ -47,6 +46,7 @@ public sealed class GachaOptions
     public string AttireMode { get; set; } = RandomChoice;
     public bool Legwear { get; set; } = true;
     public bool Footwear { get; set; } = true;
+    public bool NoShoes { get; set; } = false;
     public bool Accessories { get; set; } = false;
 
     // 动作
@@ -325,7 +325,6 @@ public static class GachaEngine
         new("hair", "hair_color", "发色", o => BoolChoice(o.HairColor)),
         new("hair", "hair_length", "发长", o => o.SelectedHairLength ?? GachaOptions.NoneChoice),
         new("hair", "hair_styles", "发型", o => BoolChoice(o.HairStyles)),
-        new("hair", "hair_accessories", "发饰", o => BoolChoice(o.HairAccessories)),
 
         // 2. 面部与五官
         new("face_and_eyes", "eyes", "瞳色/眼型", o => BoolChoice(o.Eyes)),
@@ -341,9 +340,9 @@ public static class GachaEngine
         new("body_parts", "details", "细节", o => BoolChoice(o.BodyDetails)),
 
         // 4. 服装与配饰（outfits/tops/bottoms 由 AttireMode 控制，在 Roll 中按需展开）
-        new("attire_and_accessories", "accessories", "头饰/配饰", o => BoolChoice(o.Accessories)),
+        new("attire_and_accessories", "accessories", "配饰", o => BoolChoice(o.Accessories)),
         new("attire_and_accessories", "legwear", "袜类/腿饰", o => BoolChoice(o.Legwear)),
-        new("attire_and_accessories", "footwear", "鞋类", o => BoolChoice(o.Footwear)),
+        new("attire_and_accessories", "footwear", "鞋类", o => o.NoShoes ? "no_shoes" : BoolChoice(o.Footwear)),
     };
 
     /// <summary>读取指定子组的 SFW tag 列表，用于下拉框选项填充。</summary>

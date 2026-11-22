@@ -196,7 +196,6 @@
                         <UniformGrid Columns="3" Margin="0,0,0,8">
                             <CheckBox Content="发色" IsChecked="{Binding HairColor}" Margin="0,0,6,5" />
                             <CheckBox Content="发型" IsChecked="{Binding HairStyles}" Margin="0,0,6,5" />
-                            <CheckBox Content="发饰" IsChecked="{Binding HairAccessories}" Margin="0,0,6,5" />
                             <CheckBox Content="瞳色/眼型(30%)" IsChecked="{Binding Eyes}" Margin="0,0,6,5" ToolTip="勾选后仅 30% 概率触发抽取" />
                             <CheckBox Content="表情" IsChecked="{Binding FaceAndExpression}" Margin="0,0,6,5" />
                             <CheckBox Content="细节" IsChecked="{Binding BodyDetails}" Margin="0,0,6,5"
@@ -205,10 +204,12 @@
 
                         <!-- 4. 穿搭与配饰 -->
                         <TextBlock Text="穿搭与配饰" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource Muted}" Margin="0,2,0,5" />
-                        <UniformGrid Columns="3" Margin="0,0,0,8">
-                            <CheckBox Content="头饰/配饰" IsChecked="{Binding Accessories}" Margin="0,0,6,5" />
+                        <UniformGrid Columns="4" Margin="0,0,0,8">
+                            <CheckBox Content="配饰" IsChecked="{Binding Accessories}" Margin="0,0,6,5" />
                             <CheckBox Content="袜类/腿饰" IsChecked="{Binding Legwear}" Margin="0,0,6,5" />
                             <CheckBox Content="鞋类" IsChecked="{Binding Footwear}" Margin="0,0,6,5" />
+                            <CheckBox Content="不穿鞋" IsChecked="{Binding NoShoes}" Margin="0,0,6,5"
+                                      ToolTip="固定输出 no shoes，与「鞋类」互斥" />
                         </UniformGrid>
                     </StackPanel>
                 </ScrollViewer>

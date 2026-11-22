@@ -63,7 +63,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
     private bool _hairColor = true;
     private string _selectedHairLength = GachaOptions.RandomChoice;
     private bool _hairStyles = true;
-    private bool _hairAccessories;
     private bool _eyes = true;
     private bool _faceAndExpression = true;
     private string _earsMode = GachaOptions.EarsRareChoice;
@@ -73,6 +72,7 @@ public sealed class GachaViewModel : INotifyPropertyChanged
     private string _attireMode = GachaOptions.RandomChoice;
     private bool _legwear = true;
     private bool _footwear = true;
+    private bool _noShoes;
     private bool _accessories;
 
     private string _actionMode = GachaOptions.RandomChoice;
@@ -223,12 +223,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         set => SetField(ref _hairStyles, value);
     }
 
-    public bool HairAccessories
-    {
-        get => _hairAccessories;
-        set => SetField(ref _hairAccessories, value);
-    }
-
     public bool Eyes
     {
         get => _eyes;
@@ -276,7 +270,21 @@ public sealed class GachaViewModel : INotifyPropertyChanged
     public bool Footwear
     {
         get => _footwear;
-        set => SetField(ref _footwear, value);
+        set
+        {
+            if (SetField(ref _footwear, value) && value)
+                NoShoes = false;
+        }
+    }
+
+    public bool NoShoes
+    {
+        get => _noShoes;
+        set
+        {
+            if (SetField(ref _noShoes, value) && value)
+                Footwear = false;
+        }
     }
 
     public bool Accessories
@@ -376,7 +384,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         HairColor = o.HairColor;
         SelectedHairLength = o.SelectedHairLength;
         HairStyles = o.HairStyles;
-        HairAccessories = o.HairAccessories;
 
         Eyes = o.Eyes;
         FaceAndExpression = o.FaceAndExpression;
@@ -387,7 +394,8 @@ public sealed class GachaViewModel : INotifyPropertyChanged
 
         AttireMode = o.AttireMode;
         Legwear = o.Legwear;
-        Footwear = o.Footwear;
+        NoShoes = o.NoShoes;
+        Footwear = !o.NoShoes && o.Footwear;
         Accessories = o.Accessories;
 
         ActionMode = o.ActionMode;
@@ -406,7 +414,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         HairColor = HairColor,
         SelectedHairLength = SelectedHairLength,
         HairStyles = HairStyles,
-        HairAccessories = HairAccessories,
 
         Eyes = Eyes,
         FaceAndExpression = FaceAndExpression,
@@ -418,6 +425,7 @@ public sealed class GachaViewModel : INotifyPropertyChanged
         AttireMode = AttireMode,
         Legwear = Legwear,
         Footwear = Footwear,
+        NoShoes = NoShoes,
         Accessories = Accessories,
 
         ActionMode = ActionMode,
@@ -564,7 +572,7 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             o.EarsMode = GachaOptions.EarsRareChoice;
             o.HairColor = true;
             o.HairStyles = true;
-            o.HairAccessories = true;
+            o.Accessories = true;
             o.Eyes = true;
             o.FaceAndExpression = true;
             o.Legwear = true;
@@ -593,7 +601,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             HairColor = false,
             SelectedHairLength = GachaOptions.NoneChoice,
             HairStyles = false,
-            HairAccessories = false,
             Eyes = false,
             FaceAndExpression = false,
             EarsMode = GachaOptions.NoneChoice,
@@ -603,6 +610,7 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             Accessories = false,
             Legwear = false,
             Footwear = false,
+            NoShoes = false,
             ActionMode = GachaOptions.NoneChoice,
             SceneMode = GachaOptions.NoneChoice,
         };
@@ -623,7 +631,6 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             HairColor = false,
             SelectedHairLength = GachaOptions.NoneChoice,
             HairStyles = false,
-            HairAccessories = false,
             Eyes = false,
             FaceAndExpression = false,
             EarsMode = GachaOptions.NoneChoice,
@@ -633,6 +640,7 @@ public sealed class GachaViewModel : INotifyPropertyChanged
             Accessories = false,
             Legwear = false,
             Footwear = false,
+            NoShoes = false,
             ActionMode = GachaOptions.NoneChoice,
             SceneMode = GachaOptions.NoneChoice,
         };
