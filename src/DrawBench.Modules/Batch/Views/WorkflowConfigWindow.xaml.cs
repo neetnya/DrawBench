@@ -635,6 +635,13 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         foreach (var item in matched)
             _filteredGlobalLoras.Add(item);
 
+        if (TxtGlobalLoraCount is not null)
+        {
+            TxtGlobalLoraCount.Text = query.Length > 0
+                ? $"{matched.Count} / {_globalLoras.Count} 个"
+                : $"{_globalLoras.Count} 个";
+        }
+
         if (keepSelected is not null && _filteredGlobalLoras.Contains(keepSelected))
             LstGlobalLoras.SelectedItem = keepSelected;
         else if (_filteredGlobalLoras.Count > 0 && LstGlobalLoras.SelectedItem is null)

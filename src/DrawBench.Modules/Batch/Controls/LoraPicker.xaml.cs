@@ -111,7 +111,14 @@ public partial class LoraPicker : UserControl
     private string FormatDisplay(string loraName)
     {
         if (AliasMap is not null && AliasMap.TryGetValue(loraName, out var alias) && !string.IsNullOrWhiteSpace(alias))
-            return $"[{alias}] {loraName}";
+            return alias.Trim();
+        return loraName;
+    }
+
+    private string BuildSearchText(string loraName)
+    {
+        if (AliasMap is not null && AliasMap.TryGetValue(loraName, out var alias) && !string.IsNullOrWhiteSpace(alias))
+            return $"{alias.Trim()} {loraName}";
         return loraName;
     }
 
@@ -241,7 +248,8 @@ public partial class LoraPicker : UserControl
             {
                 string trimmed = s.Trim();
                 string display = FormatDisplay(trimmed);
-                return new PickerOption(trimmed, display, display);
+                string searchText = BuildSearchText(trimmed);
+                return new PickerOption(trimmed, display, searchText);
             })
             .ToList();
 

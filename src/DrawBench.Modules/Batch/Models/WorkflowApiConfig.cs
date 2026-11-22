@@ -72,7 +72,7 @@ public sealed class LoraProfile : INotifyPropertyChanged
     public string DisplayTitle =>
         string.IsNullOrWhiteSpace(Alias)
             ? (string.IsNullOrWhiteSpace(LoraName) ? "(未选择 LoRA)" : LoraName)
-            : $"{Alias}  ({System.IO.Path.GetFileNameWithoutExtension(LoraName)})";
+            : Alias.Trim();
 
     /// <summary>界面展示用的引用数与文件存在状态摘要。</summary>
     [JsonIgnore]
