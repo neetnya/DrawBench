@@ -18,6 +18,9 @@ public sealed class BatchSettings
     /// <summary>全局 LoRA 库（包含路径、别名、默认权重、全局触发词），所有工作流共享。</summary>
     public List<LoraProfile> LoraProfiles { get; set; } = new();
 
+    /// <summary>用户自定义的 LoRA 分类列表（无预设，默认为空）。</summary>
+    public List<string> LoraCategories { get; set; } = new();
+
     /// <summary>兼容旧版字典格式的触发词（启动时自动迁移合并进 LoraProfiles）。</summary>
     public Dictionary<string, string> LoraTriggerWords { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
@@ -44,6 +47,12 @@ public sealed class BatchSettings
     {
         Workflows ??= new List<WorkflowApiConfig>();
         LoraProfiles ??= new List<LoraProfile>();
+        LoraCategories = (LoraCategories ?? new List<string>())
+            .Concat(LoraProfiles.Select(p => p.Category))
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Select(c => c.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
         LoraTriggerWords = LoraTriggerWords is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(LoraTriggerWords, StringComparer.OrdinalIgnoreCase);

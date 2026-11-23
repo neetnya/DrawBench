@@ -23,6 +23,7 @@ public sealed class LoraProfile : INotifyPropertyChanged
 {
     private string _loraName = string.Empty;
     private string _alias = string.Empty;
+    private string _category = string.Empty;
     private string _triggerWords = string.Empty;
     private double _defaultStrengthModel = 1.0;
     private double _defaultStrengthClip = 1.0;
@@ -47,6 +48,13 @@ public sealed class LoraProfile : INotifyPropertyChanged
             if (SetField(ref _alias, value ?? string.Empty))
                 OnPropertyChanged(nameof(DisplayTitle));
         }
+    }
+
+    /// <summary>用户自定义的单个分类（留空表示未分类）。</summary>
+    public string Category
+    {
+        get => _category;
+        set => SetField(ref _category, value ?? string.Empty);
     }
 
     /// <summary>全局触发词，所有引用此 LoRA 的工作流自动生效。</summary>
@@ -86,6 +94,7 @@ public sealed class LoraProfile : INotifyPropertyChanged
     {
         LoraName = LoraName,
         Alias = Alias,
+        Category = Category,
         TriggerWords = TriggerWords,
         DefaultStrengthModel = DefaultStrengthModel,
         DefaultStrengthClip = DefaultStrengthClip

@@ -31,13 +31,19 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
     private ComfyOptionsCatalog _lastCatalog = new();
     private WorkflowApiConfig? _current;
     private LoraProfile? _currentGlobalLora;
+    private const string FilterAllLabel = "全部分类";
+    private const string UncategorizedLabel = "未分类";
+
     private bool _syncingModeCombo;
     private bool _syncingLoraTrigger;
+    private bool _syncingCategoryControls;
     private IReadOnlyDictionary<string, string> _loraAliasMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    private IReadOnlyDictionary<string, string> _loraCategoryMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     public WorkflowConfigWindow(
         IEnumerable<WorkflowApiConfig> initialWorkflows,
         IEnumerable<LoraProfile>? initialLoraProfiles,
+        IEnumerable<string>? initialLoraCategories,
         string comfyBaseUrl)
     {
         _comfyBaseUrl = comfyBaseUrl;
@@ -70,7 +76,21 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         LstLoras.ItemsSource = _currentLoras;
         LstGlobalLoras.ItemsSource = _filteredGlobalLoras;
 
+        if (initialLoraCategories is not null)
+        {
+            foreach (var c in initialLoraCategories.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).Distinct(StringComparer.OrdinalIgnoreCase))
+                LoraCategories.Add(c);
+        }
+        foreach (var p in _globalLoras)
+        {
+            string cat = p.Category.Trim();
+            if (cat.Length > 0 && !LoraCategories.Any(c => string.Equals(c, cat, StringComparison.OrdinalIgnoreCase)))
+                LoraCategories.Add(cat);
+        }
+
+        RebuildCategoryControls();
         RebuildAliasMap();
+        RebuildCategoryMap();
         ApplyCatalog(_lastCatalog);
         RefreshGlobalLoraList();
 
@@ -82,6 +102,12 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
 
     /// <summary>点击「保存并关闭」后返回的全局 LoRA 库。</summary>
     public List<LoraProfile> ResultLoraProfiles { get; private set; } = new();
+
+    /// <summary>点击「保存并关闭」后返回的自定义分类列表。</summary>
+    public List<string> ResultLoraCategories { get; private set; } = new();
+
+    /// <summary>用户自定义的 LoRA 分类列表（供 LoraPicker 绑定）。</summary>
+    public ObservableCollection<string> LoraCategories { get; } = new();
 
     // 所有下拉框的稳定数据源集合
     public ObservableCollection<string> CheckpointOptions { get; } = new();
@@ -101,6 +127,16 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         private set
         {
             _loraAliasMap = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public IReadOnlyDictionary<string, string> LoraCategoryMap
+    {
+        get => _loraCategoryMap;
+        private set
+        {
+            _loraCategoryMap = value;
             OnPropertyChanged();
         }
     }
@@ -140,6 +176,7 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         {
             // 从全局 LoRA 页切回工作流页时，同步最新触发词与别名
             RebuildAliasMap();
+            RebuildCategoryMap();
             foreach (var item in _currentLoras)
                 LoadTriggerIntoItem(item);
         }
@@ -582,6 +619,21 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
     {
         if (e.PropertyName == nameof(LoraProfile.Alias) || e.PropertyName == nameof(LoraProfile.LoraName))
             RebuildAliasMap();
+        if (e.PropertyName == nameof(LoraProfile.Category) || e.PropertyName == nameof(LoraProfile.LoraName))
+            RebuildCategoryMap();
+    }
+
+    private void RebuildCategoryMap()
+    {
+        var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var p in _globalLoras)
+        {
+            string key = p.LoraName.Trim();
+            string cat = p.Category.Trim();
+            if (key.Length > 0 && cat.Length > 0)
+                map[key] = cat;
+        }
+        LoraCategoryMap = map;
     }
 
     private void RebuildAliasMap()
@@ -609,8 +661,9 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
                 w.Loras.Any(l => string.Equals(l.LoraName.Trim(), key, StringComparison.OrdinalIgnoreCase)));
 
             bool missing = hasComfyList && key.Length > 0 && !_comfyLoraSet.Contains(key);
+            string catPrefix = string.IsNullOrWhiteSpace(profile.Category) ? string.Empty : $"[{profile.Category.Trim()}] · ";
             string usage = refCount > 0 ? $"被 {refCount} 个工作流引用" : "未被工作流引用";
-            profile.StatusBadge = missing ? $"⚠ ComfyUI 中未找到 · {usage}" : usage;
+            profile.StatusBadge = missing ? $"{catPrefix}⚠ ComfyUI 中未找到 · {usage}" : $"{catPrefix}{usage}";
         }
     }
 
@@ -621,11 +674,25 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         string query = (TxtGlobalLoraSearch?.Text ?? string.Empty).Trim();
         var tokens = query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
+        string? activeCatFilter = CmbGlobalCategoryFilter?.SelectedItem as string;
+
         var matched = _globalLoras
             .Where(p =>
             {
+                if (!string.IsNullOrEmpty(activeCatFilter) && activeCatFilter != FilterAllLabel)
+                {
+                    if (activeCatFilter == UncategorizedLabel)
+                    {
+                        if (!string.IsNullOrWhiteSpace(p.Category)) return false;
+                    }
+                    else if (!string.Equals(p.Category.Trim(), activeCatFilter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
+
                 if (tokens.Length == 0) return true;
-                string hay = $"{p.LoraName} {p.Alias} {p.TriggerWords}";
+                string hay = $"{p.Category} {p.LoraName} {p.Alias} {p.TriggerWords}";
                 return tokens.All(t => hay.Contains(t, StringComparison.OrdinalIgnoreCase));
             })
             .OrderBy(p => p.LoraName, StringComparer.OrdinalIgnoreCase)
@@ -637,7 +704,8 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
 
         if (TxtGlobalLoraCount is not null)
         {
-            TxtGlobalLoraCount.Text = query.Length > 0
+            bool filtered = query.Length > 0 || (!string.IsNullOrEmpty(activeCatFilter) && activeCatFilter != FilterAllLabel);
+            TxtGlobalLoraCount.Text = filtered
                 ? $"{matched.Count} / {_globalLoras.Count} 个"
                 : $"{_globalLoras.Count} 个";
         }
@@ -678,7 +746,95 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         TxtGlobalLoraEmptyHint.Visibility = Visibility.Collapsed;
         GlobalLoraScroll.Visibility = Visibility.Visible;
         PickerRenameTarget.SelectedLora = string.Empty;
+        SyncCurrentLoraCategorySelection();
         UpdateCurrentGlobalLoraUsage();
+    }
+
+    private void RebuildCategoryControls()
+    {
+        _syncingCategoryControls = true;
+        try
+        {
+            string? prevFilter = CmbGlobalCategoryFilter?.SelectedItem as string;
+            var filterItems = new List<string> { FilterAllLabel, UncategorizedLabel };
+            filterItems.AddRange(LoraCategories);
+            if (CmbGlobalCategoryFilter is not null)
+            {
+                CmbGlobalCategoryFilter.ItemsSource = filterItems;
+                CmbGlobalCategoryFilter.SelectedItem =
+                    prevFilter is not null && filterItems.Contains(prevFilter) ? prevFilter : FilterAllLabel;
+            }
+
+            var editorItems = new List<string> { UncategorizedLabel };
+            editorItems.AddRange(LoraCategories);
+            if (CmbGlobalLoraCategory is not null)
+                CmbGlobalLoraCategory.ItemsSource = editorItems;
+        }
+        finally
+        {
+            _syncingCategoryControls = false;
+        }
+        SyncCurrentLoraCategorySelection();
+    }
+
+    private void SyncCurrentLoraCategorySelection()
+    {
+        if (CmbGlobalLoraCategory is null || _currentGlobalLora is null) return;
+        _syncingCategoryControls = true;
+        try
+        {
+            string cat = _currentGlobalLora.Category.Trim();
+            CmbGlobalLoraCategory.SelectedItem = cat.Length > 0 && LoraCategories.Contains(cat)
+                ? cat
+                : UncategorizedLabel;
+        }
+        finally
+        {
+            _syncingCategoryControls = false;
+        }
+    }
+
+    private void CmbGlobalCategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_syncingCategoryControls) return;
+        RefreshGlobalLoraList(_currentGlobalLora);
+    }
+
+    private void CmbGlobalLoraCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_syncingCategoryControls || _currentGlobalLora is null) return;
+        string? selected = CmbGlobalLoraCategory.SelectedItem as string;
+        _currentGlobalLora.Category = string.IsNullOrEmpty(selected) || selected == UncategorizedLabel
+            ? string.Empty
+            : selected;
+        RebuildCategoryMap();
+        RefreshGlobalLoraList(_currentGlobalLora);
+    }
+
+    private void BtnManageCategories_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new CategoryManagerDialog(this, LoraCategories);
+        if (dlg.ShowDialog() != true) return;
+
+        LoraCategories.Clear();
+        foreach (var cat in dlg.ResultCategories)
+            LoraCategories.Add(cat);
+
+        // 同步所有 LoRA 的分类（改名更新，删除清空为未分类）
+        foreach (var p in _globalLoras)
+        {
+            string cat = p.Category.Trim();
+            if (cat.Length == 0) continue;
+
+            if (dlg.RenamedMap.TryGetValue(cat, out var newName))
+                p.Category = newName;
+            else if (dlg.DeletedSet.Contains(cat) || !LoraCategories.Any(c => string.Equals(c, cat, StringComparison.OrdinalIgnoreCase)))
+                p.Category = string.Empty;
+        }
+
+        RebuildCategoryControls();
+        RebuildCategoryMap();
+        RefreshGlobalLoraList(_currentGlobalLora);
     }
 
     private void UpdateCurrentGlobalLoraUsage()
@@ -769,6 +925,7 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         _currentGlobalLora = null;
 
         RebuildAliasMap();
+        RebuildCategoryMap();
         RefreshGlobalLoraList();
         if (_filteredGlobalLoras.Count > 0)
             LstGlobalLoras.SelectedIndex = 0;
@@ -808,6 +965,7 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
             if (!merge) return;
 
             conflict.Alias = string.IsNullOrWhiteSpace(_currentGlobalLora.Alias) ? conflict.Alias : _currentGlobalLora.Alias;
+            conflict.Category = string.IsNullOrWhiteSpace(_currentGlobalLora.Category) ? conflict.Category : _currentGlobalLora.Category;
             conflict.TriggerWords = string.IsNullOrWhiteSpace(_currentGlobalLora.TriggerWords) ? conflict.TriggerWords : _currentGlobalLora.TriggerWords;
             conflict.DefaultStrengthModel = _currentGlobalLora.DefaultStrengthModel;
             conflict.DefaultStrengthClip = _currentGlobalLora.DefaultStrengthClip;
@@ -849,6 +1007,7 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         }
 
         RebuildAliasMap();
+        RebuildCategoryMap();
         ApplyCatalog(_lastCatalog);
         RefreshGlobalLoraList(_currentGlobalLora);
         ShowGlobalLoraEditor(_currentGlobalLora);
@@ -930,6 +1089,11 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
         ResultLoraProfiles = _globalLoras
             .Where(p => !string.IsNullOrWhiteSpace(p.LoraName))
             .Select(p => p.Clone())
+            .ToList();
+        ResultLoraCategories = LoraCategories
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Select(c => c.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
         DialogResult = true;
         Close();

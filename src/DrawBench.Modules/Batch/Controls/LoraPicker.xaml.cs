@@ -10,12 +10,15 @@ using System.Windows.Media;
 namespace DrawBench.Modules.Batch.Controls;
 
 /// <summary>
-/// 带实时搜索过滤的 LoRA 下拉选择控件，支持按文件路径和全局别名双向搜索。
+/// 带实时搜索与自定义分类筛选的 LoRA 下拉选择控件，支持按路径、别名和分类搜索。
 /// 点击窗口任意空白区域、失焦或再次点击下拉按钮均自动收起。
 /// </summary>
 public partial class LoraPicker : UserControl
 {
-    private sealed record PickerOption(string Value, string Display, string SearchText);
+    private const string AllCategoryToken = "__ALL__";
+    private const string UncategorizedToken = "__NONE__";
+
+    private sealed record PickerOption(string Value, string Display, string SearchText, string Category, string Tooltip);
 
     public static readonly DependencyProperty ItemsSourceProperty =
         DependencyProperty.Register(
@@ -39,11 +42,26 @@ public partial class LoraPicker : UserControl
             nameof(AliasMap),
             typeof(IReadOnlyDictionary<string, string>),
             typeof(LoraPicker),
-            new PropertyMetadata(null, OnAliasMapChanged));
+            new PropertyMetadata(null, OnMetadataChanged));
+
+    public static readonly DependencyProperty CategoryMapProperty =
+        DependencyProperty.Register(
+            nameof(CategoryMap),
+            typeof(IReadOnlyDictionary<string, string>),
+            typeof(LoraPicker),
+            new PropertyMetadata(null, OnMetadataChanged));
+
+    public static readonly DependencyProperty CategoriesProperty =
+        DependencyProperty.Register(
+            nameof(Categories),
+            typeof(IEnumerable<string>),
+            typeof(LoraPicker),
+            new PropertyMetadata(null, OnMetadataChanged));
 
     private INotifyCollectionChanged? _subscribedCollection;
     private Window? _hookedWindow;
     private MouseButtonEventHandler? _windowMouseDownHandler;
+    private string _activeCategoryFilter = AllCategoryToken;
 
     public LoraPicker()
     {
@@ -70,6 +88,18 @@ public partial class LoraPicker : UserControl
         set => SetValue(AliasMapProperty, value);
     }
 
+    public IReadOnlyDictionary<string, string>? CategoryMap
+    {
+        get => (IReadOnlyDictionary<string, string>?)GetValue(CategoryMapProperty);
+        set => SetValue(CategoryMapProperty, value);
+    }
+
+    public IEnumerable<string>? Categories
+    {
+        get => (IEnumerable<string>?)GetValue(CategoriesProperty);
+        set => SetValue(CategoriesProperty, value);
+    }
+
     private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var picker = (LoraPicker)d;
@@ -89,12 +119,15 @@ public partial class LoraPicker : UserControl
             picker.RefreshFilterList();
     }
 
-    private static void OnAliasMapChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void OnMetadataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var picker = (LoraPicker)d;
         picker.UpdateDisplayText();
         if (picker.PopupDropDown.IsOpen)
+        {
+            picker.RebuildCategoryPills();
             picker.RefreshFilterList();
+        }
     }
 
     private void OnSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -115,11 +148,17 @@ public partial class LoraPicker : UserControl
         return loraName;
     }
 
-    private string BuildSearchText(string loraName)
+    private string GetCategory(string loraName)
     {
-        if (AliasMap is not null && AliasMap.TryGetValue(loraName, out var alias) && !string.IsNullOrWhiteSpace(alias))
-            return $"{alias.Trim()} {loraName}";
-        return loraName;
+        if (CategoryMap is not null && CategoryMap.TryGetValue(loraName, out var cat) && !string.IsNullOrWhiteSpace(cat))
+            return cat.Trim();
+        return string.Empty;
+    }
+
+    private string BuildSearchText(string loraName, string category)
+    {
+        string alias = AliasMap is not null && AliasMap.TryGetValue(loraName, out var a) ? a.Trim() : string.Empty;
+        return $"{category} {alias} {loraName}".Trim();
     }
 
     private void UpdateDisplayText()
@@ -139,7 +178,6 @@ public partial class LoraPicker : UserControl
 
     private void BtnToggle_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        // 已经展开时再次点击按钮直接收起，避免 StaysOpen=False 关闭后又立刻被 ToggleButton 弹开
         if (PopupDropDown.IsOpen)
         {
             PopupDropDown.IsOpen = false;
@@ -161,7 +199,9 @@ public partial class LoraPicker : UserControl
     private void PopupDropDown_Opened(object? sender, EventArgs e)
     {
         HookOwnerWindow();
+        _activeCategoryFilter = AllCategoryToken;
         TxtFilter.Text = string.Empty;
+        RebuildCategoryPills();
         RefreshFilterList();
         TxtFilter.Focus();
     }
@@ -170,6 +210,60 @@ public partial class LoraPicker : UserControl
     {
         UnhookOwnerWindow();
         BtnToggle.IsChecked = false;
+    }
+
+    private void RebuildCategoryPills()
+    {
+        PnlCategoryPills.Children.Clear();
+        var cats = (Categories ?? Enumerable.Empty<string>())
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Select(c => c.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (cats.Count == 0)
+        {
+            PnlCategoryPills.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        PnlCategoryPills.Visibility = Visibility.Visible;
+        AddPill("全部", AllCategoryToken);
+        foreach (var cat in cats)
+            AddPill(cat, cat);
+        AddPill("未分类", UncategorizedToken);
+    }
+
+    private void AddPill(string label, string token)
+    {
+        bool isActive = string.Equals(_activeCategoryFilter, token, StringComparison.OrdinalIgnoreCase);
+        var accentSoft = TryFindResource("AccentSoft") as Brush ?? Brushes.LightBlue;
+        var accentDeep = TryFindResource("AccentDeep") as Brush ?? Brushes.Blue;
+        var line = TryFindResource("Line") as Brush ?? Brushes.LightGray;
+        var inkSoft = TryFindResource("InkSoft") as Brush ?? Brushes.DimGray;
+
+        var btn = new Button
+        {
+            Content = label,
+            Tag = token,
+            FontSize = 11.5,
+            Padding = new Thickness(8, 2, 8, 2),
+            MinHeight = 22,
+            Margin = new Thickness(0, 0, 4, 4),
+            Cursor = Cursors.Hand,
+            Background = isActive ? accentSoft : Brushes.Transparent,
+            Foreground = isActive ? accentDeep : inkSoft,
+            BorderBrush = isActive ? accentDeep : line,
+            BorderThickness = new Thickness(1)
+        };
+        btn.Click += (_, _) =>
+        {
+            _activeCategoryFilter = token;
+            RebuildCategoryPills();
+            RefreshFilterList();
+            TxtFilter.Focus();
+        };
+        PnlCategoryPills.Children.Add(btn);
     }
 
     private void HookOwnerWindow()
@@ -204,7 +298,6 @@ public partial class LoraPicker : UserControl
     {
         if (!PopupDropDown.IsOpen) return;
 
-        // 点击落在下拉框内部或触发按钮本身时不关闭；点击窗口其他任何空白/控件立即收起
         if (e.OriginalSource is DependencyObject src)
         {
             if (IsDescendantOf(src, PopupBorder) || IsDescendantOf(src, BtnToggle))
@@ -247,32 +340,41 @@ public partial class LoraPicker : UserControl
             .Select(s =>
             {
                 string trimmed = s.Trim();
+                string category = GetCategory(trimmed);
                 string display = FormatDisplay(trimmed);
-                string searchText = BuildSearchText(trimmed);
-                return new PickerOption(trimmed, display, searchText);
+                string searchText = BuildSearchText(trimmed, category);
+                string tooltip = category.Length > 0 ? $"[{category}] {trimmed}" : trimmed;
+                return new PickerOption(trimmed, display, searchText, category, tooltip);
             })
             .ToList();
 
-        string query = (TxtFilter.Text ?? string.Empty).Trim();
+        IEnumerable<PickerOption> queryable = all;
 
-        List<PickerOption> filtered;
-        if (query.Length == 0)
+        // 分类筛选
+        if (string.Equals(_activeCategoryFilter, UncategorizedToken, StringComparison.Ordinal))
         {
-            filtered = all;
+            queryable = queryable.Where(o => o.Category.Length == 0);
         }
-        else
+        else if (!string.Equals(_activeCategoryFilter, AllCategoryToken, StringComparison.Ordinal))
+        {
+            queryable = queryable.Where(o => string.Equals(o.Category, _activeCategoryFilter, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // 关键字筛选
+        string query = (TxtFilter.Text ?? string.Empty).Trim();
+        if (query.Length > 0)
         {
             var tokens = query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            filtered = all
-                .Where(item => tokens.All(t => item.SearchText.Contains(t, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+            queryable = queryable.Where(item => tokens.All(t => item.SearchText.Contains(t, StringComparison.OrdinalIgnoreCase)));
         }
 
+        var filtered = queryable.ToList();
         LstFiltered.ItemsSource = filtered;
 
+        bool isFiltered = query.Length > 0 || !string.Equals(_activeCategoryFilter, AllCategoryToken, StringComparison.Ordinal);
         if (filtered.Count == 0)
             TxtCountHint.Text = all.Count == 0 ? "暂无可选 LoRA（请先刷新 ComfyUI 列表）" : "没有匹配的 LoRA";
-        else if (query.Length > 0)
+        else if (isFiltered)
             TxtCountHint.Text = $"匹配 {filtered.Count} / {all.Count} 个 LoRA";
         else
             TxtCountHint.Text = $"共 {all.Count} 个可选 LoRA";

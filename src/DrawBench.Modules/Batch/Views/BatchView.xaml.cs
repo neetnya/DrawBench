@@ -158,7 +158,7 @@ public partial class BatchView : UserControl
         string baseUrl = ComfyClient.Normalize(TxtBaseUrl.Text);
         var existingIds = new HashSet<string>(_settings.Workflows.Select(w => w.Id), StringComparer.OrdinalIgnoreCase);
 
-        var win = new WorkflowConfigWindow(_settings.Workflows, _settings.LoraProfiles, baseUrl)
+        var win = new WorkflowConfigWindow(_settings.Workflows, _settings.LoraProfiles, _settings.LoraCategories, baseUrl)
         {
             Owner = Window.GetWindow(this)
         };
@@ -168,6 +168,7 @@ public partial class BatchView : UserControl
         var updated = win.ResultWorkflows;
         _settings.Workflows = updated;
         _settings.LoraProfiles = win.ResultLoraProfiles;
+        _settings.LoraCategories = win.ResultLoraCategories;
         _settings.LoraTriggerWords = _settings.BuildTriggerLookup();
 
         if (_settings.HasSavedSelection)

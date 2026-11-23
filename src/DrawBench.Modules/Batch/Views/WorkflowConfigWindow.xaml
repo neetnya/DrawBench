@@ -233,6 +233,8 @@
                                                                 <controls:LoraPicker Grid.Row="0" Grid.Column="1"
                                                                                      ItemsSource="{Binding FilteredLoraOptions, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                      AliasMap="{Binding LoraAliasMap, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                     CategoryMap="{Binding LoraCategoryMap, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                     Categories="{Binding LoraCategories, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                      SelectedLora="{Binding LoraName, Mode=TwoWay}"
                                                                                      Margin="0,2,8,2"
                                                                                      ToolTip="点击展开并输入路径或别名搜索 LoRA" />
@@ -392,18 +394,31 @@
                                         <Button Content="+ 添加 LoRA" Click="BtnAddGlobalLora_Click"
                                                 Style="{StaticResource SecondaryButton}" Padding="10,3" Margin="0,0,6,0" />
                                         <Button Content="删除" Click="BtnDeleteGlobalLora_Click"
-                                                Style="{StaticResource SecondaryButton}" Padding="10,3"
+                                                Style="{StaticResource SecondaryButton}" Padding="10,3" Margin="0,0,6,0"
                                                 ToolTip="从全局 LoRA 库彻底删除选中项" />
+                                        <Button Content="管理分类" Click="BtnManageCategories_Click"
+                                                Style="{StaticResource SecondaryButton}" Padding="10,3"
+                                                ToolTip="自定义 LoRA 分类（添加、重命名、删除）" />
                                     </StackPanel>
                                 </Border>
                                 <Border Padding="8,6" BorderBrush="{StaticResource LineSoft}" BorderThickness="0,0,0,1">
                                     <Grid>
-                                        <TextBox x:Name="TxtGlobalLoraSearch" Margin="0"
-                                                 TextChanged="TxtGlobalLoraSearch_TextChanged" />
-                                        <TextBlock x:Name="TxtGlobalLoraSearchHint"
-                                                   Text="搜索路径、别名或触发词…"
-                                                   IsHitTestVisible="False" VerticalAlignment="Center"
-                                                   Margin="8,0,0,0" FontSize="12" Foreground="{StaticResource Muted}" />
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="6" />
+                                            <ColumnDefinition Width="102" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0">
+                                            <TextBox x:Name="TxtGlobalLoraSearch" Margin="0"
+                                                     TextChanged="TxtGlobalLoraSearch_TextChanged" />
+                                            <TextBlock x:Name="TxtGlobalLoraSearchHint"
+                                                       Text="搜索路径、别名或触发词…"
+                                                       IsHitTestVisible="False" VerticalAlignment="Center"
+                                                       Margin="8,0,0,0" FontSize="12" Foreground="{StaticResource Muted}" />
+                                        </Grid>
+                                        <ComboBox x:Name="CmbGlobalCategoryFilter" Grid.Column="2" Margin="0"
+                                                  SelectionChanged="CmbGlobalCategoryFilter_SelectionChanged"
+                                                  ToolTip="按分类筛选全局 LoRA 列表" />
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -475,11 +490,18 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" MinWidth="104" />
                                                     <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="16" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="54" />
+                                                    <ColumnDefinition Width="150" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" Text="显示别名" Style="{StaticResource FormLabel}" />
                                                 <TextBox Grid.Column="1"
                                                          Text="{Binding Alias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                          ToolTip="起一个好记的中文/短名，在工作流下拉选 LoRA 时可直接搜索此别名" />
+                                                <TextBlock Grid.Column="3" Text="分类" Style="{StaticResource FormLabel}" />
+                                                <ComboBox x:Name="CmbGlobalLoraCategory" Grid.Column="4"
+                                                          SelectionChanged="CmbGlobalLoraCategory_SelectionChanged"
+                                                          ToolTip="选择此 LoRA 的分类（可在左侧点「管理分类」自定义）" />
                                             </Grid>
 
                                             <Grid Margin="0,0,0,10">
