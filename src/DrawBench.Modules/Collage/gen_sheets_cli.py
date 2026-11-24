@@ -2,6 +2,8 @@
 """ComfyCollage 对比图生成脚本。
 
 支持从命令行直接使用，也支持被 WPF 界面以参数方式调用。
+- 模型数 <= 3：横向并排，按 --rows 分页（原模式）
+- 模型数 > 3：自动切换为宫格模式，每组图片生成 1 张尽可能接近正方形的宫格对比图
 """
 
 from __future__ import annotations
@@ -9,6 +11,7 @@ from __future__ import annotations
 import argparse
 import colorsys
 import json
+import math
 import os
 import re
 import sys
@@ -61,6 +64,22 @@ def clamp(value: int, low: int, high: int, label: str) -> int:
     return value
 
 
+def compute_grid_dims(count: int) -> tuple[int, int]:
+    """根据模型数量计算尽可能接近正方形的 (cols, rows)：
+    4 -> 2×2，5~6 -> 3×2，7~9 -> 3×3，10~12 -> 3×4（多一行），13~16 -> 4×4 ...
+    """
+    if count <= 3:
+        return count, 1
+    if count <= 6:
+        return (2, 2) if count == 4 else (3, 2)
+    s = math.isqrt(count)
+    if s * s == count:
+        return s, s
+    if count <= s * (s + 1):
+        return s, s + 1
+    return s + 1, s + 1
+
+
 @lru_cache(maxsize=64)
 def load_font(size: int, bold: bool):
     """优先使用带中文字形的字体，避免中文文件名显示成方块。"""
@@ -102,7 +121,6 @@ def flatten(image: Image.Image, background) -> Image.Image:
             rgba.close()
             base.close()
     if image.mode.startswith("I;16"):
-        # 16-bit 灰度图先归一化到 8-bit
         l8 = image.point(lambda p: p >> 8).convert("L")
         try:
             return l8.convert("RGB")
@@ -125,7 +143,6 @@ def prepare_tile(path: Path, tile: int, fit: str) -> Image.Image:
             if fit == "cover":
                 return ImageOps.fit(rgb, (tile, tile), method=Image.Resampling.LANCZOS)
 
-            # contain 模式：只缩小不放大，避免小图被插值放大后糊掉。
             scale = min(tile / rgb.width, tile / rgb.height, 1.0)
             new_w = max(1, int(round(rgb.width * scale)))
             new_h = max(1, int(round(rgb.height * scale)))
@@ -206,6 +223,41 @@ def build_index(models, match: str):
     return entries
 
 
+def paste_cell(
+    sheet: Image.Image,
+    draw: ImageDraw.ImageDraw,
+    image_path: Path | None,
+    x: int,
+    y: int,
+    tile: int,
+    fit: str,
+    title_font,
+) -> tuple[int, int]:
+    """绘制单个图片格子，返回 (missing_inc, error_inc)。"""
+    missing_inc = 0
+    error_inc = 0
+    if image_path is not None:
+        tile_img = None
+        try:
+            tile_img = prepare_tile(image_path, tile, fit)
+            sheet.paste(tile_img, (x, y))
+        except Exception as exc:  # noqa: BLE001
+            error_inc = 1
+            draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=ERROR_COLOR)
+            draw_centered(draw, "Error", title_font, (x, y, x + tile, y + tile), ERROR_TEXT)
+            print(f"[WARN] 图片读取失败：{image_path}：{exc}")
+        finally:
+            if tile_img is not None:
+                tile_img.close()
+    else:
+        missing_inc = 1
+        draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=MISSING_COLOR)
+        draw_centered(draw, "Missing", title_font, (x, y, x + tile, y + tile), MISSING_TEXT)
+
+    draw.rectangle((x, y, x + tile - 1, y + tile - 1), outline=BORDER_COLOR)
+    return missing_inc, error_inc
+
+
 def parse_args(argv):
     parser = argparse.ArgumentParser(add_help=True, description="生成多模型对比拼图")
     parser.add_argument("base", nargs="?", default="", help="图片根目录（位置参数，兼容旧调用）")
@@ -216,7 +268,7 @@ def parse_args(argv):
                         help="模型文件夹名，逗号分隔（兼容旧调用）；留空表示自动扫描")
     parser.add_argument("--tile", type=int, default=500, help="单元格边长（默认 500）")
     parser.add_argument("--rows", type=int, default=3,
-                        help="每张拼图的行数（默认 3；0 表示全部放一张）")
+                        help="每张拼图的行数（仅模型数 <= 3 时生效，默认 3；0 表示全部放一张）")
     parser.add_argument("--gap", type=int, default=8, help="间距（默认 8）")
     parser.add_argument("--fit", choices=("contain", "cover"), default="contain",
                         help="contain=完整显示；cover=填满并居中裁切")
@@ -243,6 +295,16 @@ def resolve_output(base: Path, out_arg: str) -> Path:
         return base / "_output"
     candidate = Path(out_arg).expanduser()
     return candidate if candidate.is_absolute() else base / candidate
+
+
+def save_sheet(sheet: Image.Image, output_path: Path, fmt: str, quality: int) -> None:
+    if fmt == "png":
+        sheet.save(output_path, format="PNG",
+                   optimize=sheet.width * sheet.height <= OPTIMIZE_PIXEL_LIMIT)
+    elif fmt == "jpg":
+        sheet.save(output_path, format="JPEG", quality=quality, subsampling=0)
+    else:
+        sheet.save(output_path, format="WEBP", quality=quality, method=4)
 
 
 def main(argv=None) -> int:
@@ -344,7 +406,7 @@ def main(argv=None) -> int:
             return 1
         print(f"[INFO] 输出目录：{output_dir}")
 
-    # ---------- 版面尺寸与格式上限前置校验 ----------
+    # ---------- 字体与模式选择 ----------
     title_size = max(11, int(round(tile * 0.045)))
     label_size = max(10, int(round(tile * 0.032)))
     title_font = load_font(title_size, True)
@@ -352,21 +414,34 @@ def main(argv=None) -> int:
     header_height = title_size + 14 if show_header else 0
     label_height = label_size + 10 if show_labels else 0
 
-    width = gap * (len(models) + 1) + len(models) * tile
+    grid_mode = len(models) > 3
+    grid_cols, grid_rows = compute_grid_dims(len(models))
 
-    if rows_per_sheet <= 0:
-        groups = [keys]
-        print(f"[INFO] 行数设为 0，全部 {len(keys)} 行将放在同一张长图中。")
+    if grid_mode:
+        # 超过 3 个模型：每组图片独立出 1 张宫格图
+        groups = [[key] for key in keys]
+        cell_h = header_height + tile
+        top_offset = gap + (label_height if show_labels else 0)
+        width = gap * (grid_cols + 1) + grid_cols * tile
+        grid_height = top_offset + grid_rows * (cell_h + gap)
+        max_height = grid_height
+        print(f"[INFO] 对比模型数超过 3 个（共 {len(models)} 个），自动切换为宫格模式："
+              f"{grid_cols} 列 × {grid_rows} 行，每组生成 1 张（共 {len(groups)} 张）。")
     else:
-        groups = [keys[i:i + rows_per_sheet] for i in range(0, len(keys), rows_per_sheet)]
+        width = gap * (len(models) + 1) + len(models) * tile
+        if rows_per_sheet <= 0:
+            groups = [keys]
+            print(f"[INFO] 行数设为 0，全部 {len(keys)} 行将放在同一张长图中。")
+        else:
+            groups = [keys[i:i + rows_per_sheet] for i in range(0, len(keys), rows_per_sheet)]
+        max_height = max(header_height + len(g) * (label_height + tile + gap) + gap for g in groups)
 
     max_dim = FORMAT_MAX_DIM.get(args.format)
     if max_dim is not None and not args.dry_run:
-        max_height = max(header_height + len(g) * (label_height + tile + gap) + gap for g in groups)
         if width > max_dim or max_height > max_dim:
             print(f"[ERROR] 目标格式 {args.format.upper()} 单边上限为 {max_dim} px，"
                   f"当前拼图尺寸为 {width}×{max_height} px。")
-            print("[HINT] 请调小「每张行数」或「单元格边长」，或改用 PNG 格式。")
+            print("[HINT] 请调小「单元格边长」或「每张行数」，或改用 PNG 格式。")
             return 1
 
     colors = {model.name: model_color(i, len(models)) for i, model in enumerate(models)}
@@ -381,17 +456,24 @@ def main(argv=None) -> int:
         print("[INFO] 预览模式：只列出计划，不渲染、不写文件。")
 
     for group_index, group in enumerate(groups, start=1):
-        height = header_height + len(group) * (label_height + tile + gap) + gap
+        height = max_height if grid_mode else (header_height + len(group) * (label_height + tile + gap) + gap)
         sheet_name = f"{prefix}_{group_index:0{pad_width}d}{extension}"
 
         if args.dry_run:
             print(f"[PROGRESS] {group_index-1}/{len(groups)}")
-            print(f"[PLAN] 第 {group_index}/{len(groups)} 张 → {sheet_name}"
-                  f"（{len(group)} 行 × {len(models)} 列，{width}×{height}）")
-            for key in group:
+            if grid_mode:
+                key = group[0]
                 present = len(entries[key])
                 flag = "" if present == len(models) else f"  [缺失 {len(models) - present}]"
-                print(f"         - {key}{flag}")
+                print(f"[PLAN] 第 {group_index}/{len(groups)} 张 → {sheet_name}"
+                      f"（{grid_cols}×{grid_rows} 宫格，{width}×{height}） - {key}{flag}")
+            else:
+                print(f"[PLAN] 第 {group_index}/{len(groups)} 张 → {sheet_name}"
+                      f"（{len(group)} 行 × {len(models)} 列，{width}×{height}）")
+                for key in group:
+                    present = len(entries[key])
+                    flag = "" if present == len(models) else f"  [缺失 {len(models) - present}]"
+                    print(f"         - {key}{flag}")
             continue
 
         if width * height > 300_000_000:
@@ -404,60 +486,74 @@ def main(argv=None) -> int:
         try:
             draw = ImageDraw.Draw(sheet)
 
-            # 模型标题
-            if show_header:
-                for column, model in enumerate(models):
-                    x = gap + column * (tile + gap)
-                    color = colors[model.name]
-                    draw.rectangle((x, 0, x + tile - 1, 4), fill=color)
-                    draw.text((x + 6, 7), fit_text(draw, model.name, title_font, tile - 12),
-                              font=title_font, fill=color)
-
-            y = header_height
-            for key in group:
+            if grid_mode:
+                key = group[0]
+                y_start = gap
                 if show_labels:
-                    draw.text((gap + 2, y + 3),
-                              fit_text(draw, key, label_font, width - 2 * gap - 4),
-                              font=label_font, fill=LABEL_TEXT)
-                    y += label_height
+                    draw.text(
+                        (gap + 2, y_start + 2),
+                        fit_text(draw, key, label_font, width - 2 * gap - 4),
+                        font=label_font,
+                        fill=LABEL_TEXT,
+                    )
+                    y_start += label_height
 
-                for column, model in enumerate(models):
-                    x = gap + column * (tile + gap)
-                    image_path = entries[key].get(model.name)
+                cell_h = header_height + tile
+                for idx, model in enumerate(models):
+                    row_idx = idx // grid_cols
+                    col_idx = idx % grid_cols
+                    x = gap + col_idx * (tile + gap)
+                    cell_y = y_start + row_idx * (cell_h + gap)
 
-                    if image_path is not None:
-                        tile_img = None
-                        try:
-                            tile_img = prepare_tile(image_path, tile, args.fit)
-                            sheet.paste(tile_img, (x, y))
-                        except Exception as exc:  # noqa: BLE001
-                            error_count += 1
-                            draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=ERROR_COLOR)
-                            draw_centered(draw, "Error", title_font,
-                                          (x, y, x + tile, y + tile), ERROR_TEXT)
-                            print(f"[WARN] 图片读取失败：{image_path}：{exc}")
-                        finally:
-                            if tile_img is not None:
-                                tile_img.close()
-                    else:
-                        missing_count += 1
-                        draw.rectangle((x, y, x + tile - 1, y + tile - 1), fill=MISSING_COLOR)
-                        draw_centered(draw, "Missing", title_font,
-                                      (x, y, x + tile, y + tile), MISSING_TEXT)
+                    if show_header:
+                        color = colors[model.name]
+                        draw.rectangle((x, cell_y, x + tile - 1, cell_y + 4), fill=color)
+                        draw.text(
+                            (x + 6, cell_y + 7),
+                            fit_text(draw, model.name, title_font, tile - 12),
+                            font=title_font,
+                            fill=color,
+                        )
 
-                    draw.rectangle((x, y, x + tile - 1, y + tile - 1), outline=BORDER_COLOR)
+                    tile_y = cell_y + header_height
+                    m_inc, e_inc = paste_cell(
+                        sheet, draw, entries[key].get(model.name),
+                        x, tile_y, tile, args.fit, title_font,
+                    )
+                    missing_count += m_inc
+                    error_count += e_inc
+            else:
+                # 3 个及以下模型：原横向并排模式
+                if show_header:
+                    for column, model in enumerate(models):
+                        x = gap + column * (tile + gap)
+                        color = colors[model.name]
+                        draw.rectangle((x, 0, x + tile - 1, 4), fill=color)
+                        draw.text((x + 6, 7), fit_text(draw, model.name, title_font, tile - 12),
+                                  font=title_font, fill=color)
 
-                y += tile + gap
+                y = header_height
+                for key in group:
+                    if show_labels:
+                        draw.text((gap + 2, y + 3),
+                                  fit_text(draw, key, label_font, width - 2 * gap - 4),
+                                  font=label_font, fill=LABEL_TEXT)
+                        y += label_height
+
+                    for column, model in enumerate(models):
+                        x = gap + column * (tile + gap)
+                        m_inc, e_inc = paste_cell(
+                            sheet, draw, entries[key].get(model.name),
+                            x, y, tile, args.fit, title_font,
+                        )
+                        missing_count += m_inc
+                        error_count += e_inc
+
+                    y += tile + gap
 
             output_path = output_dir / sheet_name
             try:
-                if args.format == "png":
-                    sheet.save(output_path, format="PNG",
-                               optimize=width * height <= OPTIMIZE_PIXEL_LIMIT)
-                elif args.format == "jpg":
-                    sheet.save(output_path, format="JPEG", quality=quality, subsampling=0)
-                else:
-                    sheet.save(output_path, format="WEBP", quality=quality, method=4)
+                save_sheet(sheet, output_path, args.format, quality)
             except (OSError, ValueError) as exc:
                 print(f"[ERROR] 保存失败：{output_path}（{exc}）")
                 return 1
@@ -496,6 +592,7 @@ def main(argv=None) -> int:
     print("[SUMMARY] " + json.dumps({
         "sheets": len(groups),
         "models": [m.name for m in models],
+        "layout": f"{grid_cols}x{grid_rows}" if grid_mode else f"strip({len(models)})",
         "rows": len(keys),
         "missing": missing_count,
         "errors": error_count,

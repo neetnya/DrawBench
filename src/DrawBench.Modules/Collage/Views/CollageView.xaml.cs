@@ -211,9 +211,32 @@ public partial class CollageView : UserControl
 
     private void UpdateModelCount()
     {
-        TxtModelCount.Text = _models.Count == 0
-            ? "没有找到模型文件夹（以 . 或 _ 开头的文件夹会被忽略）。"
-            : $"共 {_models.Count} 个模型，已勾选 {_models.Count(m => m.IsSelected)} 个。";
+        if (_models.Count == 0)
+        {
+            TxtModelCount.Text = "没有找到模型文件夹（以 . 或 _ 开头的文件夹会被忽略）。";
+            return;
+        }
+
+        int selected = _models.Count(m => m.IsSelected);
+        if (selected > 3)
+        {
+            var (cols, rows) = ComputeGridDims(selected);
+            TxtModelCount.Text = $"共 {_models.Count} 个模型，已勾选 {selected} 个（自动 {cols}×{rows} 宫格，每组 1 张）。";
+        }
+        else
+        {
+            TxtModelCount.Text = $"共 {_models.Count} 个模型，已勾选 {selected} 个。";
+        }
+    }
+
+    private static (int Cols, int Rows) ComputeGridDims(int count)
+    {
+        if (count <= 3) return (count, 1);
+        if (count <= 6) return count == 4 ? (2, 2) : (3, 2);
+        int s = (int)Math.Sqrt(count);
+        if (s * s == count) return (s, s);
+        if (count <= s * (s + 1)) return (s, s + 1);
+        return (s + 1, s + 1);
     }
 
     // ==================== 执行 ====================

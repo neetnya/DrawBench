@@ -122,7 +122,7 @@
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="每张行数" Style="{StaticResource FormLabel}"/>
                         <TextBox x:Name="CmbRows" Grid.Row="0" Grid.Column="3" Text="3"
                                  Margin="0,2,0,8"
-                                 ToolTip="0 表示把所有行放进同一张长图"/>
+                                 ToolTip="仅 3 个及以下模型时生效（0 表示全部放一张长图）；超过 3 个模型自动切换宫格，每组 1 张"/>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="缩放方式" Style="{StaticResource FormLabel}"/>
                         <ComboBox x:Name="CmbFit" Grid.Row="1" Grid.Column="1" SelectedIndex="0"
