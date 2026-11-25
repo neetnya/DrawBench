@@ -33,6 +33,9 @@ public sealed class GenerationParameters
     /// <summary>原始元数据文本，供“原始数据”面板显示。</summary>
     public string RawText { get; set; } = "";
 
+    /// <summary>ComfyUI 的 prompt（API 格式工作流）原文，可能为空。</summary>
+    public string? PromptJson { get; set; }
+
     /// <summary>ComfyUI 的 workflow（界面图）原文，可能为空。</summary>
     public string? WorkflowJson { get; set; }
 

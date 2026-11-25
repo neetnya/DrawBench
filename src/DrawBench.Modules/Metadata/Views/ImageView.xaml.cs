@@ -8,6 +8,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using DrawBench.Core;
 using DrawBench.Core.Ui;
+using DrawBench.Core.Comfy;
+using DrawBench.Modules.Batch;
+using DrawBench.Modules.Batch.Models;
+using DrawBench.Modules.Batch.Services;
+using DrawBench.Modules.Batch.Views;
+using DrawBench.Modules.Metadata.Models;
 using DrawBench.Modules.Metadata.ViewModels;
 
 namespace DrawBench.Modules.Metadata.Views;
@@ -199,6 +205,102 @@ public partial class ImageView : UserControl
         {
             UiHost.Warn("复制失败：" + ex.Message);
         }
+    }
+
+    /// <summary>从当前图片的元数据解析并导入为「批量提交」的工作流 API 配置。</summary>
+    private void ImportWorkflow_Click(object sender, RoutedEventArgs e)
+    {
+        var item = _vm.Selected;
+        if (item is null)
+        {
+            ConfirmDialog.Warn(Window.GetWindow(this), "请先在左侧选择一张图片。", "未选择图片");
+            return;
+        }
+
+        string defaultName = Path.GetFileNameWithoutExtension(item.FileName);
+        if (!TryBuildWorkflowFromImage(item.Params, defaultName, out var imported, out var err) || imported is null)
+        {
+            ConfirmDialog.Warn(Window.GetWindow(this), $"无法从当前图片解析工作流：{err}", "导入工作流失败");
+            return;
+        }
+
+        var settings = SettingsStore.Shared.Get<BatchSettings>(ModuleIds.Batch) ?? new BatchSettings();
+        settings.Normalize();
+
+        var existingIds = new HashSet<string>(settings.Workflows.Select(w => w.Id), StringComparer.OrdinalIgnoreCase);
+        var win = new WorkflowConfigWindow(
+            settings.Workflows,
+            settings.LoraProfiles,
+            settings.LoraCategories,
+            ComfyClient.Normalize(settings.ComfyBaseUrl))
+        {
+            Owner = Window.GetWindow(this)
+        };
+        win.PreloadImportedWorkflow(imported);
+
+        if (win.ShowDialog() != true) return;
+
+        var updated = win.ResultWorkflows;
+        settings.Workflows = updated;
+        settings.LoraProfiles = win.ResultLoraProfiles;
+        settings.LoraCategories = win.ResultLoraCategories;
+        settings.LoraTriggerWords = settings.BuildTriggerLookup();
+
+        if (settings.HasSavedSelection)
+        {
+            foreach (var cfg in updated)
+            {
+                if (!existingIds.Contains(cfg.Id) && !settings.IsEnabled(cfg.Id))
+                    settings.EnabledWorkflows.Add(cfg.Id);
+            }
+        }
+
+        SettingsStore.Shared.Set(ModuleIds.Batch, settings);
+        AiBridge.Send(ModuleIds.Batch, "reload-workflows:", "参数读取");
+        _vm.StatusText = $"已导入工作流并同步到「批量提交」（共 {updated.Count} 个工作流）";
+    }
+
+    private static bool TryBuildWorkflowFromImage(
+        GenerationParameters p,
+        string defaultName,
+        out WorkflowApiConfig? config,
+        out string error)
+    {
+        // 1. ComfyUI 图片优先直接解析完整的 API prompt JSON（保留 UNet/CLIP/VAE/LoRA 链）
+        if (!string.IsNullOrWhiteSpace(p.PromptJson) &&
+            WorkflowApiBuilder.TryImportFromJson(p.PromptJson, defaultName, out config, out _))
+        {
+            error = string.Empty;
+            return true;
+        }
+
+        // 2. 兜底：从通用参数（如 WebUI / Forge）构建 Checkpoint 工作流
+        if (!string.IsNullOrWhiteSpace(p.Model))
+        {
+            string safeName = string.IsNullOrWhiteSpace(defaultName) ? "导入工作流" : defaultName.Trim();
+            config = new WorkflowApiConfig
+            {
+                Name = safeName,
+                FilenamePrefix = safeName + "/",
+                LoaderMode = WorkflowLoaderMode.Checkpoint,
+                CheckpointName = p.Model.Trim(),
+                Width = p.Width ?? 1024,
+                Height = p.Height ?? 1024,
+                Steps = p.Steps ?? 20,
+                Cfg = p.CfgScale ?? 5.0,
+                SamplerName = string.IsNullOrWhiteSpace(p.Sampler) ? "euler_ancestral" : p.Sampler.Trim(),
+                Scheduler = string.IsNullOrWhiteSpace(p.Scheduler) ? "karras" : p.Scheduler.Trim(),
+                Denoise = p.Denoise ?? 1.0,
+                PositiveTemplate = p.PositivePrompt?.Trim() ?? string.Empty,
+                NegativeTemplate = p.NegativePrompt?.Trim() ?? string.Empty
+            };
+            error = string.Empty;
+            return true;
+        }
+
+        config = null;
+        error = "当前图片不含 ComfyUI 工作流节点，也未识别到模型名称。";
+        return false;
     }
 
     /// <summary>生成参数表只复制值：选中的每一行取「值」列，一行一个，不带项目名和表头。</summary>

@@ -27,6 +27,7 @@ public static class ParameterParser
         // 2. ComfyUI —— prompt 块（API 格式工作流）
         if (TryGet(chunks, "prompt", out var comfyText) && ComfyUiParser.TryParse(comfyText, p))
         {
+            p.PromptJson = comfyText;
             if (TryGet(chunks, "workflow", out var workflow)) p.WorkflowJson = workflow;
             return Finish(p);
         }
@@ -46,10 +47,14 @@ public static class ParameterParser
 
             string trimmed = value.Trim();
 
-            if (trimmed.Contains("\"class_type\"", StringComparison.Ordinal) &&
-                ComfyUiParser.TryParse(StripJsonPrefix(trimmed), p))
+            if (trimmed.Contains("\"class_type\"", StringComparison.Ordinal))
             {
-                return Finish(p);
+                string stripped = StripJsonPrefix(trimmed);
+                if (ComfyUiParser.TryParse(stripped, p))
+                {
+                    p.PromptJson = stripped;
+                    return Finish(p);
+                }
             }
 
             if (trimmed.StartsWith('{') && NovelAiParser.TryParse(trimmed, p)) return Finish(p);

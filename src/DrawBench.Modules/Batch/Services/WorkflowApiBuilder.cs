@@ -277,22 +277,42 @@ public static class WorkflowApiBuilder
     /// </summary>
     public static bool TryImportFromJsonFile(string jsonPath, out WorkflowApiConfig? config, out string error)
     {
+        try
+        {
+            string jsonText = File.ReadAllText(jsonPath);
+            string defaultName = Path.GetFileNameWithoutExtension(jsonPath);
+            return TryImportFromJson(jsonText, defaultName, out config, out error);
+        }
+        catch (Exception ex)
+        {
+            config = null;
+            error = ex.Message;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 从 ComfyUI API 格式 JSON 字符串解析并转换为 WorkflowApiConfig（支持从图片元数据直接导入）。
+    /// </summary>
+    public static bool TryImportFromJson(string jsonText, string defaultName, out WorkflowApiConfig? config, out string error)
+    {
         config = null;
         error = string.Empty;
 
         try
         {
-            var root = JsonNode.Parse(File.ReadAllText(jsonPath))?.AsObject();
+            var root = JsonNode.Parse(jsonText)?.AsObject();
             if (root is null)
             {
                 error = "不是有效的 JSON 对象";
                 return false;
             }
 
+            string safeName = string.IsNullOrWhiteSpace(defaultName) ? "导入工作流" : defaultName.Trim();
             var cfg = new WorkflowApiConfig
             {
-                Name = Path.GetFileNameWithoutExtension(jsonPath),
-                FilenamePrefix = Path.GetFileNameWithoutExtension(jsonPath) + "/"
+                Name = safeName,
+                FilenamePrefix = SanitizePrefix(safeName) + "/"
             };
 
             JsonObject? FindByClass(string classType) =>

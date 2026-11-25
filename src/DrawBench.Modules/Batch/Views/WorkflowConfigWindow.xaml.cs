@@ -144,11 +144,33 @@ public partial class WorkflowConfigWindow : Window, INotifyPropertyChanged
     /// <summary>当前选中工作流是否为 Checkpoint 模式（决定 CLIP 权重输入框是否可用）。</summary>
     public bool IsCurrentCheckpointMode => _current?.LoaderMode == WorkflowLoaderMode.Checkpoint;
 
+    private WorkflowApiConfig? _initialSelectedWorkflow;
+
+    /// <summary>预置一个从图片元数据导入的工作流并默认选中它，方便用户微调后保存。</summary>
+    public void PreloadImportedWorkflow(WorkflowApiConfig imported)
+    {
+        var clone = imported.Clone(newId: true);
+        _items.Add(clone);
+        foreach (var l in clone.Loras)
+        {
+            if (!string.IsNullOrWhiteSpace(l.LoraName))
+                EnsureGlobalProfile(l.LoraName, l.StrengthModel, l.StrengthClip);
+        }
+        ApplyCatalog(_lastCatalog);
+        RefreshGlobalLoraList(_currentGlobalLora);
+        _initialSelectedWorkflow = clone;
+    }
+
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         Loaded -= OnLoaded;
 
-        if (_items.Count > 0)
+        if (_initialSelectedWorkflow is not null && _items.Contains(_initialSelectedWorkflow))
+        {
+            LstConfigs.SelectedItem = _initialSelectedWorkflow;
+            LstConfigs.ScrollIntoView(_initialSelectedWorkflow);
+        }
+        else if (_items.Count > 0)
             LstConfigs.SelectedIndex = 0;
         else
             ShowEditor(null);

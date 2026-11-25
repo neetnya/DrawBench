@@ -288,7 +288,10 @@
                             <DockPanel LastChildFill="False" VerticalAlignment="Center">
                                 <TextBlock DockPanel.Dock="Left" Text="生成参数" VerticalAlignment="Center" />
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Button Content="复制值" Style="{StaticResource SmallButton}"
+                                    <Button Content="导入工作流" Style="{StaticResource SmallButton}"
+                                            Click="ImportWorkflow_Click"
+                                            ToolTip="将当前图片的模型、LoRA 与采样参数导入为「批量提交」的工作流 API" />
+                                    <Button Content="复制值" Style="{StaticResource SmallButton}" Margin="0"
                                             Click="CopyParams_Click"
                                             ToolTip="复制选中行的参数值（不含项目名）" />
                                 </StackPanel>

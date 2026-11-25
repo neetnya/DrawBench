@@ -670,6 +670,17 @@ public partial class BatchView : UserControl
         }
     }
 
+    /// <summary>从统一设置重新加载工作流列表（供参数读取等模块导入工作流后实时刷新）。</summary>
+    public void ReloadFromStore()
+    {
+        RunOnUi(() =>
+        {
+            _settings = _store.Get<BatchSettings>(ModuleIds.Batch) ?? new BatchSettings();
+            _settings.Normalize();
+            ReloadWorkflows();
+        });
+    }
+
     public string PromptQueueText => TxtPromptQueue.Text;
 
     private void RunOnUi(Action action)

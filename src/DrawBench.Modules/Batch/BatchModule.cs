@@ -89,6 +89,11 @@ public sealed class BatchModule : IToolModule, IActivatableModule, ITextReceiver
 
     private static void ApplyToView(BatchView view, string text)
     {
+        if (text.StartsWith("reload-workflows:", StringComparison.Ordinal))
+        {
+            view.ReloadFromStore();
+            return;
+        }
         if (text.StartsWith("negative-append:", StringComparison.Ordinal))
         {
             view.AppendNegative(text["negative-append:".Length..]);
